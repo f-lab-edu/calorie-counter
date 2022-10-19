@@ -20,6 +20,8 @@
 * IntelliJ
 
 ## 메뉴 구조도
+![image](https://user-images.githubusercontent.com/106227771/196656935-e6472fc0-eba6-475d-b8f1-021e38725fe5.png)
+
 ![image](https://user-images.githubusercontent.com/113809660/196573162-ff045b59-a47f-4638-b469-99c9f1873f5a.png)
 
 ## 기능 구조도
@@ -61,6 +63,9 @@
    - 4-2. 식품 상세목록을 수정한다.
      - 4-2-1. 제공자에 의해 제공되는 정보중 수량(g, 개수, kg, 인분, 온스 등), 용량 등을 선택하여 저장한다.
 5. 총 섭취 칼로리,영양분이 보여진다
+
+![image](https://user-images.githubusercontent.com/106227771/196658370-f5410ae0-5460-4faa-92ee-cc7c02c6953b.png)
+
 
 ## 제공자 기능 명세
 
