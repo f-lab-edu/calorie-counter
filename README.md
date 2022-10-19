@@ -17,7 +17,10 @@
 * MyBatis 3
 * MySQL 8.0 
 * Gradle
-* IntelliJ 
+* IntelliJ
+
+## 메뉴 구조도
+![image](https://user-images.githubusercontent.com/113809660/196573162-ff045b59-a47f-4638-b469-99c9f1873f5a.png)
 
 ## 기능 구조도
 
