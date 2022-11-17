@@ -20,7 +20,7 @@
 * IntelliJ
 
 ## ERD (예시, 현재 논의 중)
-![image](https://user-images.githubusercontent.com/113809660/200981682-5372b563-e590-4e73-bd08-724a4a6362ef.png)
+https://www.erdcloud.com/d/thuYe7sMXNEzk7MPp
 
 ## 메뉴 구조도
 ![image](https://user-images.githubusercontent.com/106227771/196656935-e6472fc0-eba6-475d-b8f1-021e38725fe5.png)
