@@ -19,7 +19,7 @@
 * Gradle
 * IntelliJ
 
-## ERD (예시, 현재 논의 중)
+## ERD (예시, 현재 논의 중.)
 https://www.erdcloud.com/d/thuYe7sMXNEzk7MPp
 
 ## 메뉴 구조도
