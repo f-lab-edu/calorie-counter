@@ -37,7 +37,7 @@ class UserMapperTest {
     @Test
     @DisplayName("회원가입 정상처리 테스트")
     void signUp() {
-        assertThat(userMapper.isExistId(signUpForm.getUserId())).isTrue();
-        assertThat(userMapper.isExistId("tempId")).isFalse();
+        assertThat(this.userMapper.hasDuplicatedId(this.signUpForm.userId())).isTrue();
+        assertThat(this.userMapper.hasDuplicatedId("tempId")).isFalse();
     }
 }

@@ -39,13 +39,13 @@ class UserControllerTest {
                 .email("asdf123456@naver.com")
                 .build();
 
-        mockMvc.perform(post("/users")
+        this.mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(user)))
+                        .content(objectMapper.writeValueAsString(this.rightUserForm)))
                 .andExpect(status().isCreated())
                 .andDo(print());
 
-        verify(signUpUseCase).signUp(any(SignUpForm.class));
+        verify(this.signUpUseCase).signUp(any(SignUpForm.class));
     }
 
     @Test
@@ -58,12 +58,12 @@ class UserControllerTest {
                 .email("2")
                 .build();
 
-        mockMvc.perform(post("/users")
+        this.mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(user)))
+                        .content(this.objectMapper.writeValueAsString(this.wrongUserForm)))
                 .andExpect(status().isBadRequest())
                 .andDo(print());
 
-        verify(signUpUseCase, never()).signUp(any(SignUpForm.class));
+        verify(this.signUpUseCase, never()).signUp(any(SignUpForm.class));
     }
 }

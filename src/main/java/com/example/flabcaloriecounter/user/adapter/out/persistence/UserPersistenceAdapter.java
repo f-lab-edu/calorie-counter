@@ -1,7 +1,7 @@
 package com.example.flabcaloriecounter.user.adapter.out.persistence;
 
-import com.example.flabcaloriecounter.user.application.port.out.SignUpPort;
 import com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm;
+import com.example.flabcaloriecounter.user.application.port.out.SignUpPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,12 +12,12 @@ public class UserPersistenceAdapter implements SignUpPort {
     private final UserRepository userRepository;
 
     @Override
-    public void signUp(SignUpForm signUpForm) {
-        userRepository.signUp(signUpForm);
+    public void signUp(final SignUpForm signUpForm) {
+        this.userRepository.signUp(signUpForm);
     }
 
     @Override
-    public boolean isExistId(String userId) {
-        return userRepository.isExistId(userId);
+    public boolean hasDuplicatedId(final String userId) {
+        return this.userRepository.hasDuplicatedId(userId);
     }
 }

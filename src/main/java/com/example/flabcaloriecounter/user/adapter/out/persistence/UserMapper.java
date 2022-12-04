@@ -5,7 +5,8 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface UserMapper {
-    void signUp(SignUpForm signUpForm);
 
-    boolean isExistId(String userId);
+    void signUp(final SignUpForm signUpForm);
+
+    boolean hasDuplicatedId(final String userId);
 }

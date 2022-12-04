@@ -38,20 +38,17 @@ class SignUpServiceTest {
     @Test
     @DisplayName("중복된 아이디가 있으면 예외를던진다")
     void signUp_existEmail_fail() {
-        when(signUpPort.isExistId(signUpForm.getUserId())).thenReturn(true);
+        when(this.signUpPort.hasDuplicatedId(this.signUpForm.userId())).thenReturn(true);
 
-        assertThatThrownBy(() -> {
-            signUpService.signUp(signUpForm);
-        }).isInstanceOf(AlreadyExistUserIdException.class);
+        assertThatThrownBy(() -> this.signUpService.signUp(this.signUpForm))
+                .isInstanceOf(AlreadyExistUserIdException.class);
     }
 
     @Test
     @DisplayName("중복된 아이디가 없으면 정상처리한다")
     void signUp_success() {
-        when(signUpPort.isExistId(signUpForm.getUserId())).thenReturn(false);
+        when(this.signUpPort.hasDuplicatedId(signUpForm.userId())).thenReturn(false);
 
-        assertDoesNotThrow(() -> {
-            signUpService.signUp(signUpForm);
-        });
+        assertDoesNotThrow(() -> this.signUpService.signUp(this.signUpForm));
     }
 }

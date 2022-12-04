@@ -19,12 +19,13 @@ public class UserMybatisRepository implements UserRepository {
                 .password(PasswordEncrypt.encrypt(signUpForm.getPassword()))
                 .email(signUpForm.getEmail())
                 .build();
+    public void signUp(final SignUpForm signUpForm) {
 
-        userMapper.signUp(user);
+        this.userMapper.signUp(user);
     }
 
     @Override
-    public boolean isExistId(String userId) {
-        return userMapper.isExistId(userId);
+    public boolean hasDuplicatedId(final String userId) {
+        return this.userMapper.hasDuplicatedId(userId);
     }
 }

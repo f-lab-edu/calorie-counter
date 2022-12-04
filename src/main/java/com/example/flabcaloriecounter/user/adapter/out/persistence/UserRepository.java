@@ -4,7 +4,7 @@ import com.example.flabcaloriecounter.user.application.port.in.response.SignUpFo
 
 public interface UserRepository {
 
-    void signUp(SignUpForm signUpForm);
+    void signUp(final SignUpForm signUpForm);
 
-    boolean isExistId(String userId);
+    boolean hasDuplicatedId(final String userId);
 }
