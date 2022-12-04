@@ -1,5 +1,6 @@
 package com.example.flabcaloriecounter.config;
 
+import javax.sql.DataSource;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -9,11 +10,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.sql.DataSource;
-
 @Configuration
 @MapperScan(basePackages = "com.example.flabcaloriecounter.user.adapter.out.persistence",
-            annotationClass = org.apache.ibatis.annotations.Mapper.class)
+        annotationClass = org.apache.ibatis.annotations.Mapper.class)
 @RequiredArgsConstructor
 public class MybatisConfig {
 

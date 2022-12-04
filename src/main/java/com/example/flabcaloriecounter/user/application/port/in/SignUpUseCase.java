@@ -3,5 +3,6 @@ package com.example.flabcaloriecounter.user.application.port.in;
 import com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm;
 
 public interface SignUpUseCase {
-    void signUp(SignUpForm signUpForm);
+
+    void signUp(final SignUpForm signUpForm);
 }

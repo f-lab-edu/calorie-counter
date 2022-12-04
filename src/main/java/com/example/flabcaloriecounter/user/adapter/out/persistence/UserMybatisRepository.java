@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class UserMybatisRepository implements UserRepository{
+public class UserMybatisRepository implements UserRepository {
 
     private final UserMapper userMapper;
 
