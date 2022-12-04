@@ -1,5 +1,7 @@
 package com.example.flabcaloriecounter.user.adapter.out.persistence;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.example.flabcaloriecounter.config.MybatisConfig;
 import com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,10 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.context.annotation.Import;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @MybatisTest
-@AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(MybatisConfig.class)
 class UserMapperTest {
 
@@ -24,14 +24,14 @@ class UserMapperTest {
 
     @BeforeEach
     void setup() {
-        signUpForm = SignUpForm.builder()
-                .userId("asdfasdasd123")
-                .name("이영진")
-                .password("asdfsa5678")
-                .email("asdf123456@naver.com")
-                .build();
+        this.signUpForm = new SignUpForm(
+                "asdf123545",
+                "이영진",
+                "12345678",
+                "dudwls0505@naver.com"
+        );
 
-        userMapper.signUp(signUpForm);
+        userMapper.signUp(this.signUpForm);
     }
 
     @Test

@@ -1,8 +1,12 @@
 package com.example.flabcaloriecounter.user.application.service;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.Mockito.when;
+
 import com.example.flabcaloriecounter.exception.AlreadyExistUserIdException;
-import com.example.flabcaloriecounter.user.application.port.out.SignUpPort;
 import com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm;
+import com.example.flabcaloriecounter.user.application.port.out.SignUpPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,10 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class SignUpServiceTest {
@@ -28,11 +28,12 @@ class SignUpServiceTest {
 
     @BeforeEach
     void setup() {
-        signUpForm = SignUpForm.builder()
-                .name("이영진")
-                .password("12345678")
-                .email("dudwls0505@naver.com")
-                .build();
+        this.signUpForm = new SignUpForm(
+                "asdf123545",
+                "이영진",
+                "12345678",
+                "dudwls0505@naver.com"
+        );
     }
 
     @Test
