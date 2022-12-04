@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.when;
 
-import com.example.flabcaloriecounter.exception.AlreadyExistUserIdException;
+import com.example.flabcaloriecounter.exception.HasDuplicatedIdException;
 import com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm;
 import com.example.flabcaloriecounter.user.application.port.out.SignUpPort;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +42,7 @@ class SignUpServiceTest {
         when(this.signUpPort.hasDuplicatedId(this.signUpForm.userId())).thenReturn(true);
 
         assertThatThrownBy(() -> this.signUpService.signUp(this.signUpForm))
-                .isInstanceOf(AlreadyExistUserIdException.class);
+                .isInstanceOf(HasDuplicatedIdException.class);
     }
 
     @Test

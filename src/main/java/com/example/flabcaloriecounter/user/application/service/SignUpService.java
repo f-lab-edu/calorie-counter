@@ -1,6 +1,6 @@
 package com.example.flabcaloriecounter.user.application.service;
 
-import com.example.flabcaloriecounter.exception.AlreadyExistUserIdException;
+import com.example.flabcaloriecounter.exception.HasDuplicatedIdException;
 import com.example.flabcaloriecounter.user.application.port.in.SignUpUseCase;
 import com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm;
 import com.example.flabcaloriecounter.user.application.port.out.SignUpPort;
@@ -18,7 +18,7 @@ public class SignUpService implements SignUpUseCase {
     @Transactional
     public void signUp(final SignUpForm signUpForm) {
         if (this.signUpPort.hasDuplicatedId(signUpForm.userId())) {
-            throw new AlreadyExistUserIdException("이미 존재하는 ID입니다");
+            throw new HasDuplicatedIdException("이미 존재하는 ID입니다");
         }
 
         this.signUpPort.signUp(signUpForm);
