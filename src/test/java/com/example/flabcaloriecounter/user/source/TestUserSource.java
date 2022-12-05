@@ -16,7 +16,7 @@ public class TestUserSource {
 		UserStatus.USER
 	);
 
-	static final SignUpForm 정보제공자_가입폼_케이스2 = new SignUpForm(
+	static final SignUpForm 정보제공자_가입폼_케이스1 = new SignUpForm(
 		"provider123",
 		"정보제공자_이름",
 		"12345678",
@@ -24,10 +24,34 @@ public class TestUserSource {
 		UserStatus.PROVIDER
 	);
 
-	public static Stream<Arguments> 일반사용자_하나_정보제공자_하나() {
+	static final SignUpForm 정보제공자_가입폼_케이스2 = new SignUpForm(
+		"provider5334",
+		"정보제공자_이름2",
+		"87837823",
+		"provider1234@gmail.com",
+		UserStatus.PROVIDER
+	);
+
+	static final SignUpForm 정보제공자_가입폼_케이스3 = new SignUpForm(
+		"provider5334",
+		"정보제공자_이름2",
+		"87837823",
+		"provider8232@gmail.com",
+		UserStatus.PROVIDER
+	);
+
+	public static Stream<Arguments> 일반사용자_1가지_정보제공자_1가지() {
 		return Stream.of(
 			Arguments.of(일반사용자_가입폼_케이스1),
-			Arguments.of(정보제공자_가입폼_케이스2)
+			Arguments.of(정보제공자_가입폼_케이스1)
+		);
+	}
+
+	public static Stream<Arguments> 정보제공자_3가지() {
+		return Stream.of(
+			Arguments.of(정보제공자_가입폼_케이스1),
+			Arguments.of(정보제공자_가입폼_케이스2),
+			Arguments.of(정보제공자_가입폼_케이스3)
 		);
 	}
 }
