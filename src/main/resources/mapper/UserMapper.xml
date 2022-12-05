@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.flabcaloriecounter.user.adapter.out.persistence.UserMapper">
-    <insert id="signUp" parameterType="com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm" >
-        INSERT INTO user(userId, name, password, email)
-        values (#{userId}, #{name}, #{password}, #{email})
-    </insert>
+  <insert id="signUp"
+    parameterType="com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm">
+    INSERT INTO user(userId, name, password, email)
+    values (#{userId}, #{name}, #{password}, #{email})
+  </insert>
 
-    <select id="isExistId" resultType="boolean">
-        SELECT EXISTS(select userId from user where userId= #{userId})
-    </select>
+  <select id="hasDuplicatedId" resultType="boolean">
+    SELECT EXISTS(select userId from user where userId = #{userId})
+  </select>
 </mapper>
