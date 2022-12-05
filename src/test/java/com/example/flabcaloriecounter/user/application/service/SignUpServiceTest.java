@@ -36,7 +36,7 @@ class SignUpServiceTest {
     void setup() {}
 
     @ParameterizedTest
-    @MethodSource("TestUserSource#일반사용자_하나_정보제공자_하나")
+    @MethodSource("com.example.flabcaloriecounter.user.source.TestUserSource#일반사용자_하나_정보제공자_하나")
     @DisplayName("중복된 아이디가 있으면 예외를 던진다")
     void signUp_existEmail_fail(SignUpForm signUpForm) {
         when(this.signUpPort.hasDuplicatedId(signUpForm.userId())).thenReturn(true);
@@ -46,7 +46,7 @@ class SignUpServiceTest {
     }
 
     @ParameterizedTest
-    @MethodSource("TestUserSource#일반사용자_하나_정보제공자_하나")
+    @MethodSource("com.example.flabcaloriecounter.user.source.TestUserSource#일반사용자_하나_정보제공자_하나")
     @DisplayName("중복된 아이디가 없으면 정상처리한다")
     void signUp_success(SignUpForm signUpForm) {
         when(this.signUpPort.hasDuplicatedId(signUpForm.userId())).thenReturn(false);
