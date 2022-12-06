@@ -5,17 +5,16 @@
 <mapper namespace="com.example.flabcaloriecounter.user.adapter.out.persistence.UserMapper">
   <insert id="signUp"
     parameterType="com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm">
-    INSERT INTO user(userId, name, password, email)
-    values (#{userId}, #{name}, #{password}, #{email})
+    INSERT INTO user_table(user_id, user_name, user_password, email, weight, userStatus)
+    values (#{userId}, #{userName}, #{userPassword}, #{email}, #{weight}, #{userStatus})
   </insert>
 
   <select id="hasDuplicatedId" resultType="boolean">
-    SELECT EXISTS(select userId from user where userId = #{userId})
+    SELECT EXISTS(select user_id from user_table where user_id = #{userId})
   </select>
 
   <select id="findByUserId" resultType="com.example.flabcaloriecounter.user.domain.User">
-    SELECT userId, name, password, email, weight, withdrawalReason,
-           joinDate, withdrawalStatus, judgeStatus, userStatus, photoLink
-    FROM user WHERE userId = #{userId}
+    SELECT user_id, user_name, user_password, email, weight, withdrawal_reason, joinDate, withdrawal_status, judge_status, user_status, photo_link
+    FROM user_table WHERE user_id = #{userId}
   </select>
 </mapper>

@@ -14,7 +14,7 @@ spring:
       on-profile: "test"
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:testdb;NON_KEYWORDS=USER;
+    url: jdbc:h2:mem:testdb;
     username: yj
     password:
 ---
