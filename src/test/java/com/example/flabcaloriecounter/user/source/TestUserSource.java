@@ -13,7 +13,8 @@ public class TestUserSource {
 		"이영진",
 		"12345678",
 		"dudwls0505@naver.com",
-		UserStatus.USER
+		50.3,
+		UserStatus.ORDINARY
 	);
 
 	static final SignUpForm 정보제공자_가입폼_케이스1 = new SignUpForm(
@@ -21,6 +22,7 @@ public class TestUserSource {
 		"정보제공자_이름",
 		"12345678",
 		"provider@gmail.com",
+		60.02,
 		UserStatus.PROVIDER
 	);
 
@@ -29,6 +31,7 @@ public class TestUserSource {
 		"정보제공자_이름2",
 		"87837823",
 		"provider1234@gmail.com",
+		61.03,
 		UserStatus.PROVIDER
 	);
 
@@ -37,6 +40,7 @@ public class TestUserSource {
 		"정보제공자_이름2",
 		"87837823",
 		"provider8232@gmail.com",
+		65.05,
 		UserStatus.PROVIDER
 	);
 

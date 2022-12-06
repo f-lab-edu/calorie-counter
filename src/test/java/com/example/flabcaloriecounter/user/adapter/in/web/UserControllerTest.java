@@ -47,7 +47,8 @@ class UserControllerTest {
             "올바른유저",
             "12345678",
             "dudwls0505@naver.com",
-            UserStatus.USER
+            60.03,
+            UserStatus.ORDINARY
         );
 
         wrongUserForm = new SignUpForm(
@@ -55,7 +56,8 @@ class UserControllerTest {
             "잘못된유저",
             "1",
             "2",
-            UserStatus.USER
+            70.02,
+            UserStatus.ORDINARY
         );
     }
 

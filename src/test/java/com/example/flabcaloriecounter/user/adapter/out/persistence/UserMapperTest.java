@@ -31,7 +31,8 @@ class UserMapperTest {
             "이영진",
             "12345678",
             "dudwls0505@naver.com",
-            UserStatus.USER
+            60.02,
+            UserStatus.ORDINARY
         );
 
         userMapper.signUp(this.signUpForm);

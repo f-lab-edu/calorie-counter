@@ -13,7 +13,6 @@ import com.example.flabcaloriecounter.user.application.port.in.response.SignUpFo
 import com.example.flabcaloriecounter.user.application.port.out.SignUpPort;
 import com.example.flabcaloriecounter.user.domain.User;
 
-import org.apache.ibatis.annotations.Mapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,10 +23,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.test.context.ActiveProfiles;
 
 @MybatisTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
 class SignUpServiceTest {
 
@@ -72,22 +71,22 @@ class SignUpServiceTest {
         assertDoesNotThrow(() -> this.mockSignUpService.signUp(signUpForm));
     }
 
-    // @ParameterizedTest
-    // @MethodSource("com.example.flabcaloriecounter.user.source.TestUserSource#정보제공자_3가지")
-    // @DisplayName("정보제공자가 성공적으로 가입될 수 있다")
-    // void 정보제공자_가입_성공(SignUpForm providerSignUpForm) {
-    //     // when
-    //     realSignUpService.signUp(providerSignUpForm);
-    //
-    //     // then
-    //     User checkedProvider = userRepository.findByUserId(providerSignUpForm.userId());
-    //     assertAll(
-    //             () -> assertThat(checkedProvider).isNotNull(),
-    //             () -> assertThat(checkedProvider.userId()).isEqualTo(providerSignUpForm.userId()),
-    //             () -> assertThat(checkedProvider.password()).isEqualTo(providerSignUpForm.password()),
-    //             () -> assertThat(checkedProvider.name()).isEqualTo(providerSignUpForm.name()),
-    //             () -> assertThat(checkedProvider.email()).isEqualTo(providerSignUpForm.email()),
-    //             () -> assertThat(checkedProvider.userStatus()).isEqualTo(providerSignUpForm.userStatus())
-    //     );
-    // }
+    @ParameterizedTest
+    @MethodSource("com.example.flabcaloriecounter.user.source.TestUserSource#정보제공자_3가지")
+    @DisplayName("정보제공자가 성공적으로 가입될 수 있다")
+    void 정보제공자_가입_성공(SignUpForm providerSignUpForm) {
+        // when
+        realSignUpService.signUp(providerSignUpForm);
+
+        // then
+        User checkedProvider = userRepository.findByUserId(providerSignUpForm.userId());
+        assertAll(
+                () -> assertThat(checkedProvider).isNotNull(),
+                () -> assertThat(checkedProvider.userId()).isEqualTo(providerSignUpForm.userId()),
+                () -> assertThat(checkedProvider.password()).isEqualTo(providerSignUpForm.userPassword()),
+                () -> assertThat(checkedProvider.name()).isEqualTo(providerSignUpForm.userName()),
+                () -> assertThat(checkedProvider.email()).isEqualTo(providerSignUpForm.email()),
+                () -> assertThat(checkedProvider.userStatus()).isEqualTo(providerSignUpForm.userStatus())
+        );
+    }
 }
