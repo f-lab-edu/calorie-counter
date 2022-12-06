@@ -1,5 +1,7 @@
 package com.example.flabcaloriecounter.user.application.port.in.response;
 
+import com.example.flabcaloriecounter.user.domain.UserStatus;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -13,7 +15,10 @@ public record SignUpForm(
         @NotBlank @Size(min = 8, max = 25) @Pattern(regexp = passwordPattern)
         String password,
         @NotBlank @Email
-        String email
+        String email,
+
+        @NotBlank
+        UserStatus userStatus
 ) {
 
     public static final String userIdPattern = "^[a-zA-Z0-9가-힣]+$";

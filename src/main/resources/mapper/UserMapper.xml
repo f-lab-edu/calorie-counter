@@ -12,4 +12,10 @@
   <select id="hasDuplicatedId" resultType="boolean">
     SELECT EXISTS(select userId from user where userId = #{userId})
   </select>
+
+  <select id="findByUserId" resultType="com.example.flabcaloriecounter.user.domain.User">
+    SELECT userId, name, password, email, weight, withdrawalReason,
+           joinDate, withdrawalStatus, judgeStatus, userStatus, photoLink
+    FROM user WHERE userId = #{userId}
+  </select>
 </mapper>
