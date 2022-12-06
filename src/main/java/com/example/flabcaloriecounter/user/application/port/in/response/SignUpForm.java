@@ -1,19 +1,29 @@
 package com.example.flabcaloriecounter.user.application.port.in.response;
 
+import com.example.flabcaloriecounter.user.domain.UserStatus;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.springframework.format.annotation.NumberFormat;
+
 public record SignUpForm(
         @NotBlank @Size(min = 6, max = 20) @Pattern(regexp = userIdPattern)
         String userId,
         @NotBlank @Size(min = 1, max = 20) @Pattern(regexp = namePattern)
-        String name,
+        String userName,
         @NotBlank @Size(min = 8, max = 25) @Pattern(regexp = passwordPattern)
-        String password,
+        String userPassword,
         @NotBlank @Email
-        String email
+        String email,
+
+        @NotBlank @NumberFormat
+        Double weight,
+
+        @NotBlank
+        UserStatus userStatus
 ) {
 
     public static final String userIdPattern = "^[a-zA-Z0-9가-힣]+$";

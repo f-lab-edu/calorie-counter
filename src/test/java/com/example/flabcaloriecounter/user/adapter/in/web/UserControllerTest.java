@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.example.flabcaloriecounter.exception.HasDuplicatedIdException;
 import com.example.flabcaloriecounter.user.application.port.in.SignUpUseCase;
 import com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm;
+import com.example.flabcaloriecounter.user.domain.UserStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -42,17 +43,21 @@ class UserControllerTest {
     @BeforeEach
     void setup() {
         rightUserForm = new SignUpForm(
-                "rightUserId",
-                "올바른유저",
-                "12345678",
-                "dudwls0505@naver.com"
+            "rightUserId",
+            "올바른유저",
+            "12345678",
+            "dudwls0505@naver.com",
+            60.03,
+            UserStatus.ORDINARY
         );
 
         wrongUserForm = new SignUpForm(
-                "wrongUserId",
-                "잘못된유저",
-                "1",
-                "2"
+            "wrongUserId",
+            "잘못된유저",
+            "1",
+            "2",
+            70.02,
+            UserStatus.ORDINARY
         );
     }
 

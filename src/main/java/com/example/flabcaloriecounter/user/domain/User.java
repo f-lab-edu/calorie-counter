@@ -7,7 +7,7 @@ public record User(
         String name,
         String password,
         String email,
-        double weight,
+        Double weight,
         String withdrawalReason,
         LocalDateTime joinDate,
         WithdrawalStatus withdrawalStatus,

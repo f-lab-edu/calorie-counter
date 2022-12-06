@@ -1,20 +1,18 @@
-CREATE TABLE `user`
+CREATE TABLE `user_table`
 (
-    `user_id`          BIGINT auto_increment primary key                              not null,
-    `userId`           varchar(30)                                                    NOT NULL,
-    `name`             VARCHAR(30)                                                    NOT NULL,
-    `password`         VARCHAR(255)                                                   NOT NULL,
+    `id`               BIGINT auto_increment primary key                              not null,
+    `user_id`          VARCHAR(30)                                                    NOT NULL,
+    `user_name`        VARCHAR(30)                                                    NOT NULL,
+    `user_password`    VARCHAR(255)                                                   NOT NULL,
     `email`            VARCHAR(50)                                                    NOT NULL,
     `weight`           DOUBLE                                                         NULL,
-    `withdrawalReason` VARCHAR(200)                                                   NULL,
+    `withdrawal_reason` VARCHAR(200)                                                   NULL,
     `joinDate`         DATETIME                             default current_timestamp NOT NULL,
-    `withdrawalState`  enum ('withdrawal', 'notwithdrawal') default 'notwithdrawal'   NOT NULL,
-    `userStatus`       ENUM ('user' , 'provider', 'admin')  default 'user'            NOT NULL,
-    `judgeStatus`      ENUM ('pending','passed', 'rejected')                          NULL,
-    `photoLink`        VARCHAR(255)                                                   NULL
+    `withdrawal_status` ENUM ('WITHDRAWAL', 'NOT_WITHDRAWAL') default 'NOT_WITHDRAWAL'   NOT NULL,
+    `user_status`       ENUM ('ORDINARY' , 'PROVIDER', 'ADMIN')  default 'ORDINARY'            NOT NULL,
+    `judge_status`      ENUM ('PEDNING','PASSED', 'REJECTED', 'NOT_ASSIGNED') default 'NOT_ASSIGNED'                         NULL,
+    `photo_link`        VARCHAR(255)                                                   NULL
 );
-
-
 
 CREATE TABLE `food`
 (

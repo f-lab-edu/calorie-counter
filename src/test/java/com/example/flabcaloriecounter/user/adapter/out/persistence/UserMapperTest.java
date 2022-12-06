@@ -3,6 +3,8 @@ package com.example.flabcaloriecounter.user.adapter.out.persistence;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm;
+import com.example.flabcaloriecounter.user.domain.UserStatus;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,10 +27,12 @@ class UserMapperTest {
     @BeforeEach
     void setup() {
         this.signUpForm = new SignUpForm(
-                "asdf123545",
-                "이영진",
-                "12345678",
-                "dudwls0505@naver.com"
+            "asdf123545",
+            "이영진",
+            "12345678",
+            "dudwls0505@naver.com",
+            60.02,
+            UserStatus.ORDINARY
         );
 
         userMapper.signUp(this.signUpForm);
