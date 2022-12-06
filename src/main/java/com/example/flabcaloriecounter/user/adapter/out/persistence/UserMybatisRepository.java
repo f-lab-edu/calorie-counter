@@ -14,15 +14,16 @@ public class UserMybatisRepository implements UserRepository {
 
     @Override
     public void signUp(final SignUpForm signUpForm) {
-        SignUpForm user = new SignUpForm(
+        SignUpForm intermediateUserForm = new SignUpForm(
                 signUpForm.userId(),
-                signUpForm.name(),
-                PasswordEncrypt.encrypt(signUpForm.password()),
+                signUpForm.userName(),
+                PasswordEncrypt.encrypt(signUpForm.userPassword()),
                 signUpForm.email(),
+                signUpForm.weight(),
                 signUpForm.userStatus()
         );
 
-        this.userMapper.signUp(user);
+        this.userMapper.signUp(intermediateUserForm);
     }
 
     @Override
