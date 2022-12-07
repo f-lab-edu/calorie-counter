@@ -3,6 +3,7 @@ package com.example.flabcaloriecounter.user.adapter.out.persistence;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm;
+import com.example.flabcaloriecounter.user.domain.JudgeStatus;
 import com.example.flabcaloriecounter.user.domain.UserStatus;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +33,8 @@ class UserMapperTest {
             "12345678",
             "dudwls0505@naver.com",
             60.02,
-            UserStatus.ORDINARY
+            UserStatus.ORDINARY,
+            JudgeStatus.getInitialJudgeStatusByUserStatus(UserStatus.ORDINARY)
         );
 
         userMapper.signUp(this.signUpForm);
