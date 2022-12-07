@@ -83,7 +83,6 @@ class SignUpServiceTest {
         assertAll(
                 () -> assertThat(checkedProvider).isNotNull(),
                 () -> assertThat(checkedProvider.userId()).isEqualTo(providerSignUpForm.userId()),
-                () -> assertThat(checkedProvider.password()).isEqualTo(providerSignUpForm.userPassword()),
                 () -> assertThat(checkedProvider.name()).isEqualTo(providerSignUpForm.userName()),
                 () -> assertThat(checkedProvider.email()).isEqualTo(providerSignUpForm.email()),
                 () -> assertThat(checkedProvider.userStatus()).isEqualTo(providerSignUpForm.userStatus())
