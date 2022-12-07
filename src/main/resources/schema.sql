@@ -9,8 +9,8 @@ CREATE TABLE `user_table`
     `withdrawal_reason` VARCHAR(200)                                                   NULL,
     `joinDate`         DATETIME                             default current_timestamp NOT NULL,
     `withdrawal_status` ENUM ('WITHDRAWAL', 'NOT_WITHDRAWAL') default 'NOT_WITHDRAWAL'   NOT NULL,
-    `user_status`       ENUM ('ORDINARY' , 'PROVIDER', 'ADMIN')  default 'ORDINARY'            NOT NULL,
-    `judge_status`      ENUM ('PEDNING','PASSED', 'REJECTED', 'NOT_ASSIGNED') default 'NOT_ASSIGNED'                         NULL,
+    `user_status`       ENUM ('ORDINARY' , 'PROVIDER', 'ADMIN')            NOT NULL,
+    `judge_status`      ENUM ('PENDING','PASSED', 'REJECTED', 'NOT_ASSIGNED')                         NOT NULL,
     `photo_link`        VARCHAR(255)                                                   NULL
 );
 

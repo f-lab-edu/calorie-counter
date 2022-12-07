@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.params.provider.Arguments;
 
 import com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm;
+import com.example.flabcaloriecounter.user.domain.JudgeStatus;
 import com.example.flabcaloriecounter.user.domain.UserStatus;
 
 public class TestUserSource {
@@ -14,7 +15,8 @@ public class TestUserSource {
 		"12345678",
 		"dudwls0505@naver.com",
 		50.3,
-		UserStatus.ORDINARY
+		UserStatus.ORDINARY,
+		JudgeStatus.getInitialJudgeStatusByUserStatus(UserStatus.ORDINARY)
 	);
 
 	static final SignUpForm 정보제공자_가입폼_케이스1 = new SignUpForm(
@@ -23,7 +25,8 @@ public class TestUserSource {
 		"12345678",
 		"provider@gmail.com",
 		60.02,
-		UserStatus.PROVIDER
+		UserStatus.PROVIDER,
+		JudgeStatus.getInitialJudgeStatusByUserStatus(UserStatus.PROVIDER)
 	);
 
 	static final SignUpForm 정보제공자_가입폼_케이스2 = new SignUpForm(
@@ -32,7 +35,8 @@ public class TestUserSource {
 		"87837823",
 		"provider1234@gmail.com",
 		61.03,
-		UserStatus.PROVIDER
+		UserStatus.PROVIDER,
+		JudgeStatus.getInitialJudgeStatusByUserStatus(UserStatus.PROVIDER)
 	);
 
 	static final SignUpForm 정보제공자_가입폼_케이스3 = new SignUpForm(
@@ -41,7 +45,8 @@ public class TestUserSource {
 		"87837823",
 		"provider8232@gmail.com",
 		65.05,
-		UserStatus.PROVIDER
+		UserStatus.PROVIDER,
+		JudgeStatus.getInitialJudgeStatusByUserStatus(UserStatus.PROVIDER)
 	);
 
 	public static Stream<Arguments> 일반사용자_1가지_정보제공자_1가지() {
