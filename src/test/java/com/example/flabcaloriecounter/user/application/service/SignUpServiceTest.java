@@ -11,6 +11,7 @@ import com.example.flabcaloriecounter.user.adapter.out.persistence.UserPersisten
 import com.example.flabcaloriecounter.user.adapter.out.persistence.UserRepository;
 import com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm;
 import com.example.flabcaloriecounter.user.application.port.out.SignUpPort;
+import com.example.flabcaloriecounter.user.domain.JudgeStatus;
 import com.example.flabcaloriecounter.user.domain.User;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -81,11 +82,12 @@ class SignUpServiceTest {
         // then
         User checkedProvider = userRepository.findByUserId(providerSignUpForm.userId());
         assertAll(
-                () -> assertThat(checkedProvider).isNotNull(),
-                () -> assertThat(checkedProvider.userId()).isEqualTo(providerSignUpForm.userId()),
-                () -> assertThat(checkedProvider.name()).isEqualTo(providerSignUpForm.userName()),
-                () -> assertThat(checkedProvider.email()).isEqualTo(providerSignUpForm.email()),
-                () -> assertThat(checkedProvider.userStatus()).isEqualTo(providerSignUpForm.userStatus())
+            () -> assertThat(checkedProvider).isNotNull(),
+            () -> assertThat(checkedProvider.userId()).isEqualTo(providerSignUpForm.userId()),
+            () -> assertThat(checkedProvider.name()).isEqualTo(providerSignUpForm.userName()),
+            () -> assertThat(checkedProvider.email()).isEqualTo(providerSignUpForm.email()),
+            () -> assertThat(checkedProvider.userStatus()).isEqualTo(providerSignUpForm.userStatus()),
+            () -> assertThat(checkedProvider.judgeStatus()).isEqualTo(JudgeStatus.PENDING)
         );
     }
 }
