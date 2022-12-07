@@ -1,6 +1,7 @@
 package com.example.flabcaloriecounter.user.adapter.out.persistence;
 
 import com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm;
+import com.example.flabcaloriecounter.user.domain.JudgeStatus;
 import com.example.flabcaloriecounter.user.domain.User;
 import com.example.flabcaloriecounter.util.PasswordEncrypt;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +16,13 @@ public class UserMybatisRepository implements UserRepository {
     @Override
     public void signUp(final SignUpForm signUpForm) {
         SignUpForm intermediateUserForm = new SignUpForm(
-                signUpForm.userId(),
-                signUpForm.userName(),
-                PasswordEncrypt.encrypt(signUpForm.userPassword()),
-                signUpForm.email(),
-                signUpForm.weight(),
-                signUpForm.userStatus()
+            signUpForm.userId(),
+            signUpForm.userName(),
+            PasswordEncrypt.encrypt(signUpForm.userPassword()),
+            signUpForm.email(),
+            signUpForm.weight(),
+            signUpForm.userStatus(),
+            JudgeStatus.getInitialJudgeStatusByUserStatus(signUpForm.userStatus())
         );
 
         this.userMapper.signUp(intermediateUserForm);
