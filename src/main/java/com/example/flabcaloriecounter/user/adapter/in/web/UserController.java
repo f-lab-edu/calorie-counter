@@ -19,7 +19,6 @@ public class UserController {
     @PostMapping("/users")
     public ResponseEntity<SignUpForm> signUpSubmit(
             @RequestBody @Valid final SignUpForm signUpForm) {
-        //TODO 제공자 가입
         this.signUpUseCase.signUp(signUpForm);
         return new ResponseEntity<>(signUpForm, HttpStatus.CREATED);
     }
