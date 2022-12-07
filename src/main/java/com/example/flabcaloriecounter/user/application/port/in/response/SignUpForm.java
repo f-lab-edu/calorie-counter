@@ -1,5 +1,6 @@
 package com.example.flabcaloriecounter.user.application.port.in.response;
 
+import com.example.flabcaloriecounter.user.domain.JudgeStatus;
 import com.example.flabcaloriecounter.user.domain.UserStatus;
 
 import javax.validation.constraints.Email;
@@ -23,7 +24,10 @@ public record SignUpForm(
         Double weight,
 
         @NotBlank
-        UserStatus userStatus
+        UserStatus userStatus,
+
+        @NotBlank
+        JudgeStatus judgeStatus
 ) {
 
     public static final String userIdPattern = "^[a-zA-Z0-9가-힣]+$";
