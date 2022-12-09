@@ -4,8 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm;
 import com.example.flabcaloriecounter.user.domain.JudgeStatus;
-import com.example.flabcaloriecounter.user.domain.UserStatus;
-
+import com.example.flabcaloriecounter.user.domain.UserType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,10 +12,8 @@ import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
-import org.springframework.test.context.ActiveProfiles;
 
 @MybatisTest
-@ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 class UserMapperTest {
 
@@ -28,13 +25,13 @@ class UserMapperTest {
     @BeforeEach
     void setup() {
         this.signUpForm = new SignUpForm(
-            "asdf123545",
-            "이영진",
-            "12345678",
-            "dudwls0505@naver.com",
-            60.02,
-            UserStatus.ORDINARY,
-            JudgeStatus.getInitialJudgeStatusByUserStatus(UserStatus.ORDINARY)
+                "asdf123545",
+                "이영진",
+                "12345678",
+                "dudwls0505@naver.com",
+                60.02,
+                UserType.ORDINARY,
+                JudgeStatus.getInitialJudgeStatusByUserType(UserType.ORDINARY)
         );
 
         userMapper.signUp(this.signUpForm);

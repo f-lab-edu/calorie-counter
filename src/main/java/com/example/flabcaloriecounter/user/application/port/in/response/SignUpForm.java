@@ -1,13 +1,12 @@
 package com.example.flabcaloriecounter.user.application.port.in.response;
 
 import com.example.flabcaloriecounter.user.domain.JudgeStatus;
-import com.example.flabcaloriecounter.user.domain.UserStatus;
-
+import com.example.flabcaloriecounter.user.domain.UserType;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
 import org.springframework.format.annotation.NumberFormat;
 
 public record SignUpForm(
@@ -20,13 +19,13 @@ public record SignUpForm(
         @NotBlank @Email
         String email,
 
-        @NotBlank @NumberFormat
+        @NotNull @NumberFormat
         Double weight,
 
-        @NotBlank
-        UserStatus userStatus,
+        @NotNull
+        UserType userType,
 
-        @NotBlank
+        @NotNull
         JudgeStatus judgeStatus
 ) {
 

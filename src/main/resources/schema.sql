@@ -1,17 +1,17 @@
 CREATE TABLE `user_table`
 (
-    `id`               BIGINT auto_increment primary key                              not null,
-    `user_id`          VARCHAR(30)                                                    NOT NULL,
-    `user_name`        VARCHAR(30)                                                    NOT NULL,
-    `user_password`    VARCHAR(255)                                                   NOT NULL,
-    `email`            VARCHAR(50)                                                    NOT NULL,
-    `weight`           DOUBLE                                                         NULL,
-    `withdrawal_reason` VARCHAR(200)                                                   NULL,
-    `joinDate`         DATETIME                             default current_timestamp NOT NULL,
-    `withdrawal_status` ENUM ('WITHDRAWAL', 'NOT_WITHDRAWAL') default 'NOT_WITHDRAWAL'   NOT NULL,
-    `user_status`       ENUM ('ORDINARY' , 'PROVIDER', 'ADMIN')            NOT NULL,
-    `judge_status`      ENUM ('PENDING','PASSED', 'REJECTED', 'NOT_ASSIGNED')                         NOT NULL,
-    `photo_link`        VARCHAR(255)                                                   NULL
+    `id`                BIGINT auto_increment primary key     not null,
+    `user_id`           VARCHAR(30)                           NOT NULL,
+    `user_name`         VARCHAR(30)                           NOT NULL,
+    `user_password`     VARCHAR(255)                          NOT NULL,
+    `email`             VARCHAR(50)                           NOT NULL,
+    `weight`            DOUBLE                                NULL,
+    `withdrawal_reason` VARCHAR(200)                          NULL,
+    `joinDate`          DATETIME    default current_timestamp NOT NULL,
+    `user_status`       VARCHAR(30) default '정상상태'            NOT NULL COMMENT '탈퇴상태, 정상상태',
+    `user_type`         VARCHAR(30)                           NOT NULL COMMENT '일반,제공자,관리자',
+    `judge_status`      VARCHAR(30)                           NULL COMMENT '프로바이더 특성, 심사상태',
+    `photo_link`        VARCHAR(255)                          NULL COMMENT '프로바이더 특성'
 );
 
 CREATE TABLE `food`
@@ -25,20 +25,21 @@ CREATE TABLE `food`
 
 CREATE TABLE `post`
 (
-    `post_id`  BIGINT auto_increment primary key NOT NULL,
-    `subject`  VARCHAR(50)                       NOT NULL,
-    `contents` VARCHAR(1000)                     NOT NULL,
-    `user_id`  BIGINT                            NOT NULL
+    `post_id`   BIGINT auto_increment primary key  NOT NULL,
+    `contents`  VARCHAR(1000)                      NOT NULL,
+    `writeDate` DATETIME default current_timestamp NOT NULL,
+    `user_id`   BIGINT                             NOT NULL
 );
 
 CREATE TABLE `comment`
 (
-    `comment_id`  BIGINT auto_increment primary key NOT NULL,
-    `board_id`    BIGINT                            NOT NULL,
-    `contents`    VARCHAR(300)                      NOT NULL,
-    `depth`       INT                               NOT NULL COMMENT '댓글의 현재 깊이가 몇인지',
-    `comment_id3` BIGINT                            NULL,
-    `user_id`     BIGINT                            NOT NULL
+    `comment_id`  BIGINT auto_increment primary key  NOT NULL,
+    `board_id`    BIGINT                             NOT NULL,
+    `contents`    VARCHAR(300)                       NOT NULL,
+    `depth`       INT                                NOT NULL COMMENT '댓글의 현재 깊이가 몇인지',
+    `writeDate`   DATETIME default current_timestamp NOT NULL,
+    `comment_id3` BIGINT                             NULL,
+    `user_id`     BIGINT                             NOT NULL
 );
 
 CREATE TABLE `nutrition`
