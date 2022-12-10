@@ -1,25 +1,25 @@
 package com.example.flabcaloriecounter.user.domain;
 
 public enum UserStatus {
-    WITHDRAWAL(0),
-    NOT_WITHDRAWAL(1);
+    WITHDRAWAL("탈퇴상태"),
+    NOT_WITHDRAWAL("정상상태");
 
-    private int statusCode;
+    private String statusMessage;
 
-    UserStatus(int statusCode) {
-        this.statusCode = statusCode;
+    UserStatus(String statusMessage) {
+        this.statusMessage = statusMessage;
     }
 
-    public int getStatusCode() {
-        return statusCode;
+    public String getStatusMessage() {
+        return this.statusMessage;
     }
 
-    public static UserStatus valueOf(int value) {
-        for (UserStatus userStatus : values()) {
-            if (userStatus.getStatusCode() == value) {
+    public static UserStatus findByMessage(String statusMessage) {
+        for (UserStatus userStatus : UserStatus.values()) {
+            if (userStatus.getStatusMessage().equals(statusMessage)) {
                 return userStatus;
             }
         }
-        throw new IllegalArgumentException("Invalid UserStatus code: " + value);
+        throw new IllegalArgumentException("해당하는 상태가 없습니다.");
     }
 }
