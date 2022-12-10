@@ -7,32 +7,30 @@ import java.sql.SQLException;
 
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
-import org.apache.ibatis.type.TypeException;
-import org.apache.ibatis.type.TypeHandler;
 
 import com.example.flabcaloriecounter.user.domain.UserStatus;
 
-public class StatusTypeHandler extends BaseTypeHandler<UserStatus> {
+public class UserStatusTypeHandler extends BaseTypeHandler<UserStatus> {
 
 	@Override
 	public void setNonNullParameter(PreparedStatement ps, int i, UserStatus parameter, JdbcType jdbcType)
 		throws SQLException {
-		ps.setInt(i, parameter.getStatusCode());
+		ps.setString(i, parameter.getStatusMessage());
 	}
 
 	@Override
 	public UserStatus getNullableResult(ResultSet rs, String columnName) throws SQLException {
-		return UserStatus.valueOf(rs.getInt(columnName));
+		return UserStatus.findByMessage(rs.getString(columnName));
 	}
 
 	@Override
 	public UserStatus getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-		return UserStatus.valueOf(rs.getInt(columnIndex));
+		return UserStatus.findByMessage(rs.getString(columnIndex));
 	}
 
 	@Override
 	public UserStatus getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-		return UserStatus.valueOf(cs.getInt(columnIndex));
+		return UserStatus.findByMessage(cs.getString(columnIndex));
 	}
 
 }
