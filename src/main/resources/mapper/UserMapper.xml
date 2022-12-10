@@ -22,10 +22,10 @@
            email,
            weight,
            withdrawal_reason,
-           joinDate,
-           withdrawal_status,
-           judge_status,
+           join_date,
            user_status,
+           user_type,
+           judge_status,
            photo_link
     FROM user_table
     WHERE user_id = #{userId}
