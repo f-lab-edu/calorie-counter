@@ -10,10 +10,10 @@ public record User(
         Double weight,
         String withdrawalReason,
         LocalDateTime joinDate,
-        WithdrawalStatus withdrawalStatus,
-        JudgeStatus judgeStatus,
-        UserStatus userStatus,
-        String photoLink
+		UserStatus status,
+		UserType userType,
+		JudgeStatus judgeStatus,
+		String photoLink
 ) {
 
 }
