@@ -22,3 +22,4 @@ spring:
 # mybatis
 mybatis:
   mapper-locations: classpath:/mapper/*.xml
+  type-handlers-package: com.example.flabcaloriecounter.util
