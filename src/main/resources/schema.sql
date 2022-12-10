@@ -8,7 +8,7 @@ CREATE TABLE `user_table`
     `weight`            DOUBLE                                NULL,
     `withdrawal_reason` VARCHAR(200)                          NULL,
     `join_date`          DATETIME    default current_timestamp NOT NULL,
-    `user_status`       TINYINT default 0            NOT NULL COMMENT '탈퇴상태, 정상상태',
+    `user_status`       VARCHAR(30) default '정상상태'            NOT NULL COMMENT '탈퇴상태, 정상상태',
     `user_type`         VARCHAR(30)                           NOT NULL COMMENT '일반,제공자,관리자',
     `judge_status`      VARCHAR(30)                           NULL COMMENT '프로바이더 특성, 심사상태',
     `photo_link`        VARCHAR(255)                          NULL COMMENT '프로바이더 특성'
