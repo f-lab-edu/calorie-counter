@@ -22,6 +22,12 @@ public class FeedMybatisRepository implements FeedRepository {
 	public void write(final FeedInfoDto feedInfoDto) {
 		this.feedMapper.write(feedInfoDto);
 	}
+
+	@Override
+	public void update(Feed feed, FeedUpdateDto feedUpdateDto) {
+		this.feedMapper.update(feed, feedUpdateDto);
+	}
+
 	@Override
 	public Optional<Feed> findByFeedId(final Long feedId) {
 		return this.feedMapper.findByFeedId(feedId);
