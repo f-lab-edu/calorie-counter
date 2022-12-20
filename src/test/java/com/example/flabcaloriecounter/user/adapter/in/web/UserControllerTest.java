@@ -15,18 +15,20 @@ import com.example.flabcaloriecounter.exception.HasDuplicatedIdException;
 import com.example.flabcaloriecounter.user.application.port.in.SignUpUseCase;
 import com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm;
 import com.example.flabcaloriecounter.user.domain.JudgeStatus;
-import com.example.flabcaloriecounter.user.domain.UserStatus;
+import com.example.flabcaloriecounter.user.domain.UserType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(UserController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 class UserControllerTest {
 
     @Autowired
@@ -44,23 +46,23 @@ class UserControllerTest {
     @BeforeEach
     void setup() {
         rightUserForm = new SignUpForm(
-            "rightUserId",
-            "올바른유저",
-            "12345678",
-            "dudwls0505@naver.com",
-            60.03,
-            UserStatus.ORDINARY,
-            JudgeStatus.getInitialJudgeStatusByUserStatus(UserStatus.ORDINARY)
+                "rightUserId",
+                "올바른유저",
+                "12345678",
+                "dudwls0505@naver.com",
+                60.03,
+                UserType.ORDINARY,
+                JudgeStatus.getInitialJudgeStatusByUserType(UserType.ORDINARY)
         );
 
         wrongUserForm = new SignUpForm(
-            "wrongUserId",
-            "잘못된유저",
-            "1",
-            "2",
-            70.02,
-            UserStatus.ORDINARY,
-            JudgeStatus.getInitialJudgeStatusByUserStatus(UserStatus.ORDINARY)
+                "wrongUserId",
+                "잘못된유저",
+                "1",
+                "2",
+                70.02,
+                UserType.ORDINARY,
+                JudgeStatus.getInitialJudgeStatusByUserType(UserType.ORDINARY)
         );
     }
 
@@ -71,10 +73,12 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(this.rightUserForm)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("userId").value("rightUserId"))
-                .andExpect(jsonPath("name").value("올바른유저"))
-                .andExpect(jsonPath("password").value("12345678"))
-                .andExpect(jsonPath("email").value("dudwls0505@naver.com"))
+                .andExpect(jsonPath("userId").value(this.rightUserForm.userId()))
+                .andExpect(jsonPath("userName").value(this.rightUserForm.userName()))
+                .andExpect(jsonPath("userPassword").value(this.rightUserForm.userPassword()))
+                .andExpect(jsonPath("email").value(this.rightUserForm.email()))
+                .andExpect(jsonPath("weight").value(this.rightUserForm.weight()))
+                .andExpect(jsonPath("userType").value("ORDINARY"))
                 .andDo(print());
 
         verify(this.signUpUseCase).signUp(any(SignUpForm.class));
