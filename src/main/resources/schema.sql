@@ -1,3 +1,5 @@
+drop table if exists user_table;
+
 CREATE TABLE `user_table`
 (
     `id`                BIGINT auto_increment primary key     not null,
@@ -13,6 +15,7 @@ CREATE TABLE `user_table`
     `judge_status`      VARCHAR(30)                           NULL COMMENT '프로바이더 특성, 심사상태',
     `photo_link`        VARCHAR(255)                          NULL COMMENT '프로바이더 특성'
 );
+drop table if exists food;
 
 CREATE TABLE `food`
 (
@@ -22,15 +25,17 @@ CREATE TABLE `food`
     `denyState` INT                               NULL,
     `user_id`   BIGINT                            NOT NULL
 );
+drop table if exists feed;
 
-CREATE TABLE `post`
+CREATE TABLE `feed`
 (
-    `post_id`   BIGINT auto_increment primary key  NOT NULL,
+    `feed_id`   BIGINT auto_increment primary key  NOT NULL,
     `contents`  VARCHAR(1000)                      NOT NULL,
     `writeDate` DATETIME default current_timestamp NOT NULL,
     `user_id`   BIGINT                             NOT NULL
 );
 
+drop table if exists comment;
 CREATE TABLE `comment`
 (
     `comment_id`  BIGINT auto_increment primary key  NOT NULL,
@@ -42,6 +47,7 @@ CREATE TABLE `comment`
     `user_id`     BIGINT                             NOT NULL
 );
 
+drop table if exists nutrition;
 CREATE TABLE `nutrition`
 (
     `id`          VARCHAR(255) primary key NOT NULL COMMENT '키는 무엇이 되어야 할까요?',
@@ -50,6 +56,7 @@ CREATE TABLE `nutrition`
     `metric`      VARCHAR(50)              NOT NULL
 );
 
+drop table if exists food_save;
 CREATE TABLE `food_save`
 (
     `user_id`  BIGINT                                 NOT NULL,
@@ -57,21 +64,21 @@ CREATE TABLE `food_save`
     `quantity` INT                                    NOT NULL COMMENT '개수선택',
     `weight`   Enum ('g', 'cup', 'servings', 'ounce') NOT NULL COMMENT 'g, 인분, 온스,1컵 등 카테고리 선택'
 );
-
-CREATE TABLE `like`
+drop table if exists good;
+CREATE TABLE `good`
 (
     `Key`        VARCHAR(255) primary key NOT NULL,
     `post_id`    BIGINT                   NOT NULL,
     `user_id3`   BIGINT                   NOT NULL,
     `like_state` BOOLEAN                  NOT NULL
 );
-
+drop table if exists admin;
 CREATE TABLE `admin`
 (
     `Key`   VARCHAR(255) primary key NOT NULL,
     `Field` VARCHAR(255)             NOT NULL
 );
-
+drop table if exists user_login;
 CREATE TABLE `user_login`
 (
     `userlogin_id` VARCHAR(255) primary key NOT NULL,
@@ -82,14 +89,14 @@ CREATE TABLE `user_login`
     `lock_status`  TINYINT                  NULL COMMENT '로그인 실패로 잠금상태인지',
     `lock_date`    DATETIME                 NULL COMMENT '로그인 실패로 잠긴시간'
 );
-
+drop table if exists food_nutrition;
 CREATE TABLE `food_nutrition`
 (
     `food_id`      BIGINT       NOT NULL,
     `nutrition_id` VARCHAR(255) NOT NULL COMMENT '키는 무엇이 되어야 할까요?',
     `kcal`         BIGINT       NOT NULL
 );
-
+drop table if exists user_pw_log;
 CREATE TABLE `user_pw_log`
 (
     `userlogin_id` BIGINT auto_increment primary key NOT NULL,
@@ -97,11 +104,15 @@ CREATE TABLE `user_pw_log`
     `last_login`   DATETIME                          NULL,
     `Field`        DATETIME                          NULL
 );
-
+drop table if exists photo;
 CREATE TABLE `photo`
 (
-    `Key`         BIGINT auto_increment primary key NOT NULL,
-    `post_id`     BIGINT                            NOT NULL,
-    `upload_date` DATETIME                          NOT NULL,
-    `path`        VARCHAR(100)                      NOT NULL
+    `photo_id`    BIGINT auto_increment primary key  NOT NULL,
+    `photo_name`  VARCHAR(50)                        not null,
+    `upload_date` DATETIME default current_timestamp NOT NULL,
+    `photo_path`  VARCHAR(100)                       NOT NULL,
+    `post_id`     BIGINT                             NOT NULL
 );
+
+
+
