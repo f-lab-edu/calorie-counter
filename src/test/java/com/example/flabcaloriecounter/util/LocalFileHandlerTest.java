@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @SpringBootTest
 @Transactional
-class ImagePathHandlerTest {
+class LocalFileHandlerTest {
 
 	@Autowired
 	private LocalFileHandler imagePathHandler;
