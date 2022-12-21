@@ -2,6 +2,7 @@ package com.example.flabcaloriecounter.user.adapter.in.web;
 
 import static com.example.flabcaloriecounter.exception.GlobalExceptionHandler.ARGUMENT_NOT_VALID_MSG;
 import static com.example.flabcaloriecounter.exception.GlobalExceptionHandler.HAS_DUPLICATED_ID_MSG;
+import static com.example.flabcaloriecounter.user.adapter.in.web.Constants.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
@@ -69,7 +70,7 @@ class UserControllerTest {
     @Test
     @DisplayName("회원가입 성공")
     void signUp_success() throws Exception {
-        this.mockMvc.perform(post("/users")
+        this.mockMvc.perform(post(LATEST_API_VERSION + "/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(this.rightUserForm)))
                 .andExpect(status().isCreated())
@@ -87,7 +88,7 @@ class UserControllerTest {
     @Test
     @DisplayName("잘못된 Form 입력값으로 회원가입 실패")
     void signUp_wrong_input_fail() throws Exception {
-        this.mockMvc.perform(post("/users")
+        this.mockMvc.perform(post(LATEST_API_VERSION + "/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(this.wrongUserForm)))
                 .andExpect(status().isBadRequest())
@@ -104,7 +105,7 @@ class UserControllerTest {
         doThrow(HasDuplicatedIdException.class).when(this.signUpUseCase)
                 .signUp(any(SignUpForm.class));
 
-        this.mockMvc.perform(post("/users")
+        this.mockMvc.perform(post(LATEST_API_VERSION + "/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(this.rightUserForm)))
                 .andDo(print())
