@@ -1,12 +1,14 @@
 package com.example.flabcaloriecounter.feed.domain;
 
-import com.example.flabcaloriecounter.user.domain.User;
-import java.util.List;
+import java.time.LocalDateTime;
 
 public record Feed(
-        String contents,
-        User user,
-        List<Photo> photo
+	long id,
+	String contents,
+	LocalDateTime writeDate,
+	long userId
 ) {
-
+	public Feed(long id, String contents, long userId) {
+		this(id, contents, null, userId);
+	}
 }
