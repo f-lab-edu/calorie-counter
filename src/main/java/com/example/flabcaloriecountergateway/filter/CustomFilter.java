@@ -1,19 +1,16 @@
 package com.example.flabcaloriecountergateway.filter;
 
-import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 @Component
-public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilterConfig> {
+public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.CustomFilterConfig> {
     private static final Logger logger = LoggerFactory.getLogger(CustomFilter.class);
 
     public CustomFilter() {
@@ -35,4 +32,7 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilterConfi
         });
     }
 
+    public static class CustomFilterConfig {
+        // Put the configuration properties
+    }
 }
