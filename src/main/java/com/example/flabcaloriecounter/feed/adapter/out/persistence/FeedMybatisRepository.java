@@ -6,7 +6,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDto;
-import com.example.flabcaloriecounter.feed.application.port.in.response.FeedUpdateDto;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateFeedDto;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
 import com.example.flabcaloriecounter.feed.domain.Feed;
 
 import lombok.RequiredArgsConstructor;
@@ -23,8 +24,11 @@ public class FeedMybatisRepository implements FeedRepository {
 	}
 
 	@Override
-	public void update(Feed feed, FeedUpdateDto feedUpdateDto) {
-		this.feedMapper.update(feed, feedUpdateDto);
+	public void update(final long feedId, final UpdateFeedDto feedDto) {
+		if (feedDto.contents() == null) {
+			return;
+		}
+		this.feedMapper.update(feedId, feedDto.contents());
 	}
 
 	@Override
@@ -37,4 +41,8 @@ public class FeedMybatisRepository implements FeedRepository {
 		this.feedMapper.insertImage(imagePathResult);
 	}
 
+	@Override
+	public void updateImage(final long feedId, final List<UpdateImageInfo> updateImageInfos) {
+		this.feedMapper.updateImage(feedId, updateImageInfos);
+	}
 }

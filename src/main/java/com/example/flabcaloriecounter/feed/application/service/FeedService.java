@@ -6,11 +6,18 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.flabcaloriecounter.exception.FeedNotFoundException;
+import com.example.flabcaloriecounter.exception.InvalidUserException;
+import com.example.flabcaloriecounter.exception.UserNotFoundException;
 import com.example.flabcaloriecounter.feed.application.port.in.FeedUseCase;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDto;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateFeedDto;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
 import com.example.flabcaloriecounter.feed.application.port.out.FeedPort;
 import com.example.flabcaloriecounter.feed.domain.Feed;
+import com.example.flabcaloriecounter.user.application.service.SignUpService;
+import com.example.flabcaloriecounter.user.domain.User;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +27,7 @@ public class FeedService implements FeedUseCase {
 
 	private final FeedPort feedPort;
 	private final ImageService imageService;
+	private final SignUpService signUpService;
 
 	@Override
 	@Transactional
@@ -46,6 +54,30 @@ public class FeedService implements FeedUseCase {
 	@Transactional(readOnly = true)
 	public Optional<Feed> findByFeedId(final long feedId) {
 		return this.feedPort.findByFeedId(feedId);
+	}
+
+	@Override
+	@Transactional
+	public void update(final FeedDto feedDto, final String mockUserId, final long feedId) {
+		final User user = this.signUpService.findByUserId(mockUserId)
+			.orElseThrow(() -> new UserNotFoundException(String.format("%s not exist", mockUserId)));
+
+		final Feed feed = this.feedPort.findByFeedId(feedId)
+			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId)));
+
+		if (user.id() != feed.userId()) {
+			throw new InvalidUserException(String.format("%s is not match feedWriter", user.id()));
+		}
+
+		if (feedDto.photos() != null) {
+			final List<UpdateImageInfo> updateImageInfos = imageService.uploadFile(feedDto.photos(), user.id()).stream()
+				.map(imageUploadPath -> new UpdateImageInfo(imageUploadPath.imageName(), imageUploadPath.imagePath()))
+				.toList();
+
+			this.feedPort.updateImage(feedId, updateImageInfos);
+		}
+
+		this.feedPort.update(feedId, new UpdateFeedDto(feedDto.contents()));
 	}
 
 	private List<ImageUploadDto> imageInfos(final FeedDto feedDto, final long userId, final long latestPostId) {

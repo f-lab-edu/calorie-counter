@@ -22,20 +22,29 @@
     </select>
 
     <insert id="insertImage" parameterType="java.util.List">
-        insert into PHOTO(photo_name, photo_path, POST_ID)
+        insert into PHOTO(photo_name, photo_path, feed_ID)
         values
         <foreach collection="imagePathResult" item="file" separator=",">
             (
             #{file.imageName},
             #{file.imagePath},
-            #{file.latestPostId}
+            #{file.latestFeedId}
             )
         </foreach>
     </insert>
 
-    <!--    <update id="update">-->
-    <!--        update feed-->
-    <!--        set content = #{content}-->
-    <!--        where feed_id = #{feedId}-->
-    <!--    </update>-->
+    <update id="updateImage">
+        <foreach collection="updateImageInfos" item="file" separator=",">
+            UPDATE PHOTO
+            set PHOTO_NAME = #{file.updateImageName},
+            PHOTO_PATH = #{file.updateImagePath}
+            where FEED_ID = {#feedId}
+        </foreach>
+    </update>
+
+    <update id="update">
+        update feed
+        set contents = #{contents}
+        where feed_id = #{feedId}
+    </update>
 </mapper>

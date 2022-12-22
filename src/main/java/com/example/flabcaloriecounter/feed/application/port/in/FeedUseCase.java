@@ -10,4 +10,6 @@ public interface FeedUseCase {
 	void write(final FeedDto feedDto, final long userId);
 
 	Optional<Feed> findByFeedId(final long feedId);
+
+	void update(final FeedDto feedDto, final String mockUserId, final long feedId);
 }
