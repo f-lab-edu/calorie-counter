@@ -105,3 +105,11 @@ CREATE TABLE `photo`
     `upload_date` DATETIME                          NOT NULL,
     `path`        VARCHAR(100)                      NOT NULL
 );
+
+CREATE TABLE `feed`
+(
+    `feed_id`   BIGINT auto_increment primary key  NOT NULL,
+    `contents`  VARCHAR(40000)                      NOT NULL,
+    `created_date` DATETIME default current_timestamp NOT NULL,
+    `user_id`   BIGINT                             NOT NULL
+);

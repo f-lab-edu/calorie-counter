@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import com.example.flabcaloriecounter.feed.application.port.in.response.FeedDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
+@Disabled
 @AutoConfigureMockMvc
 class FeedControllerTest {
 
