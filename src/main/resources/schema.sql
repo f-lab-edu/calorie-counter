@@ -9,7 +9,7 @@ CREATE TABLE `user_table`
     `email`             VARCHAR(50)                           NOT NULL,
     `weight`            DOUBLE                                NULL,
     `withdrawal_reason` VARCHAR(200)                          NULL,
-    `join_date`          DATETIME    default current_timestamp NOT NULL,
+    `join_date`         DATETIME    default current_timestamp NOT NULL,
     `user_status`       VARCHAR(30) default '정상상태'            NOT NULL COMMENT '탈퇴상태, 정상상태',
     `user_type`         VARCHAR(30)                           NOT NULL COMMENT '일반,제공자,관리자',
     `judge_status`      VARCHAR(30)                           NULL COMMENT '프로바이더 특성, 심사상태',
@@ -111,7 +111,7 @@ CREATE TABLE `photo`
     `photo_name`  VARCHAR(50)                        not null,
     `upload_date` DATETIME default current_timestamp NOT NULL,
     `photo_path`  VARCHAR(100)                       NOT NULL,
-    `post_id`     BIGINT                             NOT NULL
+    `feed_id`     BIGINT                             NOT NULL
 );
 
 
