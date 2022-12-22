@@ -15,6 +15,10 @@ repositories {
     maven { url 'https://repo.spring.io/snapshot' }
 }
 
+jar {
+    enabled = false
+}
+
 ext {
     set('snippetsDir', file("build/generated-snippets"))
 }
