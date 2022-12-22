@@ -15,7 +15,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedDto;
+import com.example.flabcaloriecounter.feed.application.service.FeedService;
+import com.example.flabcaloriecounter.user.application.port.in.SignUpUseCase;
+import com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm;
+import com.example.flabcaloriecounter.user.domain.JudgeStatus;
+import com.example.flabcaloriecounter.user.domain.UserType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -27,7 +35,16 @@ class FeedControllerTest {
 	private MockMvc mockMvc;
 
 	@Autowired
+	private SignUpUseCase signUpUseCase;
+
+	@Autowired
+	private FeedService feedService;
+
+	@Autowired
 	private ObjectMapper objectMapper;
+
+	SignUpForm rightUserForm;
+	private FeedDto contentsFeed;
 
 	MockMultipartFile image1;
 	MockMultipartFile contents;
@@ -39,6 +56,16 @@ class FeedControllerTest {
 
 	@BeforeEach
 	void setup() throws JsonProcessingException {
+		rightUserForm = new SignUpForm(
+			"mockUser",
+			"올바른유저",
+			"12345678",
+			"dudwls0505@naver.com",
+			60.03,
+			UserType.ORDINARY,
+			JudgeStatus.getInitialJudgeStatusByUserType(UserType.ORDINARY)
+		);
+
 		this.image1 = new MockMultipartFile(
 			"feedDto",
 			"photos",
@@ -65,6 +92,11 @@ class FeedControllerTest {
 			"feedDto",
 			"application/json",
 			objectMapper.writeValueAsString(new FeedTestDto("")).getBytes()
+		);
+
+		this.contentsFeed = new FeedDto(
+			"닭가슴살을 먹었다",
+			null
 		);
 	}
 
@@ -129,4 +161,33 @@ class FeedControllerTest {
 	// 		.andExpect(status().isUnauthorized())
 	// 		.andDo(print());
 	// }
+
+	@Test
+	@DisplayName("피드 수정 성공")
+	void feed_update_test() throws Exception {
+		this.signUpUseCase.signUp(this.rightUserForm);
+		this.feedService.write(this.contentsFeed, 1);
+
+		//todo 로그인 한 유저
+
+		MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/feeds/1");
+		builder.with(request -> {
+			request.setMethod("PUT");
+			return request;
+		});
+
+		this.mockMvc.perform(builder
+				.file(this.contents)
+				.file(this.image1)
+				.file(this.image2)
+				.contentType(MediaType.MULTIPART_FORM_DATA))
+			.andDo(print())
+			.andExpect(status().isCreated());
+	}
+
+	//todo 로그인 안한경우 수정할때 에러
+
+	//todo 로그인은 되어있지만, 작성자가 아닌 다른사람이 수정하는경우 에러
+
+	//todo 수정하려는 피드가 존재하지 않는경우 에러
 }
