@@ -11,10 +11,3 @@ eureka:
 spring:
   application:
     name: gateway-service
-#  cloud:
-#    gateway:
-#      routes:
-#        - id: user-service
-#          uri: http://localhost:8080
-#          predicates:
-#            - Path=/user/**
