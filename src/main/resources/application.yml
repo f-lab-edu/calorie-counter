@@ -11,3 +11,26 @@ eureka:
 spring:
   application:
     name: gateway-service
+  security:
+    patterns:
+      ignoring:
+        GET: [ "/v1/**" ]
+        POST: [ "/v1/**" ]
+        PATCH: [ ]
+        PUT: [ ]
+        DELETE: [ ]
+      permit-all:
+        GET: [ "/v1/**" ]
+        POST: [ ]
+        PATCH: [ ]
+        PUT: [ ]
+        DELETE: [ ]
+    jwt:
+      issuer: jypthemiracle
+      client-secret:
+      accessToken:
+        header: atoken
+        expiry-seconds: 6000000
+      refreshToken:
+        header: rtoken
+        expiry-seconds: 6000000
