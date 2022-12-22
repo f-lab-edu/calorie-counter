@@ -29,9 +29,10 @@ public class FilterConfig {
         GatewayFilter appliedLoggingFilter = loggingFilter.apply(loggingFilterConfigImpl());
         return rlbuilder.routes()
                 .route(r -> r.path("/v1/**")
-                        .filters(f -> f.filter(appliedCustomFilter).filter(appliedLoggingFilter).addRequestHeader("x-session-id", sessionId)
+                        .filters(f -> f.filter(appliedCustomFilter).filter(appliedLoggingFilter)
+                                .addRequestHeader("x-session-id", sessionId)
                                 .addResponseHeader("x-session-id", sessionId))
-                        .uri("http://localhost:8080"))
+                        .uri("lb://v1-service"))
                 .build();
     }
 
