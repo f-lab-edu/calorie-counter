@@ -1,4 +1,4 @@
-package com.example.flabcaloriecounter.exception;
+package com.example.flabcaloriecountergateway.exception;
 
 public class JwtTokenNotFoundException extends RuntimeException {
 	public JwtTokenNotFoundException() {
