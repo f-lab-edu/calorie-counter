@@ -15,11 +15,16 @@ repositories {
     maven { url 'https://repo.spring.io/snapshot' }
 }
 
+jar {
+    enabled = false
+}
+
 ext {
     set('snippetsDir', file("build/generated-snippets"))
 }
 
 dependencies {
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-eureka-client', version: '3.1.4'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-web'
