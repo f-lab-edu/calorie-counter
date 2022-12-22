@@ -1,9 +1,9 @@
-package com.example.flabcaloriecounter.user.adapter.in.web;
+package com.example.flabcaloriecountergateway.auth;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
-public record RequestLoginDto (
+public record RequestLoginDto(
 	@NotNull(message = "아이디를 입력해주세요.")
 	@Size(min = 1, max = 20, message = "아이디는 1자 이상 20자 이하로 입력해주세요.")
 	String id,
