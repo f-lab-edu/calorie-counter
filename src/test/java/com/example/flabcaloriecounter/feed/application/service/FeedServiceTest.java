@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.flabcaloriecounter.exception.FeedNotFoundException;
@@ -31,6 +32,7 @@ import com.example.flabcaloriecounter.user.domain.UserType;
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test")
+@Sql("classpath:tableInit.sql")
 class FeedServiceTest {
 
 	@Autowired
