@@ -16,10 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 @SpringBootTest
 @Transactional
-class LocalFileHandlerTest {
+class FileHandlerTest {
 
 	@Autowired
-	private LocalFileHandler imagePathHandler;
+	private FileHandler imagePathHandler;
 
 	List<MultipartFile> files;
 

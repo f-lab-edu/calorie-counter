@@ -1,35 +1,6 @@
 spring:
   profiles:
     active: "test"
----
-spring:
-  config:
-    activate:
-      on-profile: "local"
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost/calorie?serverTimezone=Asia/Seoul
-    username: root
-    password: root
-
-file:
-  local:
-    dir: "C:\\Users\\dudwl\\OneDrive\\바탕 화면\\calorie-counter\\"
----
-spring:
-  config:
-    activate:
-      on-profile: "test"
-  datasource:
-    url: jdbc:h2:mem:testdb;MODE=MySQL
-    driver-class-name: org.h2.Driver
-    username: yj
-    password:
-
-file:
-  test:
-    dir: "C:\\Users\\dudwl\\OneDrive\\바탕 화면\\calorie-counter\\"
----
 
 # mybatis
 mybatis:
