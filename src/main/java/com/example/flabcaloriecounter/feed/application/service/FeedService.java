@@ -16,7 +16,7 @@ import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateFeedDto
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
 import com.example.flabcaloriecounter.feed.application.port.out.FeedPort;
 import com.example.flabcaloriecounter.feed.domain.Feed;
-import com.example.flabcaloriecounter.user.application.service.SignUpService;
+import com.example.flabcaloriecounter.user.application.port.out.SignUpPort;
 import com.example.flabcaloriecounter.user.domain.User;
 
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ public class FeedService implements FeedUseCase {
 
 	private final FeedPort feedPort;
 	private final ImageService imageService;
-	private final SignUpService signUpService;
+	private final SignUpPort signUpPort;
 
 	@Override
 	@Transactional
@@ -35,23 +35,17 @@ public class FeedService implements FeedUseCase {
 		//todo 현재 유저가 존재하는 아이디인지 체크
 
 		//todo write(), uploadFile()에 인증된 userId(현재는 임시Id) 넣어줘야한다.
-		if (contentsAndPhotos(feedDto)) {
-			this.feedPort.insertImage(imageInfos(feedDto, userId, this.feedPort.write(feedDto.contents(), userId)));
-			return;
-		}
-
 		if (onlyContents(feedDto)) {
 			this.feedPort.write(feedDto.contents(), userId);
-			return;
-		}
-
-		if (onlyPhotos(feedDto)) {
+		} else if (onlyPhotos(feedDto)) {
 			this.feedPort.insertImage(imageInfos(feedDto, userId, this.feedPort.write("", userId)));
+		} else {
+			this.feedPort.insertImage(imageInfos(feedDto, userId, this.feedPort.write(feedDto.contents(), userId)));
 		}
 	}
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public Optional<Feed> findByFeedId(final long feedId) {
 		return this.feedPort.findByFeedId(feedId);
 	}
@@ -59,7 +53,7 @@ public class FeedService implements FeedUseCase {
 	@Override
 	@Transactional
 	public void update(final FeedDto feedDto, final String mockUserId, final long feedId) {
-		final User user = this.signUpService.findByUserId(mockUserId)
+		final User user = this.signUpPort.findByUserId(mockUserId)
 			.orElseThrow(() -> new UserNotFoundException(String.format("%s not exist", mockUserId)));
 
 		final Feed feed = this.feedPort.findByFeedId(feedId)
@@ -88,14 +82,10 @@ public class FeedService implements FeedUseCase {
 	}
 
 	private boolean onlyPhotos(final FeedDto feedDto) {
-		return feedDto.contents() == null;
+		return feedDto.contents().isEmpty();
 	}
 
 	private boolean onlyContents(final FeedDto feedDto) {
 		return feedDto.photos() == null;
-	}
-
-	private boolean contentsAndPhotos(final FeedDto feedDto) {
-		return feedDto.photos() != null;
 	}
 }

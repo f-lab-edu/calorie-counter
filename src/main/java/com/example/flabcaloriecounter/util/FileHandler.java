@@ -30,13 +30,9 @@ public class FileHandler {
 
 	public List<PhotoDto> storeImages(final List<MultipartFile> multipartFiles, final long userId) {
 		return multipartFiles.stream()
-			.filter(this::hasFile)
+			.filter(multipartFile -> !multipartFile.isEmpty())
 			.map(exceptionWrapper(multipartFile -> storeImage(multipartFile, userId)))
 			.collect(Collectors.toList());
-	}
-
-	private boolean hasFile(final MultipartFile multipartFile) {
-		return !multipartFile.isEmpty();
 	}
 
 	private <T, R> Function<T, R> exceptionWrapper(final ExceptionFunction<T, R> function) {
@@ -54,41 +50,41 @@ public class FileHandler {
 	}
 
 	private PhotoDto storeImage(final MultipartFile multipartFile, final long userId) throws IOException {
-		final StringBuilder fileName = newFileName(multipartFile, userId);
+		final String fileName = newFileName(multipartFile, userId);
 		final LocalDate now = LocalDate.now();
 
-		final StringBuilder filePath = new StringBuilder()
+		final String filePath = new StringBuilder()
 			.append(this.fileDir)
 			.append(File.separator)
 			.append(now.getYear())
 			.append(File.separator)
 			.append(now.getMonthValue())
 			.append(now.getDayOfMonth())
-			.append(File.separator);
+			.append(File.separator).toString();
 
 		makeDirectory(filePath);
 
-		multipartFile.transferTo(new File(String.valueOf(filePath.append(fileName))));
-		return new PhotoDto(String.valueOf(fileName), String.valueOf(filePath));
+		multipartFile.transferTo(new File(filePath + fileName));
+		return new PhotoDto(fileName, filePath);
 	}
 
-	private StringBuilder newFileName(final MultipartFile multipartFile, final long userId) {
+	private String newFileName(final MultipartFile multipartFile, final long userId) {
 		if (multipartFile.isEmpty()) {
-			return new StringBuilder();
+			return "";
 		}
 
 		return newFileNameFormat(multipartFile, userId);
 	}
 
-	private void makeDirectory(final StringBuilder filePathForSave) {
-		File dirForSave = new File(String.valueOf(filePathForSave));
+	private void makeDirectory(final String filePathForSave) {
+		File dirForSave = new File(filePathForSave);
 
 		if (!dirForSave.exists()) {
 			dirForSave.mkdir();
 		}
 	}
 
-	private StringBuilder newFileNameFormat(final MultipartFile multipartFile, final long userId) {
+	private String newFileNameFormat(final MultipartFile multipartFile, final long userId) {
 		final String originalName = multipartFile.getOriginalFilename();
 		final String uuid = UUID.randomUUID().toString();
 		final String ext = originalName.substring(originalName.lastIndexOf(".") + 1);
@@ -98,6 +94,6 @@ public class FileHandler {
 			.append("_")
 			.append(userId)
 			.append(".")
-			.append(ext);
+			.append(ext).toString();
 	}
 }
