@@ -6,6 +6,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedDto;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedRequestDto;
 import com.example.flabcaloriecounter.feed.application.service.FeedService;
 import com.example.flabcaloriecounter.user.application.port.in.SignUpUseCase;
 import com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm;
@@ -44,12 +46,15 @@ class FeedControllerTest {
 	private ObjectMapper objectMapper;
 
 	SignUpForm rightUserForm;
-	private FeedDto contentsFeed;
+	private FeedRequestDto contentsFeed;
 
 	MockMultipartFile image1;
 	MockMultipartFile contents;
 	MockMultipartFile nullContents;
 	MockMultipartFile image2;
+
+	MockMultipartFile mockFeedContent;
+	List<MockMultipartFile> list;
 
 	record FeedTestDto(String contents) {
 	}
@@ -67,14 +72,14 @@ class FeedControllerTest {
 		);
 
 		this.image1 = new MockMultipartFile(
-			"feedDto",
+			"feedPhotos",
 			"photos",
 			"image/jpeg",
 			"photos".getBytes()
 		);
 
 		this.image2 = new MockMultipartFile(
-			"feedDto",
+			"feedPhotos",
 			"photos2",
 			"image/jpeg",
 			"photos2".getBytes()
@@ -94,9 +99,18 @@ class FeedControllerTest {
 			objectMapper.writeValueAsString(new FeedTestDto("")).getBytes()
 		);
 
-		this.contentsFeed = new FeedDto(
+		this.contentsFeed = new FeedRequestDto(
 			"닭가슴살을 먹었다",
 			null
+		);
+
+		list = List.of(image1, image2);
+
+		this.mockFeedContent = new MockMultipartFile(
+			"feedContents",
+			"feedContents",
+			"application/json",
+			objectMapper.writeValueAsString("닭가슴살먹음").getBytes()
 		);
 	}
 
@@ -105,7 +119,7 @@ class FeedControllerTest {
 	@DisplayName("피드 작성 성공 : 이미지, 내용 둘다 있는경우")
 	void feed_write_test() throws Exception {
 		this.mockMvc.perform(multipart("/feeds")
-				.file(this.contents)
+				.file(this.mockFeedContent)
 				.file(this.image1)
 				.file(this.image2)
 				.contentType(MediaType.MULTIPART_FORM_DATA))
@@ -118,7 +132,6 @@ class FeedControllerTest {
 	@DisplayName("피드 작성 성공 : 이미지만 있는경우")
 	void feed_write_test2() throws Exception {
 		this.mockMvc.perform(multipart("/feeds")
-				.file(this.nullContents)
 				.file(this.image1)
 				.file(this.image2)
 				.contentType(MediaType.MULTIPART_FORM_DATA))
@@ -131,7 +144,7 @@ class FeedControllerTest {
 	@DisplayName("피드 작성 성공 : 내용만 있는경우")
 	void feed_write_test3() throws Exception {
 		this.mockMvc.perform(multipart("/feeds")
-				.file(contents)
+				.file(mockFeedContent)
 				.contentType(MediaType.MULTIPART_FORM_DATA))
 			.andDo(print())
 			.andExpect(status().isCreated());
@@ -148,19 +161,6 @@ class FeedControllerTest {
 			.andExpect(jsonPath("statusCode").value("BAD_REQUEST"))
 			.andDo(print());
 	}
-
-	//todo 로그인 추가되면 마저 작성 : 로그인 하지 않은경우 피드 작성 실패
-
-	// @Test
-	// @DisplayName("로그인 하지 않은경우 피드 작성 실패")
-	// void feed_write_fail() throws Exception {
-	// 	// todo 인증되지 않은 상태여야한다
-	// 	this.mockMvc.perform(post("/feeds")
-	// 			.contentType(MediaType.APPLICATION_JSON)
-	// 			.content(this.objectMapper.writeValueAsString(this.rightFeedDto)))
-	// 		.andExpect(status().isUnauthorized())
-	// 		.andDo(print());
-	// }
 
 	@Test
 	@DisplayName("피드 수정 성공")

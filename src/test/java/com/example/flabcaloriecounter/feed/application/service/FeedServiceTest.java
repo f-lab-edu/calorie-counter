@@ -17,10 +17,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.flabcaloriecounter.exception.FeedNotFoundException;
 import com.example.flabcaloriecounter.exception.InvalidUserException;
 import com.example.flabcaloriecounter.exception.UserNotFoundException;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedDto;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedRequestDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDto;
 import com.example.flabcaloriecounter.feed.application.port.out.FeedPort;
 import com.example.flabcaloriecounter.feed.domain.Feed;
@@ -44,9 +44,8 @@ class FeedServiceTest {
 	@Autowired
 	private UserRepository userRepository;
 
-	private FeedDto contentsFeed;
+	private FeedRequestDto contentsFeed;
 	private FeedDto updateContentFeed;
-	private FeedDto contentsAndImageFeed;
 	private SignUpForm signUpForm;
 	private SignUpForm signUpForm2;
 	private List<ImageUploadDto> imageInfos;
@@ -57,7 +56,7 @@ class FeedServiceTest {
 
 	@BeforeEach
 	void setup() {
-		this.contentsFeed = new FeedDto(
+		this.contentsFeed = new FeedRequestDto(
 			"닭가슴살을 먹었다",
 			null
 		);
@@ -78,11 +77,6 @@ class FeedServiceTest {
 			"photos2",
 			"image/jpeg",
 			"photos2".getBytes()
-		);
-
-		this.contentsAndImageFeed = new FeedDto(
-			"갈비를 먹었다",
-			List.of(image1, image2)
 		);
 
 		this.signUpForm = new SignUpForm(
@@ -125,10 +119,15 @@ class FeedServiceTest {
 		this.userRepository.signUp(this.signUpForm);
 
 		this.imageInfos = List.of(
-			new ImageUploadDto("image1.png", "local/2022/1221/user12q3wqeqwe.png", 1),
-			new ImageUploadDto("image2.png", "local/2022/1221/user211231q3wqeqwe.png", 2));
+			new ImageUploadDto("image1.png", "local/2022/1221/user12q3wqeqwe.png",
+				this.feedPort.write(contentsFeed.contents(), 1)),
+			new ImageUploadDto("image2.png", "local/2022/1221/user211231q3wqeqwe.png",
+				this.feedPort.write(contentsFeed.contents(), 1)));
 
 		assertDoesNotThrow(() -> this.feedPort.insertImage(this.imageInfos));
+
+		assertThat(this.feedService.findByFeedId(1)).isEqualTo(
+			Optional.of(new Feed(1, this.contentsFeed.contents(), 1)));
 	}
 
 	//todo 로그인 유무 check
@@ -138,10 +137,13 @@ class FeedServiceTest {
 		this.userRepository.signUp(this.signUpForm);
 
 		this.onlyImageInfos = List.of(
-			new ImageUploadDto("image3.png", "local/2022/1221/user12q3wqeqwe.png", 1),
-			new ImageUploadDto("image4.png", "local/2022/1221/user211231q3wqeqwe.png", 2));
+			new ImageUploadDto("image3.png", "local/2022/1221/user12q3wqeqwe.png", this.feedPort.write("", 1)),
+			new ImageUploadDto("image4.png", "local/2022/1221/user211231q3wqeqwe.png", this.feedPort.write("", 1)));
 
 		assertDoesNotThrow(() -> this.feedPort.insertImage(this.onlyImageInfos));
+
+		assertThat(this.feedService.findByFeedId(1)).isEqualTo(
+			Optional.of(new Feed(1, "", 1)));
 	}
 
 	//todo 피드 작성 실패 : 유저가 로그인하지않음
@@ -162,7 +164,6 @@ class FeedServiceTest {
 		this.feedService.write(this.contentsFeed, 1);
 
 		assertDoesNotThrow(() -> this.feedService.update(this.updateContentFeed, "user", 1));
-
 		//수정 내용 확인하기위해 update타입을 변경?
 	}
 
@@ -171,8 +172,7 @@ class FeedServiceTest {
 	void feed_update_fail() {
 		this.userRepository.signUp(this.signUpForm);
 
-		assertThatThrownBy(() -> this.feedService.update(this.updateContentFeed, "user", 1))
-			.isInstanceOf(FeedNotFoundException.class);
+		assertThatThrownBy(() -> this.feedService.update(this.updateContentFeed, "user", 1));
 	}
 
 	@Test

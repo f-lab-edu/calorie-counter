@@ -5,12 +5,14 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.flabcaloriecounter.exception.FeedNotFoundException;
 import com.example.flabcaloriecounter.exception.InvalidUserException;
 import com.example.flabcaloriecounter.exception.UserNotFoundException;
 import com.example.flabcaloriecounter.feed.application.port.in.FeedUseCase;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedDto;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedRequestDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateFeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
@@ -31,16 +33,23 @@ public class FeedService implements FeedUseCase {
 
 	@Override
 	@Transactional
-	public void write(final FeedDto feedDto, final long userId) {
+	public void write(final FeedRequestDto feedRequestDto, final long userId) {
 		//todo 현재 유저가 존재하는 아이디인지 체크
 
 		//todo write(), uploadFile()에 인증된 userId(현재는 임시Id) 넣어줘야한다.
-		if (onlyContents(feedDto)) {
-			this.feedPort.write(feedDto.contents(), userId);
-		} else if (onlyPhotos(feedDto)) {
-			this.feedPort.insertImage(imageInfos(feedDto, userId, this.feedPort.write("", userId)));
-		} else {
-			this.feedPort.insertImage(imageInfos(feedDto, userId, this.feedPort.write(feedDto.contents(), userId)));
+
+		// 컨텐츠만 존재하는경우
+		if (onlyContents(feedRequestDto)) {
+			this.feedPort.write(feedRequestDto.contents(), userId);
+		}
+		// 사진만 존재하는경우
+		else if (onlyPhotos(feedRequestDto)) {
+			this.feedPort.insertImage(imageInfos(feedRequestDto.photos(), userId, this.feedPort.write("", userId)));
+		}
+		// 둘다 존재하는경우
+		else {
+			this.feedPort.insertImage(
+				imageInfos(feedRequestDto.photos(), userId, this.feedPort.write(feedRequestDto.contents(), userId)));
 		}
 	}
 
@@ -74,18 +83,19 @@ public class FeedService implements FeedUseCase {
 		this.feedPort.update(feedId, new UpdateFeedDto(feedDto.contents()));
 	}
 
-	private List<ImageUploadDto> imageInfos(final FeedDto feedDto, final long userId, final long latestPostId) {
-		return imageService.uploadFile(feedDto.photos(), userId).stream()
+	private List<ImageUploadDto> imageInfos(final List<MultipartFile> photos, final long userId,
+		final long latestPostId) {
+		return imageService.uploadFile(photos, userId).stream()
 			.map(imageUploadPath -> new ImageUploadDto(imageUploadPath.imageName(), imageUploadPath.imagePath(),
 				latestPostId))
 			.toList();
 	}
 
-	private boolean onlyPhotos(final FeedDto feedDto) {
-		return feedDto.contents().isEmpty();
+	private boolean onlyPhotos(final FeedRequestDto feedRequestDto) {
+		return feedRequestDto.contents() == null || feedRequestDto.contents().equals("");
 	}
 
-	private boolean onlyContents(final FeedDto feedDto) {
-		return feedDto.photos() == null;
+	private boolean onlyContents(final FeedRequestDto feedRequestDto) {
+		return feedRequestDto.photos() == null || feedRequestDto.photos().stream().anyMatch(MultipartFile::isEmpty);
 	}
 }

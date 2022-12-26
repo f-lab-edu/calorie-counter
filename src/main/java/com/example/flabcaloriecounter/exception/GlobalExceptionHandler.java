@@ -5,7 +5,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -31,7 +30,7 @@ public class GlobalExceptionHandler {
 	}
 
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	@ExceptionHandler(MissingServletRequestPartException.class)
+	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseDto emptyFeedWriteExHandler() {
 		return new ResponseDto(EMPTY_FEED_MSG, HttpStatus.BAD_REQUEST);
 	}
