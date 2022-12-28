@@ -3,18 +3,34 @@ server:
 
 eureka:
   client:
-    register-with-eureka: false
-    fetch-registry: false
+    register-with-eureka: true
+    fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka/
 
 spring:
   application:
     name: gateway-service
-#  cloud:
-#    gateway:
-#      routes:
-#        - id: user-service
-#          uri: http://localhost:8080
-#          predicates:
-#            - Path=/user/**
+  security:
+    patterns:
+      ignoring:
+        GET: [ "/v1/**" ]
+        POST: [ "/v1/**" ]
+        PATCH: [ ]
+        PUT: [ ]
+        DELETE: [ ]
+      permit-all:
+        GET: [ "/v1/**" ]
+        POST: [ ]
+        PATCH: [ ]
+        PUT: [ ]
+        DELETE: [ ]
+    jwt:
+      issuer: jypthemiracle
+      client-secret:
+      accessToken:
+        header: atoken
+        expiry-seconds: 6000000
+      refreshToken:
+        header: rtoken
+        expiry-seconds: 6000000
