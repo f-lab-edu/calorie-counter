@@ -9,6 +9,15 @@ spring:
     url: jdbc:mysql://localhost/calorie?serverTimezone=Asia/Seoul
     username: root
     password: root
+
+eureka:
+  instance:
+    instanceId: ${spring.application.name}
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
 ---
 spring:
   application:
@@ -21,6 +30,15 @@ spring:
     url: jdbc:h2:mem:testdb;
     username: yj
     password:
+
+eureka:
+  instance:
+    instanceId: ${spring.application.name}
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
 ---
 
 spring:
@@ -29,6 +47,8 @@ spring:
 
 # eureka
 eureka:
+  instance:
+    instanceId: ${spring.application.name}
   client:
     register-with-eureka: true
     fetch-registry: true
