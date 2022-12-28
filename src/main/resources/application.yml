@@ -3,12 +3,18 @@ server:
 
 eureka:
   client:
-    register-with-eureka: false
-    fetch-registry: false
+    register-with-eureka: true
+    fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka/
 
+
+
 spring:
+  main:
+    allow-bean-definition-overriding: true
+    web-application-type: reactive
+
   application:
     name: gateway-service
 #  cloud:
