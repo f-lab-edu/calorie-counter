@@ -113,6 +113,3 @@ CREATE TABLE `photo`
     `photo_path`  VARCHAR(100)                       NOT NULL,
     `feed_id`     BIGINT                             NOT NULL
 );
-
-
-

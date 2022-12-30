@@ -4,9 +4,10 @@ import java.time.LocalDateTime;
 
 public record Photo(
 	long id,
-	Feed feed,
+	String name,
 	LocalDateTime uploadDate,
-	String path
+	String path,
+	long feedId
 ) {
 
 }

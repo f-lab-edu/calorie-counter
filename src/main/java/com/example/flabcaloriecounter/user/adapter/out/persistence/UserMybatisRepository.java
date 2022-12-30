@@ -1,40 +1,44 @@
 package com.example.flabcaloriecounter.user.adapter.out.persistence;
 
+import java.util.Optional;
+
+import org.springframework.stereotype.Component;
+
 import com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm;
 import com.example.flabcaloriecounter.user.domain.JudgeStatus;
 import com.example.flabcaloriecounter.user.domain.User;
 import com.example.flabcaloriecounter.util.PasswordEncrypt;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class UserMybatisRepository implements UserRepository {
 
-    private final UserMapper userMapper;
+	private final UserMapper userMapper;
 
-    @Override
-    public void signUp(final SignUpForm signUpForm) {
-        SignUpForm intermediateUserForm = new SignUpForm(
-                signUpForm.userId(),
-                signUpForm.userName(),
-                PasswordEncrypt.encrypt(signUpForm.userPassword()),
-                signUpForm.email(),
-                signUpForm.weight(),
-                signUpForm.userType(),
-                JudgeStatus.getInitialJudgeStatusByUserType(signUpForm.userType())
-        );
+	@Override
+	public void signUp(final SignUpForm signUpForm) {
+		SignUpForm intermediateUserForm = new SignUpForm(
+			signUpForm.userId(),
+			signUpForm.userName(),
+			PasswordEncrypt.encrypt(signUpForm.userPassword()),
+			signUpForm.email(),
+			signUpForm.weight(),
+			signUpForm.userType(),
+			JudgeStatus.getInitialJudgeStatusByUserType(signUpForm.userType())
+		);
 
-        this.userMapper.signUp(intermediateUserForm);
-    }
+		this.userMapper.signUp(intermediateUserForm);
+	}
 
-    @Override
-    public boolean hasDuplicatedId(final String userId) {
-        return this.userMapper.hasDuplicatedId(userId);
-    }
+	@Override
+	public boolean hasDuplicatedId(final String userId) {
+		return this.userMapper.hasDuplicatedId(userId);
+	}
 
-    @Override
-    public User findByUserId(final String userId) {
-        return this.userMapper.findByUserId(userId);
-    }
+	@Override
+	public Optional<User> findByUserId(final String userId) {
+		return this.userMapper.findByUserId(userId);
+	}
 }
