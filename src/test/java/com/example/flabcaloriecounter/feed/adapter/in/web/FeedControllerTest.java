@@ -1,6 +1,7 @@
 package com.example.flabcaloriecounter.feed.adapter.in.web;
 
 import static com.example.flabcaloriecounter.exception.GlobalExceptionHandler.EMPTY_FEED_MSG;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -256,4 +257,50 @@ class FeedControllerTest {
 	//todo 로그인은 되어있지만, 작성자가 아닌 다른사람이 수정하는경우 에러
 
 	//todo 수정하려는 피드가 존재하지 않는경우 에러
+
+	//todo 로그인
+	@Test
+	@DisplayName("피드 삭제 성공 : 로그인 한 유저")
+	void feed_delete_success() throws Exception {
+		this.signUpUseCase.signUp(this.rightUserForm);
+		this.feedService.write(this.contentsFeed, 1);
+
+		this.mockMvc.perform(delete("/feeds/1")
+				.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isOk());
+	}
+
+	//todo 로그인
+
+	@Test
+	@DisplayName("피드 삭제 실패 : 로그인 하지않은 유저")
+	void feed_delete_fail() throws Exception {
+		this.mockMvc.perform(delete("/feeds/1")
+				.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isUnauthorized());
+	}
+
+	//todo 로그인
+
+	@Test
+	@DisplayName("피드 삭제 실패: 피드 작성자가 아님")
+	void feed_delete_fail2() throws Exception {
+		this.mockMvc.perform(delete("/feeds/1")
+				.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isUnauthorized());
+	}
+
+	//todo 로그인
+
+	@Test
+	@DisplayName("피드 삭제 실패: 피드가 존재하지않음")
+	void feed_delete_fail3() throws Exception {
+		this.mockMvc.perform(delete("/feeds/1")
+				.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isNotFound());
+	}
 }

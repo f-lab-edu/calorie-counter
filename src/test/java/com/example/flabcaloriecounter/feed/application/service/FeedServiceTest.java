@@ -16,6 +16,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.flabcaloriecounter.exception.FeedNotFoundException;
 import com.example.flabcaloriecounter.exception.InvalidUserException;
 import com.example.flabcaloriecounter.exception.UserNotFoundException;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedRequestDto;
@@ -190,6 +191,7 @@ class FeedServiceTest {
 		this.userRepository.signUp(this.signUpForm);
 
 		assertThatThrownBy(() -> this.feedService.update(UPDATE_CONTENT, null, "user", 1));
+
 	}
 
 	@Test
@@ -197,6 +199,7 @@ class FeedServiceTest {
 	void feed_update_fail2() {
 		assertThatThrownBy(() -> this.feedService.update(UPDATE_CONTENT, null, "user", 1))
 			.isInstanceOf(UserNotFoundException.class);
+
 	}
 
 	@Test
@@ -207,6 +210,45 @@ class FeedServiceTest {
 		this.feedService.write(this.contentsFeed, 1);
 
 		assertThatThrownBy(() -> this.feedService.update(UPDATE_CONTENT, null, "notMatchUser", 1))
+			.isInstanceOf(InvalidUserException.class);
+
+	}
+
+	@Test
+	@DisplayName("피드 삭제 성공")
+	void feed_delete_success() {
+		this.userRepository.signUp(this.signUpForm);
+		this.feedService.write(this.contentsFeed, 1);
+
+		assertDoesNotThrow(() -> this.feedService.delete(this.signUpForm.userId(), 1));
+
+		//수정 내용 확인하기위해 update타입을 변경?
+	}
+
+	@Test
+	@DisplayName("피드 삭제 실패: 존재하지 않는 피드")
+	void feed_delete_fail() {
+		this.userRepository.signUp(this.signUpForm);
+
+		assertThatThrownBy(() -> this.feedService.delete(this.signUpForm.userId(), 1)).isInstanceOf(
+			FeedNotFoundException.class);
+	}
+
+	@Test
+	@DisplayName("피드 삭제 실패: 존재하지 않는 유저")
+	void feed_delete_fail2() {
+		assertThatThrownBy(() -> this.feedService.delete(this.signUpForm.userId(), 1))
+			.isInstanceOf(UserNotFoundException.class);
+	}
+
+	@Test
+	@DisplayName("피드 삭제 실패: 권한이 없는 유저")
+	void feed_delete_fail3() {
+		this.userRepository.signUp(this.signUpForm);
+		this.userRepository.signUp(this.signUpForm2);
+		this.feedService.write(this.contentsFeed, 1);
+
+		assertThatThrownBy(() -> this.feedService.delete(this.signUpForm2.userId(), 1))
 			.isInstanceOf(InvalidUserException.class);
 	}
 }
