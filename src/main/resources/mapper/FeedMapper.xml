@@ -3,30 +3,48 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.flabcaloriecounter.feed.adapter.out.persistence.FeedMapper">
-    <insert id="write"
-            parameterType="com.example.flabcaloriecounter.feed.adapter.in.web.FeedInfoDto">
+    <insert id="write">
         INSERT INTO feed(contents, user_id)
         values (#{contents}, #{userId})
+        <selectKey resultType="long" order="AFTER">
+            select last_insert_id()
+        </selectKey>
     </insert>
+
+    <select id="findByFeedId" parameterType="long" resultType="com.example.flabcaloriecounter.feed.domain.Feed">
+        select FEED_ID, CONTENTS, USER_ID
+        from FEED
+        where FEED_ID = #{feedId}
+    </select>
 
     <select id="isExistId" resultType="boolean">
         SELECT EXISTS(select user_Id from USER_TABLE where user_Id = #{userId})
     </select>
 
     <insert id="insertImage" parameterType="java.util.List">
-        insert into PHOTO(photo_name, photo_path)
+        insert into PHOTO(photo_name, photo_path, feed_ID)
         values
-        <foreach collection="uploadFile" item="image" separator=",">
+        <foreach collection="imagePathResult" item="file" separator=",">
             (
-            #{image.imageName},
-            #{image.imagePath}
+            #{file.imageName},
+            #{file.imagePath},
+            #{file.latestFeedId}
             )
         </foreach>
     </insert>
 
-    <!--    <update id="update">-->
-    <!--        update feed-->
-    <!--        set content = #{content}-->
-    <!--        where feed_id = #{feedId}-->
-    <!--    </update>-->
+    <update id="updateImage">
+        <foreach collection="updateImageInfos" item="file" separator=";">
+            UPDATE PHOTO
+            set PHOTO_NAME = #{file.updateImageName},
+            PHOTO_PATH = #{file.updateImagePath}
+            where FEED_ID = #{feedId}
+        </foreach>
+    </update>
+
+    <update id="update">
+        update feed
+        set contents = #{contents}
+        where feed_id = #{feedId}
+    </update>
 </mapper>

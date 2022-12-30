@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MySQL
+    driver-class-name: org.h2.Driver
+    username: yj
+    password:
+
+file:
+  dir: "C:\\Users\\dudwl\\OneDrive\\바탕 화면\\calorie-counter\\"

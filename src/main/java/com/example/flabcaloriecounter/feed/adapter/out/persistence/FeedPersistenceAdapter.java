@@ -5,10 +5,10 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
-import com.example.flabcaloriecounter.feed.adapter.in.web.FeedInfoDto;
-import com.example.flabcaloriecounter.feed.application.port.in.response.FeedUpdateDto;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDto;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateFeedDto;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
 import com.example.flabcaloriecounter.feed.application.port.out.FeedPort;
-import com.example.flabcaloriecounter.feed.application.service.ImageUploadPath;
 import com.example.flabcaloriecounter.feed.domain.Feed;
 
 import lombok.RequiredArgsConstructor;
@@ -20,22 +20,27 @@ public class FeedPersistenceAdapter implements FeedPort {
 	private final FeedRepository feedRepository;
 
 	@Override
-	public void write(final FeedInfoDto feedInfoDto) {
-		this.feedRepository.write(feedInfoDto);
+	public long write(final String contents, final long userId) {
+		return this.feedRepository.write(contents, userId);
 	}
 
 	@Override
-	public void update(final Feed feed, final FeedUpdateDto feedUpdateDto) {
-		this.feedRepository.update(feed, feedUpdateDto);
+	public void update(final long feedId, final UpdateFeedDto feedDto) {
+		this.feedRepository.update(feedId, feedDto);
 	}
 
 	@Override
-	public Optional<Feed> findByFeedId(final Long feedId) {
+	public Optional<Feed> findByFeedId(final long feedId) {
 		return this.feedRepository.findByFeedId(feedId);
 	}
 
 	@Override
-	public void insertImage(final List<ImageUploadPath> uploadFile) {
-		this.feedRepository.insertImage(uploadFile);
+	public void insertImage(final List<ImageUploadDto> imagePathResult) {
+		this.feedRepository.insertImage(imagePathResult);
+	}
+
+	@Override
+	public void updateImage(final long feedId, final List<UpdateImageInfo> updateImageInfos) {
+		this.feedRepository.updateImage(feedId, updateImageInfos);
 	}
 }
