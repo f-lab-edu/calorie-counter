@@ -13,13 +13,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.flabcaloriecounter.exception.InvalidUserException;
 import com.example.flabcaloriecounter.exception.UserNotFoundException;
-import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedRequestDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDto;
 import com.example.flabcaloriecounter.feed.application.port.out.FeedPort;
@@ -31,9 +29,11 @@ import com.example.flabcaloriecounter.user.domain.UserType;
 
 @SpringBootTest
 @Transactional
-@ActiveProfiles("test")
 @Sql("classpath:tableInit.sql")
 class FeedServiceTest {
+
+	private static final String WRITE_CONTENT = "닭가슴살을 먹었다";
+	private static final String UPDATE_CONTENT = "닭가슴살을 먹었다(수정된내용)";
 
 	@Autowired
 	private FeedService feedService;
@@ -45,7 +45,6 @@ class FeedServiceTest {
 	private UserRepository userRepository;
 
 	private FeedRequestDto contentsFeed;
-	private FeedDto updateContentFeed;
 	private SignUpForm signUpForm;
 	private SignUpForm signUpForm2;
 	private List<ImageUploadDto> imageInfos;
@@ -57,14 +56,10 @@ class FeedServiceTest {
 	@BeforeEach
 	void setup() {
 		this.contentsFeed = new FeedRequestDto(
-			"닭가슴살을 먹었다",
+			WRITE_CONTENT,
 			null
 		);
 
-		this.updateContentFeed = new FeedDto(
-			"닭가슴살을 먹었다(수정된내용)",
-			null
-		);
 		this.image1 = new MockMultipartFile(
 			"feedDto",
 			"photos",
@@ -108,8 +103,9 @@ class FeedServiceTest {
 
 		assertDoesNotThrow(() -> this.feedService.write(this.contentsFeed, 1));
 
+		//수정필요
 		assertThat(this.feedService.findByFeedId(1)).isEqualTo(
-			Optional.of(new Feed(1, this.contentsFeed.contents(), 1)));
+			Optional.of(new Feed(1, WRITE_CONTENT, null, 1, null)));
 	}
 
 	//todo 로그인 유무 check
@@ -120,14 +116,15 @@ class FeedServiceTest {
 
 		this.imageInfos = List.of(
 			new ImageUploadDto("image1.png", "local/2022/1221/user12q3wqeqwe.png",
-				this.feedPort.write(contentsFeed.contents(), 1)),
+				this.feedPort.write(WRITE_CONTENT, 1)),
 			new ImageUploadDto("image2.png", "local/2022/1221/user211231q3wqeqwe.png",
-				this.feedPort.write(contentsFeed.contents(), 1)));
+				this.feedPort.write(WRITE_CONTENT, 1)));
 
 		assertDoesNotThrow(() -> this.feedPort.insertImage(this.imageInfos));
 
+		//수정필요
 		assertThat(this.feedService.findByFeedId(1)).isEqualTo(
-			Optional.of(new Feed(1, this.contentsFeed.contents(), 1)));
+			Optional.of(new Feed(1, WRITE_CONTENT, null, 1, null)));
 	}
 
 	//todo 로그인 유무 check
@@ -142,8 +139,9 @@ class FeedServiceTest {
 
 		assertDoesNotThrow(() -> this.feedPort.insertImage(this.onlyImageInfos));
 
+		//수정필요
 		assertThat(this.feedService.findByFeedId(1)).isEqualTo(
-			Optional.of(new Feed(1, "", 1)));
+			Optional.of(new Feed(1, "", null, 1, null)));
 	}
 
 	//todo 피드 작성 실패 : 유저가 로그인하지않음
@@ -158,13 +156,32 @@ class FeedServiceTest {
 	//    }
 
 	@Test
-	@DisplayName("피드 수정 성공")
+	@DisplayName("피드 수정 성공: contents만 있음")
 	void feed_update_success() {
 		this.userRepository.signUp(this.signUpForm);
 		this.feedService.write(this.contentsFeed, 1);
 
-		assertDoesNotThrow(() -> this.feedService.update(this.updateContentFeed, "user", 1));
+		assertDoesNotThrow(() -> this.feedService.update(UPDATE_CONTENT, null, "user", 1));
 		//수정 내용 확인하기위해 update타입을 변경?
+	}
+
+	@Test
+	@DisplayName("피드 수정 성공: image만 있음")
+	void feed_update_success2() {
+		this.userRepository.signUp(this.signUpForm);
+		this.feedService.write(this.contentsFeed, 1);
+
+		assertDoesNotThrow(() -> this.feedService.update(null, List.of(image1, image2), "user", 1));
+		//수정 내용 확인하기위해 update타입을 변경?
+	}
+
+	@Test
+	@DisplayName("피드 수정 성공: image, contents둘다 있음")
+	void feed_update_success3() {
+		this.userRepository.signUp(this.signUpForm);
+		this.feedService.write(this.contentsFeed, 1);
+
+		assertDoesNotThrow(() -> this.feedService.update(UPDATE_CONTENT, List.of(image1, image2), "user", 1));
 	}
 
 	@Test
@@ -172,13 +189,13 @@ class FeedServiceTest {
 	void feed_update_fail() {
 		this.userRepository.signUp(this.signUpForm);
 
-		assertThatThrownBy(() -> this.feedService.update(this.updateContentFeed, "user", 1));
+		assertThatThrownBy(() -> this.feedService.update(UPDATE_CONTENT, null, "user", 1));
 	}
 
 	@Test
 	@DisplayName("피드 수정 실패: 존재하지 않는 유저")
 	void feed_update_fail2() {
-		assertThatThrownBy(() -> this.feedService.update(this.updateContentFeed, "user", 1))
+		assertThatThrownBy(() -> this.feedService.update(UPDATE_CONTENT, null, "user", 1))
 			.isInstanceOf(UserNotFoundException.class);
 	}
 
@@ -189,7 +206,7 @@ class FeedServiceTest {
 		this.userRepository.signUp(this.signUpForm2);
 		this.feedService.write(this.contentsFeed, 1);
 
-		assertThatThrownBy(() -> this.feedService.update(this.updateContentFeed, "notMatchUser", 1))
+		assertThatThrownBy(() -> this.feedService.update(UPDATE_CONTENT, null, "notMatchUser", 1))
 			.isInstanceOf(InvalidUserException.class);
 	}
 }

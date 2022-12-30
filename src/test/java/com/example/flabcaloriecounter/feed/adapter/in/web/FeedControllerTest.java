@@ -16,9 +16,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedRequestDto;
 import com.example.flabcaloriecounter.feed.application.service.FeedService;
@@ -30,7 +32,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
+@Transactional
 @AutoConfigureMockMvc
+@Sql("classpath:tableInit.sql")
 class FeedControllerTest {
 
 	@Autowired
@@ -72,30 +76,30 @@ class FeedControllerTest {
 		);
 
 		this.image1 = new MockMultipartFile(
-			"feedPhotos",
+			"photos",
 			"photos",
 			"image/jpeg",
 			"photos".getBytes()
 		);
 
 		this.image2 = new MockMultipartFile(
-			"feedPhotos",
+			"photos",
 			"photos2",
 			"image/jpeg",
 			"photos2".getBytes()
 		);
 
 		this.contents = new MockMultipartFile(
-			"feedDto",
-			"feedDto",
-			"application/json",
+			"contents",
+			"contents",
+			"",
 			objectMapper.writeValueAsString(new FeedTestDto("닭가슴살을 먹었다")).getBytes()
 		);
 
 		this.nullContents = new MockMultipartFile(
-			"feedDto",
-			"feedDto",
-			"application/json",
+			"contents",
+			"contents",
+			"",
 			objectMapper.writeValueAsString(new FeedTestDto("")).getBytes()
 		);
 
@@ -107,9 +111,9 @@ class FeedControllerTest {
 		list = List.of(image1, image2);
 
 		this.mockFeedContent = new MockMultipartFile(
-			"feedContents",
-			"feedContents",
-			"application/json",
+			"contents",
+			"contents",
+			"",
 			objectMapper.writeValueAsString("닭가슴살먹음").getBytes()
 		);
 	}
@@ -163,13 +167,12 @@ class FeedControllerTest {
 	}
 
 	@Test
-	@DisplayName("피드 수정 성공")
+	@DisplayName("피드 수정 성공: image, contents 둘다 있음")
 	void feed_update_test() throws Exception {
 		this.signUpUseCase.signUp(this.rightUserForm);
 		this.feedService.write(this.contentsFeed, 1);
 
 		//todo 로그인 한 유저
-
 		MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/feeds/1");
 		builder.with(request -> {
 			request.setMethod("PUT");
@@ -183,6 +186,69 @@ class FeedControllerTest {
 				.contentType(MediaType.MULTIPART_FORM_DATA))
 			.andDo(print())
 			.andExpect(status().isCreated());
+	}
+
+	@Test
+	@DisplayName("피드 수정 성공: contents만 있음")
+	void feed_update_test2() throws Exception {
+		this.signUpUseCase.signUp(this.rightUserForm);
+		this.feedService.write(this.contentsFeed, 1);
+
+		//todo 로그인 한 유저
+		MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/feeds/1");
+		builder.with(request -> {
+			request.setMethod("PUT");
+			return request;
+		});
+
+		this.mockMvc.perform(builder
+				.file(this.contents)
+				.contentType(MediaType.MULTIPART_FORM_DATA))
+			.andDo(print())
+			.andExpect(status().isCreated());
+	}
+
+	@Test
+	@DisplayName("피드 수정 성공: image만 있음")
+	void feed_update_test3() throws Exception {
+		this.signUpUseCase.signUp(this.rightUserForm);
+		this.feedService.write(this.contentsFeed, 1);
+
+		//todo 로그인 한 유저
+		MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/feeds/1");
+		builder.with(request -> {
+			request.setMethod("PUT");
+			return request;
+		});
+
+		this.mockMvc.perform(builder
+				.file(image1)
+				.file(image2)
+				.contentType(MediaType.MULTIPART_FORM_DATA))
+			.andDo(print())
+			.andExpect(status().isCreated());
+	}
+
+	//todo 로그인한 유저여야한다
+	@Test
+	@DisplayName("피드 수정 실패 : 내용, 이미지 모두 비어있는경우")
+	void feed_update_test4() throws Exception {
+		this.signUpUseCase.signUp(this.rightUserForm);
+		this.feedService.write(this.contentsFeed, 1);
+
+		//todo 로그인 한 유저
+		MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/feeds/1");
+		builder.with(request -> {
+			request.setMethod("PUT");
+			return request;
+		});
+
+		this.mockMvc.perform(builder
+				.contentType(MediaType.MULTIPART_FORM_DATA))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("message").value(EMPTY_FEED_MSG))
+			.andExpect(jsonPath("statusCode").value("BAD_REQUEST"))
+			.andDo(print());
 	}
 
 	//todo 로그인 안한경우 수정할때 에러
