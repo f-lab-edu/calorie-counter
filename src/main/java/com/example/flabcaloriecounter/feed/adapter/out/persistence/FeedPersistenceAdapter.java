@@ -43,4 +43,9 @@ public class FeedPersistenceAdapter implements FeedPort {
 	public void updateImage(final long feedId, final List<UpdateImageInfo> updateImageInfos) {
 		this.feedRepository.updateImage(feedId, updateImageInfos);
 	}
+
+	@Override
+	public void delete(final long feedId) {
+		this.feedRepository.delete(feedId);
+	}
 }

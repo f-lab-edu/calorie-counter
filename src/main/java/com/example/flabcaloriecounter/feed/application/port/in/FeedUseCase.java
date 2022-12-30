@@ -15,4 +15,6 @@ public interface FeedUseCase {
 	Optional<Feed> findByFeedId(final long feedId);
 
 	void update(final String contents, final List<MultipartFile> photos, final String mockUserId, final long feedId);
+
+	void delete(final String userId, final long feedId);
 }

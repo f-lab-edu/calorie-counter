@@ -45,4 +45,9 @@ public class FeedMybatisRepository implements FeedRepository {
 	public void updateImage(final long feedId, final List<UpdateImageInfo> updateImageInfos) {
 		this.feedMapper.updateImage(feedId, updateImageInfos);
 	}
+
+	@Override
+	public void delete(final long feedId) {
+		this.feedMapper.delete(feedId);
+	}
 }

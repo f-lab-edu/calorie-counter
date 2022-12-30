@@ -56,7 +56,7 @@ public class FeedService implements FeedUseCase {
 	public Optional<Feed> findByFeedId(final long feedId) {
 		return this.feedPort.findByFeedId(feedId);
 	}
-	
+
 	@Override
 	@Transactional
 	public void update(final String contents, final List<MultipartFile> photos, final String mockUserId,
@@ -82,6 +82,22 @@ public class FeedService implements FeedUseCase {
 		this.feedPort.update(feedId, new UpdateFeedDto(contents));
 	}
 
+	@Override
+	@Transactional
+	public void delete(final String userId, final long feedId) {
+		final User user = this.signUpPort.findByUserId(userId)
+			.orElseThrow(() -> new UserNotFoundException(String.format("%s not exist", userId)));
+
+		final Feed feed = this.feedPort.findByFeedId(feedId)
+			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId)));
+
+		if (user.id() != feed.userId()) {
+			throw new InvalidUserException(String.format("%s is not match feedWriter", user.id()));
+		}
+
+		this.feedPort.delete(feedId);
+	}
+
 	private List<ImageUploadDto> imageInfos(final List<MultipartFile> photos, final long userId,
 		final long latestPostId) {
 		return imageService.uploadFile(photos, userId).stream()
@@ -91,7 +107,7 @@ public class FeedService implements FeedUseCase {
 	}
 
 	private boolean onlyPhotos(final FeedRequestDto feedRequestDto) {
-		return feedRequestDto.contents() == null || "".equals(feedRequestDto.contents());
+		return "".equals(feedRequestDto.contents());
 	}
 
 	private boolean onlyContents(final FeedRequestDto feedRequestDto) {

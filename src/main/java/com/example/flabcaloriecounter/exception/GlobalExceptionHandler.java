@@ -41,16 +41,16 @@ public class GlobalExceptionHandler {
 		return new ResponseDto(FILE_STORE_FAIL_MSG, HttpStatus.BAD_REQUEST);
 	}
 
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ExceptionHandler(UserNotFoundException.class)
 	public ResponseDto userNotFoundExHandler() {
-		return new ResponseDto(NOT_EXIST_USER_MSG, HttpStatus.BAD_REQUEST);
+		return new ResponseDto(NOT_EXIST_USER_MSG, HttpStatus.NOT_FOUND);
 	}
 
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ExceptionHandler(FeedNotFoundException.class)
 	public ResponseDto feedNotFoundExHandler() {
-		return new ResponseDto(NOT_EXIST_FEED_MSG, HttpStatus.BAD_REQUEST);
+		return new ResponseDto(NOT_EXIST_FEED_MSG, HttpStatus.NOT_FOUND);
 	}
 
 	@ResponseStatus(HttpStatus.FORBIDDEN)

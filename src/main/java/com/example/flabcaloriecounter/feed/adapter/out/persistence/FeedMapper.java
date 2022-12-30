@@ -23,4 +23,6 @@ public interface FeedMapper {
 
 	void updateImage(@Param("feedId") final long feedId,
 		@Param("updateImageInfos") final List<UpdateImageInfo> updateImageInfos);
+
+	void delete(final long feedId);
 }

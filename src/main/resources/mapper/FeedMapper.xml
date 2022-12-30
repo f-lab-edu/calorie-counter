@@ -47,4 +47,10 @@
         set contents = #{contents}
         where feed_id = #{feedId}
     </update>
+
+    <delete id="delete">
+        delete
+        from FEED
+        where FEED_ID = #{feedId}
+    </delete>
 </mapper>

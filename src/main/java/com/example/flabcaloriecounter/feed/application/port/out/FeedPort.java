@@ -19,4 +19,6 @@ public interface FeedPort {
 	void insertImage(final List<ImageUploadDto> imagePathResult);
 
 	void updateImage(final long feedId, final List<UpdateImageInfo> updateImageInfos);
+
+	void delete(final long feedId);
 }
