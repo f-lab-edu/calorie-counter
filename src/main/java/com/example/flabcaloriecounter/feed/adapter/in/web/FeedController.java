@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.flabcaloriecounter.feed.application.port.in.FeedUseCase;
-import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedRequestDto;
 
 import lombok.RequiredArgsConstructor;
@@ -28,32 +27,42 @@ public class FeedController {
 	private final FeedUseCase feedUseCase;
 
 	@PostMapping
-	public ResponseEntity<FeedRequestDto> write(
-		@RequestPart(value = "feedPhotos", required = false) final List<MultipartFile> feedPhotos,
-		@RequestPart(value = "feedContents", required = false) final String feedContents) {
+	public ResponseEntity<Void> write(
+		@RequestPart(value = "photos", required = false) final List<MultipartFile> photos,
+		@RequestPart(value = "contents", required = false) final String contents) {
 		//todo 로그인 되어있지않은경우 예외처리
 
 		//todo 로그인유저 정보 넘겨줘야한다.
 
 		// 둘 다 비어있는경우
-		if ((feedContents == null || feedContents.equals("")) && (feedPhotos == null || feedPhotos.stream()
+		if ((contents == null || "".equals(contents)) && (photos == null || photos.stream()
 			.anyMatch(MultipartFile::isEmpty))) {
 			throw new IllegalArgumentException(EMPTY_FEED_MSG);
 		}
 
 		final long mockUserId = 1;
-		this.feedUseCase.write(new FeedRequestDto(feedContents, feedPhotos), mockUserId);
+		this.feedUseCase.write(new FeedRequestDto(contents, photos), mockUserId);
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
 	@PutMapping("/{feedId}")
-	public ResponseEntity<FeedDto> update(@RequestPart final FeedDto feedDto, @PathVariable final long feedId) {
+	public ResponseEntity<Void> update(
+		@RequestPart(value = "photos", required = false) final List<MultipartFile> photos,
+		@RequestPart(value = "contents", required = false) final String contents,
+		@PathVariable final long feedId) {
 		//todo 로그인 되어있지않은경우 예외처리
 
 		//todo update()에 로그인유저 정보 넘겨줘야한다.
 
+		// 둘 다 비어있는경우
+		if ((contents == null || "".equals(contents)) && (photos == null || photos.stream()
+			.anyMatch(MultipartFile::isEmpty))) {
+			throw new IllegalArgumentException(EMPTY_FEED_MSG);
+		}
+
 		final String mockUserId = "mockUser";
-		this.feedUseCase.update(feedDto, mockUserId, feedId);
-		return new ResponseEntity<>(feedDto, HttpStatus.CREATED);
+		this.feedUseCase.update(contents, photos, mockUserId, feedId);
+
+		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 }

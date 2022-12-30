@@ -11,7 +11,6 @@ import com.example.flabcaloriecounter.exception.FeedNotFoundException;
 import com.example.flabcaloriecounter.exception.InvalidUserException;
 import com.example.flabcaloriecounter.exception.UserNotFoundException;
 import com.example.flabcaloriecounter.feed.application.port.in.FeedUseCase;
-import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedRequestDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateFeedDto;
@@ -54,14 +53,14 @@ public class FeedService implements FeedUseCase {
 	}
 
 	@Override
-	@Transactional
 	public Optional<Feed> findByFeedId(final long feedId) {
 		return this.feedPort.findByFeedId(feedId);
 	}
-
+	
 	@Override
 	@Transactional
-	public void update(final FeedDto feedDto, final String mockUserId, final long feedId) {
+	public void update(final String contents, final List<MultipartFile> photos, final String mockUserId,
+		final long feedId) {
 		final User user = this.signUpPort.findByUserId(mockUserId)
 			.orElseThrow(() -> new UserNotFoundException(String.format("%s not exist", mockUserId)));
 
@@ -72,15 +71,15 @@ public class FeedService implements FeedUseCase {
 			throw new InvalidUserException(String.format("%s is not match feedWriter", user.id()));
 		}
 
-		if (feedDto.photos() != null) {
-			final List<UpdateImageInfo> updateImageInfos = imageService.uploadFile(feedDto.photos(), user.id()).stream()
+		if (photos != null && photos.stream().noneMatch(MultipartFile::isEmpty)) {
+			final List<UpdateImageInfo> updateImageInfos = imageService.uploadFile(photos, user.id()).stream()
 				.map(imageUploadPath -> new UpdateImageInfo(imageUploadPath.imageName(), imageUploadPath.imagePath()))
 				.toList();
 
 			this.feedPort.updateImage(feedId, updateImageInfos);
 		}
 
-		this.feedPort.update(feedId, new UpdateFeedDto(feedDto.contents()));
+		this.feedPort.update(feedId, new UpdateFeedDto(contents));
 	}
 
 	private List<ImageUploadDto> imageInfos(final List<MultipartFile> photos, final long userId,
@@ -92,7 +91,7 @@ public class FeedService implements FeedUseCase {
 	}
 
 	private boolean onlyPhotos(final FeedRequestDto feedRequestDto) {
-		return feedRequestDto.contents() == null || feedRequestDto.contents().equals("");
+		return feedRequestDto.contents() == null || "".equals(feedRequestDto.contents());
 	}
 
 	private boolean onlyContents(final FeedRequestDto feedRequestDto) {

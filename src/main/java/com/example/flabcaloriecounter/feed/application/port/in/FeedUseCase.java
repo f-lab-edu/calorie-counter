@@ -1,8 +1,10 @@
 package com.example.flabcaloriecounter.feed.application.port.in;
 
+import java.util.List;
 import java.util.Optional;
 
-import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedDto;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedRequestDto;
 import com.example.flabcaloriecounter.feed.domain.Feed;
 
@@ -12,5 +14,5 @@ public interface FeedUseCase {
 
 	Optional<Feed> findByFeedId(final long feedId);
 
-	void update(final FeedDto feedDto, final String mockUserId, final long feedId);
+	void update(final String contents, final List<MultipartFile> photos, final String mockUserId, final long feedId);
 }

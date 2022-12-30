@@ -25,7 +25,7 @@ public class FeedMybatisRepository implements FeedRepository {
 
 	@Override
 	public void update(final long feedId, final UpdateFeedDto feedDto) {
-		if (feedDto.contents() == null) {
+		if (feedDto.contents() == null || "".equals(feedDto.contents())) {
 			return;
 		}
 		this.feedMapper.update(feedId, feedDto.contents());
