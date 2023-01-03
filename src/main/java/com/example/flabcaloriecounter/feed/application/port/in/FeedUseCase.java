@@ -5,7 +5,9 @@ import java.util.Optional;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedRequestDto;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
 import com.example.flabcaloriecounter.feed.domain.Feed;
 
 public interface FeedUseCase {
@@ -17,4 +19,6 @@ public interface FeedUseCase {
 	void update(final String contents, final List<MultipartFile> photos, final String mockUserId, final long feedId);
 
 	void delete(final String userId, final long feedId);
+
+	List<FeedListDto> getFeedList(final Paging paging);
 }

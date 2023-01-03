@@ -6,7 +6,9 @@ import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDto;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
 import com.example.flabcaloriecounter.feed.domain.Feed;
 
@@ -25,4 +27,7 @@ public interface FeedMapper {
 		@Param("updateImageInfos") final List<UpdateImageInfo> updateImageInfos);
 
 	void delete(final long feedId);
+
+	List<FeedListDto> getFeedList(@Param("paging") final Paging paging);
+
 }

@@ -11,8 +11,10 @@ import com.example.flabcaloriecounter.exception.FeedNotFoundException;
 import com.example.flabcaloriecounter.exception.InvalidUserException;
 import com.example.flabcaloriecounter.exception.UserNotFoundException;
 import com.example.flabcaloriecounter.feed.application.port.in.FeedUseCase;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedRequestDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDto;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateFeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
 import com.example.flabcaloriecounter.feed.application.port.out.FeedPort;
@@ -96,6 +98,11 @@ public class FeedService implements FeedUseCase {
 		}
 
 		this.feedPort.delete(feedId);
+	}
+
+	@Override
+	public List<FeedListDto> getFeedList(final Paging paging) {
+		return this.feedPort.getFeedList(paging);
 	}
 
 	private List<ImageUploadDto> imageInfos(final List<MultipartFile> photos, final long userId,

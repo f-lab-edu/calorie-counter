@@ -4,25 +4,33 @@ import static com.example.flabcaloriecounter.exception.GlobalExceptionHandler.EM
 
 import java.util.List;
 
+import javax.validation.constraints.Min;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.flabcaloriecounter.feed.application.port.in.FeedUseCase;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedRequestDto;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/feeds")
 @RequiredArgsConstructor
+@Validated
 public class FeedController {
 
 	private final FeedUseCase feedUseCase;
@@ -67,6 +75,12 @@ public class FeedController {
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
+	@GetMapping
+	public ResponseEntity<List<FeedListDto>> feedList(@RequestParam @Min(value = 2) final Long cursorNo,
+		@RequestParam(required = false, defaultValue = "5") final int displayPerPage) {
+		return new ResponseEntity<>(this.feedUseCase.getFeedList(new Paging(cursorNo, displayPerPage)), HttpStatus.OK);
+	}
+
 	@DeleteMapping("/{feedId}")
 	public ResponseEntity<Void> delete(@PathVariable final long feedId) {
 		//todo 로그인 되어있지않은경우 예외처리
@@ -77,5 +91,4 @@ public class FeedController {
 		this.feedUseCase.delete(mockUserId, feedId);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
-
 }

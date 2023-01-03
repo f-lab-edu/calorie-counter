@@ -5,7 +5,9 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
+import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDto;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateFeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
 import com.example.flabcaloriecounter.feed.application.port.out.FeedPort;
@@ -47,5 +49,10 @@ public class FeedPersistenceAdapter implements FeedPort {
 	@Override
 	public void delete(final long feedId) {
 		this.feedRepository.delete(feedId);
+	}
+
+	@Override
+	public List<FeedListDto> getFeedList(final Paging paging) {
+		return this.feedRepository.getFeedList(paging);
 	}
 }

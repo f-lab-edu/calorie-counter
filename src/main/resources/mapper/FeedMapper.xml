@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
 <mapper namespace="com.example.flabcaloriecounter.feed.adapter.out.persistence.FeedMapper">
     <insert id="write">
         INSERT INTO feed(contents, user_id)
@@ -14,6 +13,21 @@
     <select id="findByFeedId" parameterType="long" resultType="com.example.flabcaloriecounter.feed.domain.Feed">
         select FEED_ID, CONTENTS, USER_ID
         from FEED
+        where FEED_ID = #{feedId}
+    </select>
+
+    <!--    테스트용-->
+    <select id="findImageByFileName" parameterType="String"
+            resultType="com.example.flabcaloriecounter.feed.domain.Photo">
+        select photo_path
+        from PHOTO
+        where PHOTO_NAME = #{filename}
+    </select>
+
+
+    <select id="findImagesById" parameterType="long" resultType="com.example.flabcaloriecounter.feed.domain.Photo">
+        select PHOTO_ID, PHOTO_NAME, UPLOAD_DATE, PHOTO_PATH, FEED_ID
+        from PHOTO
         where FEED_ID = #{feedId}
     </select>
 
@@ -32,6 +46,31 @@
             )
         </foreach>
     </insert>
+
+    <select id="findImageByFeedId" parameterType="long" resultType="com.example.flabcaloriecounter.feed.domain.Photo">
+        select photo_id, photo_name, upload_date, photo_path, feed_id
+        from PHOTO
+        where FEED_ID = #{feedId}
+    </select>
+
+    <!-- todo  댓글, 좋아요 join-->
+    <select id="getFeedList" resultType="com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto">
+        select f.feed_id,
+               f.contents,
+               f.writeDate,
+               u.user_id,
+               u.user_name,
+               p.photo_id,
+               p.photo_name,
+               p.photo_path
+        from FEED as f
+                 inner join user_table u on u.id = f.user_id
+                 left JOIN photo as p on f.feed_id = p.feed_id
+
+        where f.feed_id <![CDATA[<]]> #{paging.cursorNo}
+        order by f.feed_id desc
+        limit #{paging.displayPerPage};
+    </select>
 
     <update id="updateImage">
         <foreach collection="updateImageInfos" item="file" separator=";">
