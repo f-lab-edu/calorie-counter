@@ -19,8 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.flabcaloriecounter.exception.FeedNotFoundException;
 import com.example.flabcaloriecounter.exception.InvalidUserException;
 import com.example.flabcaloriecounter.exception.UserNotFoundException;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedRequestDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDto;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
 import com.example.flabcaloriecounter.feed.application.port.out.FeedPort;
 import com.example.flabcaloriecounter.feed.domain.Feed;
 import com.example.flabcaloriecounter.user.adapter.out.persistence.UserRepository;
@@ -250,5 +252,19 @@ class FeedServiceTest {
 
 		assertThatThrownBy(() -> this.feedService.delete(this.signUpForm2.userId(), 1))
 			.isInstanceOf(InvalidUserException.class);
+	}
+
+	@Test
+	@DisplayName("피드 조회 성공")
+	void feed_read_success() {
+		this.userRepository.signUp(this.signUpForm);
+		this.feedService.write(this.contentsFeed, 1);
+		this.feedService.write(this.contentsFeed, 1);
+		this.feedService.write(this.contentsFeed, 1);
+		this.feedService.write(this.contentsFeed, 1);
+
+		List<FeedListDto> feedList = this.feedService.getFeedList(new Paging(5, 10));
+
+		assertThat(feedList.size()).isEqualTo(4);
 	}
 }

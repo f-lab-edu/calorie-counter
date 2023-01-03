@@ -1,7 +1,10 @@
 package com.example.flabcaloriecounter.feed.adapter.in.web;
 
+import static com.example.flabcaloriecounter.exception.GlobalExceptionHandler.CURSOR_ERROR_MSG;
 import static com.example.flabcaloriecounter.exception.GlobalExceptionHandler.EMPTY_FEED_MSG;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -52,6 +55,7 @@ class FeedControllerTest {
 
 	SignUpForm rightUserForm;
 	private FeedRequestDto contentsFeed;
+	private FeedRequestDto contentsFeed2;
 
 	MockMultipartFile image1;
 	MockMultipartFile contents;
@@ -106,6 +110,11 @@ class FeedControllerTest {
 
 		this.contentsFeed = new FeedRequestDto(
 			"닭가슴살을 먹었다",
+			null
+		);
+
+		this.contentsFeed2 = new FeedRequestDto(
+			"닭가슴살을 먹었다2",
 			null
 		);
 
@@ -302,5 +311,44 @@ class FeedControllerTest {
 				.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
 			.andExpect(status().isNotFound());
+	}
+
+	@Test
+	@DisplayName("피드 조회 성공")
+	void feed_read_success() throws Exception {
+		this.signUpUseCase.signUp(this.rightUserForm);
+		this.feedService.write(this.contentsFeed, 1);
+		this.feedService.write(this.contentsFeed, 1);
+		this.feedService.write(this.contentsFeed2, 1);
+
+		this.mockMvc.perform(get("/feeds?cursorNo=4&displayPerPage=3")
+				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.length()", is(3)))
+			.andExpect(jsonPath("$[0].feedId").value(3))
+			.andExpect(jsonPath("$[0].contents").value(this.contentsFeed2.contents()))
+			.andExpect(jsonPath("$[0].userId").value(this.rightUserForm.userId()))
+			.andExpect(jsonPath("$[0].userName").value(this.rightUserForm.userName()))
+			.andExpect(jsonPath("$[2].feedId").value(1))
+			.andExpect(jsonPath("$[2].contents").value(this.contentsFeed.contents()))
+			.andExpect(jsonPath("$[2].userId").value(this.rightUserForm.userId()))
+			.andExpect(jsonPath("$[2].userName").value(this.rightUserForm.userName()))
+			.andDo(print())
+			.andExpect(status().isOk());
+	}
+
+	@Test
+	@DisplayName("피드 조회 실패: cursor가 음수")
+	void feed_read_fail() throws Exception {
+		this.signUpUseCase.signUp(this.rightUserForm);
+		this.feedService.write(this.contentsFeed, 1);
+		this.feedService.write(this.contentsFeed, 1);
+		this.feedService.write(this.contentsFeed2, 1);
+
+		this.mockMvc.perform(get("/feeds?cursorNo=-1&displayPerPage=3")
+				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("message").value(CURSOR_ERROR_MSG))
+			.andExpect(jsonPath("statusCode").value("BAD_REQUEST"))
+			.andDo(print())
+			.andExpect(status().isBadRequest());
 	}
 }
