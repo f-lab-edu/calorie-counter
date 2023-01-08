@@ -16,21 +16,6 @@
         where FEED_ID = #{feedId}
     </select>
 
-    <!--    테스트용-->
-    <select id="findImageByFileName" parameterType="String"
-            resultType="com.example.flabcaloriecounter.feed.domain.Photo">
-        select photo_path
-        from PHOTO
-        where PHOTO_NAME = #{filename}
-    </select>
-
-
-    <select id="findImagesById" parameterType="long" resultType="com.example.flabcaloriecounter.feed.domain.Photo">
-        select PHOTO_ID, PHOTO_NAME, UPLOAD_DATE, PHOTO_PATH, FEED_ID
-        from PHOTO
-        where FEED_ID = #{feedId}
-    </select>
-
     <select id="isExistId" resultType="boolean">
         SELECT EXISTS(select user_Id from USER_TABLE where user_Id = #{userId})
     </select>
@@ -53,23 +38,31 @@
         where FEED_ID = #{feedId}
     </select>
 
-    <!-- todo  댓글, 좋아요 join-->
+    <select id="maxCursor" resultType="long">
+        select Max(FEED_ID)
+        from FEED;
+    </select>
+
     <select id="getFeedList" resultType="com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto">
         select f.feed_id,
                f.contents,
                f.writeDate,
-               u.user_id,
-               u.user_name,
-               p.photo_id,
-               p.photo_name,
-               p.photo_path
+               u.ID
         from FEED as f
                  inner join user_table u on u.id = f.user_id
-                 left JOIN photo as p on f.feed_id = p.feed_id
 
-        where f.feed_id <![CDATA[<]]> #{paging.cursorNo}
+        where f.feed_id &lt;= #{paging.cursorNo}
         order by f.feed_id desc
         limit #{paging.displayPerPage};
+    </select>
+
+    <select id="photos" resultType="com.example.flabcaloriecounter.feed.domain.Photo">
+        select photo_id, photo_name, upload_date, photo_path, feed_id
+        from photo p
+        where p.feed_id In
+              (select f.feed_id
+               from feed f
+               where f.feed_id = #{feedId});
     </select>
 
     <update id="updateImage">

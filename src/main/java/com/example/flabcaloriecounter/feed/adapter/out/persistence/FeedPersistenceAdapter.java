@@ -1,5 +1,6 @@
 package com.example.flabcaloriecounter.feed.adapter.out.persistence;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,6 +13,7 @@ import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateFeedDto
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
 import com.example.flabcaloriecounter.feed.application.port.out.FeedPort;
 import com.example.flabcaloriecounter.feed.domain.Feed;
+import com.example.flabcaloriecounter.feed.domain.Photo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,6 +39,11 @@ public class FeedPersistenceAdapter implements FeedPort {
 	}
 
 	@Override
+	public List<Image> findImageByFeedId(final long feedId) {
+		return this.feedRepository.findImageByFeedId(feedId);
+	}
+
+	@Override
 	public void insertImage(final List<ImageUploadDto> imagePathResult) {
 		this.feedRepository.insertImage(imagePathResult);
 	}
@@ -54,5 +61,15 @@ public class FeedPersistenceAdapter implements FeedPort {
 	@Override
 	public List<FeedListDto> getFeedList(final Paging paging) {
 		return this.feedRepository.getFeedList(paging);
+	}
+
+	@Override
+	public long maxCursor() {
+		return this.feedRepository.maxCursor();
+	}
+
+	@Override
+	public List<Photo> photos(final long feedId) {
+		return this.feedRepository.photos(feedId);
 	}
 }

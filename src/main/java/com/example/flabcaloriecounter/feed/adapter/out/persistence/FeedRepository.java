@@ -1,5 +1,6 @@
 package com.example.flabcaloriecounter.feed.adapter.out.persistence;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateFeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
 import com.example.flabcaloriecounter.feed.domain.Feed;
+import com.example.flabcaloriecounter.feed.domain.Photo;
 
 public interface FeedRepository {
 
@@ -25,4 +27,10 @@ public interface FeedRepository {
 	void delete(final long feedId);
 
 	List<FeedListDto> getFeedList(final Paging paging);
+
+	long maxCursor();
+
+	List<Photo> photos(final long feedId);
+
+	List<Image> findImageByFeedId(final long feedId);
 }

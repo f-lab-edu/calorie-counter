@@ -38,19 +38,10 @@ public class FeedService implements FeedUseCase {
 		//todo 현재 유저가 존재하는 아이디인지 체크
 
 		//todo write(), uploadFile()에 인증된 userId(현재는 임시Id) 넣어줘야한다.
+		final long feedId = this.feedPort.write(feedRequestDto.contents(), userId);
 
-		// 컨텐츠만 존재하는경우
-		if (onlyContents(feedRequestDto)) {
-			this.feedPort.write(feedRequestDto.contents(), userId);
-		}
-		// 사진만 존재하는경우
-		else if (onlyPhotos(feedRequestDto)) {
-			this.feedPort.insertImage(imageInfos(feedRequestDto.photos(), userId, this.feedPort.write("", userId)));
-		}
-		// 둘다 존재하는경우
-		else {
-			this.feedPort.insertImage(
-				imageInfos(feedRequestDto.photos(), userId, this.feedPort.write(feedRequestDto.contents(), userId)));
+		if (feedRequestDto.photos() != null && feedRequestDto.photos().stream().noneMatch(MultipartFile::isEmpty)) {
+			this.feedPort.insertImage(imageInfos(feedRequestDto.photos(), userId, feedId));
 		}
 	}
 
@@ -105,19 +96,23 @@ public class FeedService implements FeedUseCase {
 		return this.feedPort.getFeedList(paging);
 	}
 
+	@Override
+	public long maxCursor() {
+		return this.feedPort.maxCursor();
+	}
+
+	@Override
+	public List<Feed> feedListWithPhoto(final List<FeedListDto> feedList) {
+		return feedList.stream()
+			.map(feedListDto -> new Feed(feedListDto.feedId(), feedListDto.contents(), feedListDto.writeDate(),
+				feedListDto.userId(), this.feedPort.photos(feedListDto.feedId()))).toList();
+	}
+
 	private List<ImageUploadDto> imageInfos(final List<MultipartFile> photos, final long userId,
 		final long latestPostId) {
 		return imageService.uploadFile(photos, userId).stream()
 			.map(imageUploadPath -> new ImageUploadDto(imageUploadPath.imageName(), imageUploadPath.imagePath(),
 				latestPostId))
 			.toList();
-	}
-
-	private boolean onlyPhotos(final FeedRequestDto feedRequestDto) {
-		return "".equals(feedRequestDto.contents());
-	}
-
-	private boolean onlyContents(final FeedRequestDto feedRequestDto) {
-		return feedRequestDto.photos() == null || feedRequestDto.photos().stream().anyMatch(MultipartFile::isEmpty);
 	}
 }

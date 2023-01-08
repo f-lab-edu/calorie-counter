@@ -1,5 +1,6 @@
 package com.example.flabcaloriecounter.feed.application.port.out;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateFeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
 import com.example.flabcaloriecounter.feed.domain.Feed;
+import com.example.flabcaloriecounter.feed.domain.Photo;
 
 public interface FeedPort {
 
@@ -18,6 +20,8 @@ public interface FeedPort {
 
 	Optional<Feed> findByFeedId(final long feedId);
 
+	List<Image> findImageByFeedId(final long feedId);
+
 	void insertImage(final List<ImageUploadDto> imagePathResult);
 
 	void updateImage(final long feedId, final List<UpdateImageInfo> updateImageInfos);
@@ -25,4 +29,8 @@ public interface FeedPort {
 	void delete(final long feedId);
 
 	List<FeedListDto> getFeedList(final Paging paging);
+
+	long maxCursor();
+
+	List<Photo> photos(final long feedId);
 }

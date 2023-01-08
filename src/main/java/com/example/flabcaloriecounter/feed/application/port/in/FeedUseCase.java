@@ -21,4 +21,8 @@ public interface FeedUseCase {
 	void delete(final String userId, final long feedId);
 
 	List<FeedListDto> getFeedList(final Paging paging);
+
+	long maxCursor();
+	
+	List<Feed> feedListWithPhoto(final List<FeedListDto> feedList);
 }

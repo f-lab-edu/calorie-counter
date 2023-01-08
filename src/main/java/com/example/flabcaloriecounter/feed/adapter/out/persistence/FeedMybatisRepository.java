@@ -1,5 +1,6 @@
 package com.example.flabcaloriecounter.feed.adapter.out.persistence;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateFeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
 import com.example.flabcaloriecounter.feed.domain.Feed;
+import com.example.flabcaloriecounter.feed.domain.Photo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -56,5 +58,20 @@ public class FeedMybatisRepository implements FeedRepository {
 	@Override
 	public List<FeedListDto> getFeedList(final Paging paging) {
 		return this.feedMapper.getFeedList(paging);
+	}
+
+	@Override
+	public long maxCursor() {
+		return this.feedMapper.maxCursor();
+	}
+
+	@Override
+	public List<Photo> photos(final long feedId) {
+		return this.feedMapper.photos(feedId);
+	}
+
+	@Override
+	public List<Image> findImageByFeedId(final long feedId) {
+		return this.feedMapper.findImageByFeedId(feedId);
 	}
 }

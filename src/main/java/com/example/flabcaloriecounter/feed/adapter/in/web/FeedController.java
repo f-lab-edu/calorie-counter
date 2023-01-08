@@ -4,8 +4,6 @@ import static com.example.flabcaloriecounter.exception.GlobalExceptionHandler.EM
 
 import java.util.List;
 
-import javax.validation.constraints.Min;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -24,6 +22,7 @@ import com.example.flabcaloriecounter.feed.application.port.in.FeedUseCase;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedRequestDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
+import com.example.flabcaloriecounter.feed.domain.Feed;
 
 import lombok.RequiredArgsConstructor;
 
@@ -76,9 +75,20 @@ public class FeedController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<FeedListDto>> feedList(@RequestParam @Min(value = 2) final Long cursorNo,
+	public ResponseEntity<List<Feed>> feedList(@RequestParam final long cursorNo,
 		@RequestParam(required = false, defaultValue = "5") final int displayPerPage) {
-		return new ResponseEntity<>(this.feedUseCase.getFeedList(new Paging(cursorNo, displayPerPage)), HttpStatus.OK);
+
+		if (cursorNo <= 0) {
+			final List<FeedListDto> feedList = this.feedUseCase.getFeedList(
+				new Paging(this.feedUseCase.maxCursor(), displayPerPage));
+
+			return new ResponseEntity<>(this.feedUseCase.feedListWithPhoto(feedList), HttpStatus.OK);
+		}
+
+		final List<FeedListDto> feedList = this.feedUseCase.getFeedList(
+			new Paging(cursorNo, displayPerPage));
+
+		return new ResponseEntity<>(this.feedUseCase.feedListWithPhoto(feedList), HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{feedId}")

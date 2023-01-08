@@ -1,5 +1,6 @@
 package com.example.flabcaloriecounter.feed.adapter.out.persistence;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDt
 import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
 import com.example.flabcaloriecounter.feed.domain.Feed;
+import com.example.flabcaloriecounter.feed.domain.Photo;
 
 @Mapper
 public interface FeedMapper {
@@ -30,4 +32,9 @@ public interface FeedMapper {
 
 	List<FeedListDto> getFeedList(@Param("paging") final Paging paging);
 
+	long maxCursor();
+
+	List<Photo> photos(final long feedId);
+
+	List<Image> findImageByFeedId(final long feedId);
 }
