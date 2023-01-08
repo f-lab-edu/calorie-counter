@@ -80,9 +80,13 @@
         where feed_id = #{feedId}
     </update>
 
-    <delete id="delete">
+    <delete id="delete" parameterType="long">
         delete
         from FEED
-        where FEED_ID = #{feedId}
+        where FEED_ID = #{feedId};
+
+        delete
+        from PHOTO
+        where FEED_ID = #{feedId};
     </delete>
 </mapper>
