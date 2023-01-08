@@ -30,7 +30,7 @@ drop table if exists feed;
 CREATE TABLE `feed`
 (
     `feed_id`   BIGINT auto_increment primary key  NOT NULL,
-    `contents`  VARCHAR(1000)                      NOT NULL,
+    `contents`  VARCHAR(1000)                      NULL,
     `writeDate` DATETIME default current_timestamp NOT NULL,
     `user_id`   BIGINT                             NOT NULL
 );
