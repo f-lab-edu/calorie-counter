@@ -48,6 +48,7 @@ class FeedServiceTest {
 	private UserRepository userRepository;
 
 	private FeedRequestDto contentsFeed;
+	private FeedRequestDto contentsAndPhotoFeed;
 	private SignUpForm signUpForm;
 	private SignUpForm signUpForm2;
 	private List<ImageUploadDto> imageInfos;
@@ -75,6 +76,11 @@ class FeedServiceTest {
 			"photos2",
 			"image/jpeg",
 			"photos2".getBytes()
+		);
+
+		this.contentsAndPhotoFeed = new FeedRequestDto(
+			WRITE_CONTENT,
+			List.of(this.image1, this.image2)
 		);
 
 		this.signUpForm = new SignUpForm(
@@ -220,11 +226,11 @@ class FeedServiceTest {
 	@DisplayName("피드 삭제 성공")
 	void feed_delete_success() {
 		this.userRepository.signUp(this.signUpForm);
-		this.feedService.write(this.contentsFeed, 1);
+		this.feedService.write(this.contentsAndPhotoFeed, 1);
 
 		assertDoesNotThrow(() -> this.feedService.delete(this.signUpForm.userId(), 1));
-
-		//수정 내용 확인하기위해 update타입을 변경?
+		assertThat(this.feedService.findByFeedId(1)).isEqualTo(Optional.empty());
+		assertThat(this.feedPort.findImageByFeedId(1).size()).isEqualTo(0);
 	}
 
 	@Test
@@ -259,12 +265,14 @@ class FeedServiceTest {
 	void feed_read_success() {
 		this.userRepository.signUp(this.signUpForm);
 		this.feedService.write(this.contentsFeed, 1);
-		this.feedService.write(this.contentsFeed, 1);
-		this.feedService.write(this.contentsFeed, 1);
+		this.feedService.write(this.contentsAndPhotoFeed, 1);
+		this.feedService.write(this.contentsAndPhotoFeed, 1);
 		this.feedService.write(this.contentsFeed, 1);
 
 		List<FeedListDto> feedList = this.feedService.getFeedList(new Paging(5, 10));
+		List<Feed> feedList2 = this.feedService.feedListWithPhoto(feedList);
 
 		assertThat(feedList.size()).isEqualTo(4);
+		assertThat(feedList2.size()).isEqualTo(4);
 	}
 }

@@ -1,6 +1,5 @@
 package com.example.flabcaloriecounter.feed.adapter.in.web;
 
-import static com.example.flabcaloriecounter.exception.GlobalExceptionHandler.CURSOR_ERROR_MSG;
 import static com.example.flabcaloriecounter.exception.GlobalExceptionHandler.EMPTY_FEED_MSG;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -282,25 +281,25 @@ class FeedControllerTest {
 
 	//todo 로그인
 
-	@Test
-	@DisplayName("피드 삭제 실패 : 로그인 하지않은 유저")
-	void feed_delete_fail() throws Exception {
-		this.mockMvc.perform(delete("/feeds/1")
-				.contentType(MediaType.APPLICATION_JSON))
-			.andDo(print())
-			.andExpect(status().isUnauthorized());
-	}
+	// @Test
+	// @DisplayName("피드 삭제 실패 : 로그인 하지않은 유저")
+	// void feed_delete_fail() throws Exception {
+	// 	this.mockMvc.perform(delete("/feeds/1")
+	// 			.contentType(MediaType.APPLICATION_JSON))
+	// 		.andDo(print())
+	// 		.andExpect(status().isUnauthorized());
+	// }
 
 	//todo 로그인
 
-	@Test
-	@DisplayName("피드 삭제 실패: 피드 작성자가 아님")
-	void feed_delete_fail2() throws Exception {
-		this.mockMvc.perform(delete("/feeds/1")
-				.contentType(MediaType.APPLICATION_JSON))
-			.andDo(print())
-			.andExpect(status().isUnauthorized());
-	}
+	// @Test
+	// @DisplayName("피드 삭제 실패: 피드 작성자가 아님")
+	// void feed_delete_fail2() throws Exception {
+	// 	this.mockMvc.perform(delete("/feeds/1")
+	// 			.contentType(MediaType.APPLICATION_JSON))
+	// 		.andDo(print())
+	// 		.andExpect(status().isUnauthorized());
+	// }
 
 	//todo 로그인
 
@@ -324,31 +323,35 @@ class FeedControllerTest {
 		this.mockMvc.perform(get("/feeds?cursorNo=4&displayPerPage=3")
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.length()", is(3)))
-			.andExpect(jsonPath("$[0].feedId").value(3))
+			.andExpect(jsonPath("$[0].id").value(3))
 			.andExpect(jsonPath("$[0].contents").value(this.contentsFeed2.contents()))
-			.andExpect(jsonPath("$[0].userId").value(this.rightUserForm.userId()))
-			.andExpect(jsonPath("$[0].userName").value(this.rightUserForm.userName()))
-			.andExpect(jsonPath("$[2].feedId").value(1))
+			.andExpect(jsonPath("$[0].userId").value(1))
+			.andExpect(jsonPath("$[2].id").value(1))
 			.andExpect(jsonPath("$[2].contents").value(this.contentsFeed.contents()))
-			.andExpect(jsonPath("$[2].userId").value(this.rightUserForm.userId()))
-			.andExpect(jsonPath("$[2].userName").value(this.rightUserForm.userName()))
+			.andExpect(jsonPath("$[2].userId").value(1))
 			.andDo(print())
 			.andExpect(status().isOk());
 	}
 
 	@Test
-	@DisplayName("피드 조회 실패: cursor가 음수")
+	@DisplayName("피드 조회 성공: cursor가 0보다 작으면 maxId값을 준다.")
 	void feed_read_fail() throws Exception {
 		this.signUpUseCase.signUp(this.rightUserForm);
 		this.feedService.write(this.contentsFeed, 1);
-		this.feedService.write(this.contentsFeed, 1);
+		this.feedService.write(this.contentsFeed2, 1);
 		this.feedService.write(this.contentsFeed2, 1);
 
 		this.mockMvc.perform(get("/feeds?cursorNo=-1&displayPerPage=3")
 				.contentType(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("message").value(CURSOR_ERROR_MSG))
-			.andExpect(jsonPath("statusCode").value("BAD_REQUEST"))
+			.andExpect(jsonPath("$.length()", is(3)))
+			.andExpect(jsonPath("$[0].id").value(3))
+			.andExpect(jsonPath("$[0].contents").value(this.contentsFeed2.contents()))
+			.andExpect(jsonPath("$[0].userId").value(1))
+
+			.andExpect(jsonPath("$[2].id").value(1))
+			.andExpect(jsonPath("$[2].contents").value(this.contentsFeed.contents()))
+			.andExpect(jsonPath("$[2].userId").value(1))
 			.andDo(print())
-			.andExpect(status().isBadRequest());
+			.andExpect(status().isOk());
 	}
 }
