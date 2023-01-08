@@ -21,7 +21,17 @@ drop table if exists feed;
 CREATE TABLE `feed`
 (
     `feed_id`   BIGINT auto_increment primary key  NOT NULL,
-    `contents`  VARCHAR(1000)                      NOT NULL,
+    `contents`  VARCHAR(1000)                      NULL,
     `writeDate` DATETIME default current_timestamp NOT NULL,
     `user_id`   BIGINT                             NOT NULL
+);
+
+drop table if exists photo;
+CREATE TABLE `photo`
+(
+    `photo_id`    BIGINT auto_increment primary key  NOT NULL,
+    `photo_name`  VARCHAR(50)                        not null,
+    `upload_date` DATETIME default current_timestamp NOT NULL,
+    `photo_path`  VARCHAR(100)                       NOT NULL,
+    `feed_id`     BIGINT                             NOT NULL
 );
