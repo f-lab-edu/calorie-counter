@@ -1,17 +1,16 @@
-package com.example.flabcaloriecounter.user.domain;
+package com.example.flabcaloriecounter.feed.domain;
 
 import java.util.Arrays;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public enum UserType {
-	ORDINARY("일반"),
-	PROVIDER("제공자"),
-	ADMIN("관리자");
+public enum LikeStatus {
+	ACTIVATE("활성화"),
+	NOT_ACTIVATE("비활성화");
 
 	private final String statusMessage;
 
-	UserType(String statusMessage) {
+	LikeStatus(String statusMessage) {
 		this.statusMessage = statusMessage;
 	}
 
@@ -23,8 +22,8 @@ public enum UserType {
 		return this.statusMessage.equals(statusMessage);
 	}
 
-	public static UserType findByMessage(final String statusMessage) {
-		return Arrays.stream(UserType.values())
+	public static LikeStatus findByMessage(final String statusMessage) {
+		return Arrays.stream(LikeStatus.values())
 			.filter(getUserStatusPredicate(statusMessage))
 			.findFirst()
 			.orElseThrow(NonStatusFoundErrorSupplier());
@@ -34,11 +33,7 @@ public enum UserType {
 		return () -> new IllegalArgumentException("해당하는 상태가 없습니다.");
 	}
 
-	private static Predicate<UserType> getUserStatusPredicate(String statusMessage) {
-		return userType -> userType.checkStatusMessage(statusMessage);
-	}
-
-	public boolean isProvider() {
-		return this == PROVIDER;
+	private static Predicate<LikeStatus> getUserStatusPredicate(String statusMessage) {
+		return LikeStatus -> LikeStatus.checkStatusMessage(statusMessage);
 	}
 }

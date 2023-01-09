@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
 <mapper namespace="com.example.flabcaloriecounter.feed.adapter.out.persistence.FeedMapper">
     <insert id="write">
         INSERT INTO feed(contents, user_id)
@@ -33,6 +32,39 @@
         </foreach>
     </insert>
 
+    <select id="findImageByFeedId" parameterType="long" resultType="com.example.flabcaloriecounter.feed.domain.Photo">
+        select photo_id, photo_name, upload_date, photo_path, feed_id
+        from PHOTO
+        where FEED_ID = #{feedId}
+    </select>
+
+    <select id="maxCursor" resultType="long">
+        select Max(FEED_ID)
+        from FEED;
+    </select>
+
+    <select id="getFeedList" resultType="com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto">
+        select f.feed_id,
+               f.contents,
+               f.writeDate,
+               u.ID
+        from FEED as f
+                 inner join user_table u on u.id = f.user_id
+
+        where f.feed_id &lt;= #{paging.cursorNo}
+        order by f.feed_id desc
+        limit #{paging.displayPerPage};
+    </select>
+
+    <select id="photos" resultType="com.example.flabcaloriecounter.feed.domain.Photo">
+        select photo_id, photo_name, upload_date, photo_path, feed_id
+        from photo p
+        where p.feed_id In
+              (select f.feed_id
+               from feed f
+               where f.feed_id = #{feedId});
+    </select>
+
     <update id="updateImage">
         <foreach collection="updateImageInfos" item="file" separator=";">
             UPDATE PHOTO
@@ -47,4 +79,48 @@
         set contents = #{contents}
         where feed_id = #{feedId}
     </update>
+
+    <select id="findByFeedAndUser" resultType="com.example.flabcaloriecounter.feed.domain.Like">
+        select likes_id, feed_id, user_id, likes_state
+        from LIKES
+        where USER_ID = #{userId}
+          and FEED_ID = #{feedId};
+    </select>
+
+    <insert id="like">
+        insert into likes(user_id, FEED_ID, LIKES_STATE)
+        values (#{userId}, #{feedId}, #{likeStatus})
+    </insert>
+
+    <update id="unLike">
+        update LIKES
+        set LIKES_STATE = #{likeStatus}
+        where feed_id = #{feedId}
+    </update>
+
+    <select id="likeCount" resultType="int">
+        select count(*)
+        from LIKES
+        where FEED_ID = #{feedId}
+          and LIKES_STATE = #{likeStatus}
+    </select>
+
+    <select id="findLikeStatusByUserId" parameterType="long"
+            resultType="com.example.flabcaloriecounter.feed.domain.LikeStatus">
+        select LIKES_STATE
+        from LIKES
+        where USER_ID = #{mockUserId}
+          and FEED_ID = #{feedId}
+    </select>
+
+
+    <delete id="delete" parameterType="long">
+        delete
+        from FEED
+        where FEED_ID = #{feedId};
+
+        delete
+        from PHOTO
+        where FEED_ID = #{feedId};
+    </delete>
 </mapper>

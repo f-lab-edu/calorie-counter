@@ -1,5 +1,7 @@
 package com.example.flabcaloriecounter.exception;
 
+import javax.validation.ConstraintViolationException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,6 +18,7 @@ public class GlobalExceptionHandler {
 	private static final String NOT_EXIST_USER_MSG = "존재하지 않는 유저입니다.";
 	private static final String NOT_EXIST_FEED_MSG = "존재하지 않는 피드입니다.";
 	private static final String FORBIDDEN_USER_MSG = "해당 권한이 없습니다";
+	public static final String CURSOR_ERROR_MSG = "2이상의 cursor 위치를 입력해야합니다.";
 
 	@ResponseStatus(HttpStatus.CONFLICT)
 	@ExceptionHandler(HasDuplicatedIdException.class)
@@ -41,22 +44,28 @@ public class GlobalExceptionHandler {
 		return new ResponseDto(FILE_STORE_FAIL_MSG, HttpStatus.BAD_REQUEST);
 	}
 
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ExceptionHandler(UserNotFoundException.class)
 	public ResponseDto userNotFoundExHandler() {
-		return new ResponseDto(NOT_EXIST_USER_MSG, HttpStatus.BAD_REQUEST);
+		return new ResponseDto(NOT_EXIST_USER_MSG, HttpStatus.NOT_FOUND);
 	}
 
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ExceptionHandler(FeedNotFoundException.class)
 	public ResponseDto feedNotFoundExHandler() {
-		return new ResponseDto(NOT_EXIST_FEED_MSG, HttpStatus.BAD_REQUEST);
+		return new ResponseDto(NOT_EXIST_FEED_MSG, HttpStatus.NOT_FOUND);
 	}
 
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	@ExceptionHandler(InvalidUserException.class)
 	public ResponseDto forbiddenUserExHandler() {
 		return new ResponseDto(FORBIDDEN_USER_MSG, HttpStatus.FORBIDDEN);
+	}
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ResponseDto bindExHandler() {
+		return new ResponseDto(CURSOR_ERROR_MSG, HttpStatus.BAD_REQUEST);
 	}
 
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
