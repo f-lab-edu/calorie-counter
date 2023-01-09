@@ -12,6 +12,8 @@ import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDt
 import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
 import com.example.flabcaloriecounter.feed.domain.Feed;
+import com.example.flabcaloriecounter.feed.domain.Like;
+import com.example.flabcaloriecounter.feed.domain.LikeStatus;
 import com.example.flabcaloriecounter.feed.domain.Photo;
 
 @Mapper
@@ -37,4 +39,16 @@ public interface FeedMapper {
 	List<Photo> photos(final long feedId);
 
 	List<Image> findImageByFeedId(final long feedId);
+
+	void like(@Param("userId") final long userId, @Param("feedId") final long feedId,
+		@Param("likeStatus") final LikeStatus likeStatus);
+
+	int likeCount(@Param("feedId") final long feedId, @Param("likeStatus") final LikeStatus likeStatus);
+
+	Like findByFeedAndUser(@Param("userId") final long userId, @Param("feedId") final long feedId);
+
+	void unLike(@Param("userId") final long userId, @Param("feedId") final long feedId,
+		@Param("likeStatus") final LikeStatus likeStatus);
+
+	LikeStatus findLikeStatusByUserId(@Param("feedId") final long feedId, @Param("mockUserId") final long mockUserId);
 }

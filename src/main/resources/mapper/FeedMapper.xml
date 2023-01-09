@@ -80,6 +80,40 @@
         where feed_id = #{feedId}
     </update>
 
+    <select id="findByFeedAndUser" resultType="com.example.flabcaloriecounter.feed.domain.Like">
+        select likes_id, feed_id, user_id, likes_state
+        from LIKES
+        where USER_ID = #{userId}
+          and FEED_ID = #{feedId};
+    </select>
+
+    <insert id="like">
+        insert into likes(user_id, FEED_ID, LIKES_STATE)
+        values (#{userId}, #{feedId}, #{likeStatus})
+    </insert>
+
+    <update id="unLike">
+        update LIKES
+        set LIKES_STATE = #{likeStatus}
+        where feed_id = #{feedId}
+    </update>
+
+    <select id="likeCount" resultType="int">
+        select count(*)
+        from LIKES
+        where FEED_ID = #{feedId}
+          and LIKES_STATE = #{likeStatus}
+    </select>
+
+    <select id="findLikeStatusByUserId" parameterType="long"
+            resultType="com.example.flabcaloriecounter.feed.domain.LikeStatus">
+        select LIKES_STATE
+        from LIKES
+        where USER_ID = #{mockUserId}
+          and FEED_ID = #{feedId}
+    </select>
+
+
     <delete id="delete" parameterType="long">
         delete
         from FEED

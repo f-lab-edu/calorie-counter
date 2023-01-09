@@ -21,8 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.flabcaloriecounter.feed.application.port.in.FeedUseCase;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedRequestDto;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.GetFeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
-import com.example.flabcaloriecounter.feed.domain.Feed;
 
 import lombok.RequiredArgsConstructor;
 
@@ -75,20 +75,31 @@ public class FeedController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<Feed>> feedList(@RequestParam final long cursorNo,
+	public ResponseEntity<List<GetFeedListDto>> feedList(@RequestParam final long cursorNo,
 		@RequestParam(required = false, defaultValue = "5") final int displayPerPage) {
+
+		// 로그인 한 유저(임시)
+		final long mockUserId = 1;
 
 		if (cursorNo <= 0) {
 			final List<FeedListDto> feedList = this.feedUseCase.getFeedList(
 				new Paging(this.feedUseCase.maxCursor(), displayPerPage));
 
-			return new ResponseEntity<>(this.feedUseCase.feedListWithPhoto(feedList), HttpStatus.OK);
+			return new ResponseEntity<>(this.feedUseCase.feedListWithPhoto(feedList, mockUserId), HttpStatus.OK);
 		}
 
 		final List<FeedListDto> feedList = this.feedUseCase.getFeedList(
 			new Paging(cursorNo, displayPerPage));
 
-		return new ResponseEntity<>(this.feedUseCase.feedListWithPhoto(feedList), HttpStatus.OK);
+		return new ResponseEntity<>(this.feedUseCase.feedListWithPhoto(feedList, mockUserId), HttpStatus.OK);
+	}
+
+	@PostMapping("/{feedId}/like")
+	public ResponseEntity<Void> like(@PathVariable final long feedId) {
+		final String mockUserId = "mockUser";
+
+		this.feedUseCase.like(feedId, mockUserId);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{feedId}")

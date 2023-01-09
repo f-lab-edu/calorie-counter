@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedRequestDto;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.GetFeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
 import com.example.flabcaloriecounter.feed.domain.Feed;
 
@@ -23,6 +24,8 @@ public interface FeedUseCase {
 	List<FeedListDto> getFeedList(final Paging paging);
 
 	long maxCursor();
-	
-	List<Feed> feedListWithPhoto(final List<FeedListDto> feedList);
+
+	List<GetFeedListDto> feedListWithPhoto(final List<FeedListDto> feedList, final long mockUserId);
+
+	void like(final long feedId, final String userId);
 }

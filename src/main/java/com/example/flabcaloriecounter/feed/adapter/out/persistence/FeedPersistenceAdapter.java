@@ -13,6 +13,8 @@ import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateFeedDto
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
 import com.example.flabcaloriecounter.feed.application.port.out.FeedPort;
 import com.example.flabcaloriecounter.feed.domain.Feed;
+import com.example.flabcaloriecounter.feed.domain.Like;
+import com.example.flabcaloriecounter.feed.domain.LikeStatus;
 import com.example.flabcaloriecounter.feed.domain.Photo;
 
 import lombok.RequiredArgsConstructor;
@@ -71,5 +73,30 @@ public class FeedPersistenceAdapter implements FeedPort {
 	@Override
 	public List<Photo> photos(final long feedId) {
 		return this.feedRepository.photos(feedId);
+	}
+
+	@Override
+	public Like findByFeedAndUser(final long userId, final long feedId) {
+		return this.feedRepository.findByFeedAndUser(userId, feedId);
+	}
+
+	@Override
+	public void like(final long userId, final long feedId, final LikeStatus likeStatus) {
+		this.feedRepository.like(userId, feedId, likeStatus);
+	}
+
+	@Override
+	public int likeCount(final long feedId, final LikeStatus likeStatus) {
+		return this.feedRepository.likeCount(feedId, likeStatus);
+	}
+
+	@Override
+	public void changeStatus(final long userId, final long feedId, final LikeStatus likeStatus) {
+		this.feedRepository.unLike(userId, feedId, likeStatus);
+	}
+
+	@Override
+	public LikeStatus findLikeStatusByUserId(final long feedId, final long mockUserId) {
+		return this.feedRepository.findLikeStatusByUserId(feedId, mockUserId);
 	}
 }
