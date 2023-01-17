@@ -25,4 +25,8 @@ public class UserController {
 		this.signUpUseCase.signUp(signUpForm);
 		return new ResponseEntity<>(signUpForm, HttpStatus.CREATED);
 	}
+	@PostMapping("/login")
+	public ResponseEntity<ResponseToken> login(@RequestBody @Valid LoginForm loginForm) {
+		return new ResponseEntity<>(this.userUseCase.login(loginForm), HttpStatus.OK);
+	}
 }

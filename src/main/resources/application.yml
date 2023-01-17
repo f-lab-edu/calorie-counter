@@ -2,6 +2,17 @@ spring:
   profiles:
     active: "test"
 
+  redis:
+    host: localhost
+    port: 6379
+
+jwt:
+  secret-key: +ePALofjF/LvGGYXmSMCvEl9R9c42nvhCS97/MILll0=
+  #  30분
+  access-token-expired-ms: 1800000
+  #  2주
+  refresh-token-expired-ms: 1209600000
+
 # mybatis
 mybatis:
   mapper-locations: classpath:/mapper/*.xml
