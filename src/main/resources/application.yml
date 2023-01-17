@@ -17,3 +17,7 @@ jwt:
 mybatis:
   mapper-locations: classpath:/mapper/*.xml
   type-handlers-package: com.example.flabcaloriecounter.util
+
+file:
+  dir: "C:\\Users\\dudwl\\OneDrive\\바탕 화면\\calorie-counter\\"
+

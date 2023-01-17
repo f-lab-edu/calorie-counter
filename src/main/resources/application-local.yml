@@ -4,6 +4,3 @@ spring:
     url: jdbc:mysql://localhost/calorie?serverTimezone=Asia/Seoul
     username: root
     password: root
-
-file:
-  dir: "C:\\Users\\dudwl\\OneDrive\\바탕 화면\\calorie-counter\\"
