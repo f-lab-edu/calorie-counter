@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.flabcaloriecounter.user.application.port.in.SignUpUseCase;
+import com.example.flabcaloriecounter.user.application.port.in.UserUseCase;
+import com.example.flabcaloriecounter.user.application.port.in.dto.LoginForm;
+import com.example.flabcaloriecounter.user.application.port.in.dto.ResponseToken;
 import com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm;
 
 import lombok.RequiredArgsConstructor;
@@ -17,14 +19,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserController {
 
-	private final SignUpUseCase signUpUseCase;
+	private final UserUseCase userUseCase;
 
 	@PostMapping("/users")
 	public ResponseEntity<SignUpForm> signUpSubmit(
 		@RequestBody @Valid final SignUpForm signUpForm) {
-		this.signUpUseCase.signUp(signUpForm);
+		this.userUseCase.signUp(signUpForm);
 		return new ResponseEntity<>(signUpForm, HttpStatus.CREATED);
 	}
+
 	@PostMapping("/login")
 	public ResponseEntity<ResponseToken> login(@RequestBody @Valid LoginForm loginForm) {
 		return new ResponseEntity<>(this.userUseCase.login(loginForm), HttpStatus.OK);

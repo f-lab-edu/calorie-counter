@@ -60,10 +60,10 @@ public class FeedService implements FeedUseCase {
 			.orElseThrow(() -> new UserNotFoundException(String.format("%s not exist", userId)));
 
 		final Feed feed = this.feedPort.findByFeedId(feedId)
-			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId)));
+			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId), "존재하지 않는 피드입니다."));
 
 		if (user.id() != feed.userId()) {
-			throw new InvalidUserException(String.format("%s is not match feedWriter", user.id()));
+			throw new InvalidUserException(String.format("%s is not match feedWriter", user.id()), "권한이 없는 유저입니다");
 		}
 
 		if (photos != null && photos.stream().noneMatch(MultipartFile::isEmpty)) {
@@ -84,10 +84,10 @@ public class FeedService implements FeedUseCase {
 			.orElseThrow(() -> new UserNotFoundException(String.format("%s not exist", userId)));
 
 		final Feed feed = this.feedPort.findByFeedId(feedId)
-			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId)));
+			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId), "존재하지 않는 피드입니다."));
 
 		if (user.id() != feed.userId()) {
-			throw new InvalidUserException(String.format("%s is not match feedWriter", user.id()));
+			throw new InvalidUserException(String.format("%s is not match feedWriter", user.id()), "권한이 없는 유저입니다");
 		}
 
 		this.feedPort.delete(feedId);
@@ -125,7 +125,7 @@ public class FeedService implements FeedUseCase {
 			.orElseThrow(() -> new UserNotFoundException(String.format("%s not exist", userId)));
 
 		this.feedPort.findByFeedId(feedId)
-			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId)));
+			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId), "존재하지 않는 피드입니다."));
 
 		// 해당 피드에 좋아요를 누른적있는지 확인
 		if (this.feedPort.findByFeedAndUser(user.id(), feedId) != null
@@ -144,7 +144,7 @@ public class FeedService implements FeedUseCase {
 
 	public int likeCount(final long feedId) {
 		final Feed feed = this.feedPort.findByFeedId(feedId)
-			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId)));
+			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId), "존재하지 않는 피드입니다."));
 
 		return this.feedPort.likeCount(feed.id(), LikeStatus.ACTIVATE);
 	}
