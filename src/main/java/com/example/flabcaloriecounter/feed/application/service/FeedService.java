@@ -36,14 +36,14 @@ public class FeedService implements FeedUseCase {
 
 	@Override
 	@Transactional
-	public void write(final FeedRequestDto feedRequestDto, final long userId) {
-		//todo 현재 유저가 존재하는 아이디인지 체크
+	public void write(final FeedRequestDto feedRequestDto, final String userId) {
+		final User user = this.signUpPort.findByUserId(userId)
+			.orElseThrow(() -> new UserNotFoundException(String.format("userId %s not exist", userId)));
 
-		//todo write(), uploadFile()에 인증된 userId(현재는 임시Id) 넣어줘야한다.
-		final long feedId = this.feedPort.write(feedRequestDto.contents(), userId);
+		final long feedId = this.feedPort.write(feedRequestDto.contents(), user.id());
 
 		if (feedRequestDto.photos() != null && feedRequestDto.photos().stream().noneMatch(MultipartFile::isEmpty)) {
-			this.feedPort.insertImage(imageInfos(feedRequestDto.photos(), userId, feedId));
+			this.feedPort.insertImage(imageInfos(feedRequestDto.photos(), user.id(), feedId));
 		}
 	}
 
@@ -54,10 +54,10 @@ public class FeedService implements FeedUseCase {
 
 	@Override
 	@Transactional
-	public void update(final String contents, final List<MultipartFile> photos, final String mockUserId,
+	public void update(final String contents, final List<MultipartFile> photos, final String userId,
 		final long feedId) {
-		final User user = this.signUpPort.findByUserId(mockUserId)
-			.orElseThrow(() -> new UserNotFoundException(String.format("%s not exist", mockUserId)));
+		final User user = this.signUpPort.findByUserId(userId)
+			.orElseThrow(() -> new UserNotFoundException(String.format("%s not exist", userId)));
 
 		final Feed feed = this.feedPort.findByFeedId(feedId)
 			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId)));
