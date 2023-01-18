@@ -20,6 +20,7 @@ import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateFeedDto
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
 import com.example.flabcaloriecounter.feed.application.port.out.FeedPort;
 import com.example.flabcaloriecounter.feed.domain.Feed;
+import com.example.flabcaloriecounter.feed.domain.Like;
 import com.example.flabcaloriecounter.feed.domain.LikeStatus;
 import com.example.flabcaloriecounter.user.application.port.out.SignUpPort;
 import com.example.flabcaloriecounter.user.domain.User;
@@ -127,18 +128,14 @@ public class FeedService implements FeedUseCase {
 		this.feedPort.findByFeedId(feedId)
 			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId), "존재하지 않는 피드입니다."));
 
-		// 해당 피드에 좋아요를 누른적있는지 확인
-		if (this.feedPort.findByFeedAndUser(user.id(), feedId) != null
-			&& this.feedPort.findByFeedAndUser(user.id(), feedId).likeStatus() == LikeStatus.ACTIVATE) {
-			this.feedPort.changeStatus(user.id(), feedId, LikeStatus.NOT_ACTIVATE);
-		}
-		// 좋아요를 누른적있고, 비활성화 상태인경우
-		else if (this.feedPort.findByFeedAndUser(user.id(), feedId) != null) {
-			this.feedPort.changeStatus(user.id(), feedId, LikeStatus.ACTIVATE);
-		}
-		// 처음 좋아요를 누른경우
-		else {
+		final Like like = this.feedPort.findByFeedAndUser(user.id(), feedId);
+
+		if (like == null) {
 			this.feedPort.like(user.id(), feedId, LikeStatus.ACTIVATE);
+		} else if (like.likeStatus() == LikeStatus.ACTIVATE) {
+			this.feedPort.changeStatus(user.id(), feedId, LikeStatus.NOT_ACTIVATE);
+		} else {
+			this.feedPort.changeStatus(user.id(), feedId, LikeStatus.ACTIVATE);
 		}
 	}
 
