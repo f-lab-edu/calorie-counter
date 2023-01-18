@@ -34,7 +34,7 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
 		NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
 
 		final String jws = webRequest.getHeader("Authorization");
-		if (jws == null || jws.equals("")) {
+		if (jws == null || "".equals(jws)) {
 			throw new UnauthorizedTokenException("요청헤더에 토큰이 없습니다.");
 		}
 

@@ -37,7 +37,7 @@ public class FeedController {
 		@RequestPart(value = "photos", required = false) final List<MultipartFile> photos,
 		@RequestPart(value = "contents", required = false) final String contents) {
 
-		if ((contents == null || "".equals(contents)) && (photos == null || photos.stream()
+		if (("".equals(contents)) && (photos == null || photos.stream()
 			.anyMatch(MultipartFile::isEmpty))) {
 			throw new EmptyFeedException("피드 내용이 비어있습니다");
 		}
@@ -52,7 +52,7 @@ public class FeedController {
 		@RequestPart(value = "contents", required = false) final String contents,
 		@PathVariable final long feedId) {
 
-		if ((contents == null || "".equals(contents)) && (photos == null || photos.stream()
+		if (("".equals(contents)) && (photos == null || photos.stream()
 			.anyMatch(MultipartFile::isEmpty))) {
 			throw new EmptyFeedException("피드 내용이 비어있습니다");
 		}
