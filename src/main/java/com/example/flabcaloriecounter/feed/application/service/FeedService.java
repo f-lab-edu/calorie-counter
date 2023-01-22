@@ -20,6 +20,7 @@ import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateFeedDto
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
 import com.example.flabcaloriecounter.feed.application.port.out.FeedPort;
 import com.example.flabcaloriecounter.feed.domain.Feed;
+import com.example.flabcaloriecounter.feed.domain.Like;
 import com.example.flabcaloriecounter.feed.domain.LikeStatus;
 import com.example.flabcaloriecounter.user.application.port.out.SignUpPort;
 import com.example.flabcaloriecounter.user.domain.User;
@@ -36,14 +37,14 @@ public class FeedService implements FeedUseCase {
 
 	@Override
 	@Transactional
-	public void write(final FeedRequestDto feedRequestDto, final long userId) {
-		//todo 현재 유저가 존재하는 아이디인지 체크
+	public void write(final FeedRequestDto feedRequestDto, final String userId) {
+		final User user = this.signUpPort.findByUserId(userId)
+			.orElseThrow(() -> new UserNotFoundException(String.format("userId %s not exist", userId)));
 
-		//todo write(), uploadFile()에 인증된 userId(현재는 임시Id) 넣어줘야한다.
-		final long feedId = this.feedPort.write(feedRequestDto.contents(), userId);
+		final long feedId = this.feedPort.write(feedRequestDto.contents(), user.id());
 
 		if (feedRequestDto.photos() != null && feedRequestDto.photos().stream().noneMatch(MultipartFile::isEmpty)) {
-			this.feedPort.insertImage(imageInfos(feedRequestDto.photos(), userId, feedId));
+			this.feedPort.insertImage(imageInfos(feedRequestDto.photos(), user.id(), feedId));
 		}
 	}
 
@@ -54,16 +55,16 @@ public class FeedService implements FeedUseCase {
 
 	@Override
 	@Transactional
-	public void update(final String contents, final List<MultipartFile> photos, final String mockUserId,
+	public void update(final String contents, final List<MultipartFile> photos, final String userId,
 		final long feedId) {
-		final User user = this.signUpPort.findByUserId(mockUserId)
-			.orElseThrow(() -> new UserNotFoundException(String.format("%s not exist", mockUserId)));
+		final User user = this.signUpPort.findByUserId(userId)
+			.orElseThrow(() -> new UserNotFoundException(String.format("%s not exist", userId)));
 
 		final Feed feed = this.feedPort.findByFeedId(feedId)
-			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId)));
+			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId), "존재하지 않는 피드입니다."));
 
 		if (user.id() != feed.userId()) {
-			throw new InvalidUserException(String.format("%s is not match feedWriter", user.id()));
+			throw new InvalidUserException(String.format("%s is not match feedWriter", user.id()), "권한이 없는 유저입니다");
 		}
 
 		if (photos != null && photos.stream().noneMatch(MultipartFile::isEmpty)) {
@@ -84,10 +85,10 @@ public class FeedService implements FeedUseCase {
 			.orElseThrow(() -> new UserNotFoundException(String.format("%s not exist", userId)));
 
 		final Feed feed = this.feedPort.findByFeedId(feedId)
-			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId)));
+			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId), "존재하지 않는 피드입니다."));
 
 		if (user.id() != feed.userId()) {
-			throw new InvalidUserException(String.format("%s is not match feedWriter", user.id()));
+			throw new InvalidUserException(String.format("%s is not match feedWriter", user.id()), "권한이 없는 유저입니다");
 		}
 
 		this.feedPort.delete(feedId);
@@ -125,26 +126,22 @@ public class FeedService implements FeedUseCase {
 			.orElseThrow(() -> new UserNotFoundException(String.format("%s not exist", userId)));
 
 		this.feedPort.findByFeedId(feedId)
-			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId)));
+			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId), "존재하지 않는 피드입니다."));
 
-		// 해당 피드에 좋아요를 누른적있는지 확인
-		if (this.feedPort.findByFeedAndUser(user.id(), feedId) != null
-			&& this.feedPort.findByFeedAndUser(user.id(), feedId).likeStatus() == LikeStatus.ACTIVATE) {
-			this.feedPort.changeStatus(user.id(), feedId, LikeStatus.NOT_ACTIVATE);
-		}
-		// 좋아요를 누른적있고, 비활성화 상태인경우
-		else if (this.feedPort.findByFeedAndUser(user.id(), feedId) != null) {
-			this.feedPort.changeStatus(user.id(), feedId, LikeStatus.ACTIVATE);
-		}
-		// 처음 좋아요를 누른경우
-		else {
+		final Like like = this.feedPort.findByFeedAndUser(user.id(), feedId);
+
+		if (like == null) {
 			this.feedPort.like(user.id(), feedId, LikeStatus.ACTIVATE);
+		} else if (like.likeStatus() == LikeStatus.ACTIVATE) {
+			this.feedPort.changeStatus(user.id(), feedId, LikeStatus.NOT_ACTIVATE);
+		} else {
+			this.feedPort.changeStatus(user.id(), feedId, LikeStatus.ACTIVATE);
 		}
 	}
 
 	public int likeCount(final long feedId) {
 		final Feed feed = this.feedPort.findByFeedId(feedId)
-			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId)));
+			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId), "존재하지 않는 피드입니다."));
 
 		return this.feedPort.likeCount(feed.id(), LikeStatus.ACTIVATE);
 	}

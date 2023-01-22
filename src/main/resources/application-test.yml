@@ -5,5 +5,3 @@ spring:
     username: yj
     password:
 
-file:
-  dir: "C:\\Users\\dudwl\\OneDrive\\바탕 화면\\calorie-counter\\"

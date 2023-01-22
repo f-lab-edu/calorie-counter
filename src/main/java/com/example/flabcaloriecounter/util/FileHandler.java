@@ -1,7 +1,5 @@
 package com.example.flabcaloriecounter.util;
 
-import static com.example.flabcaloriecounter.exception.GlobalExceptionHandler.FILE_STORE_FAIL_MSG;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
@@ -42,7 +40,7 @@ public class FileHandler {
 			} catch (AccessDeniedException e) {
 				throw new FileUploadException("해당 경로의 파일을 식별할수 없습니다.", e);
 			} catch (IOException e) {
-				throw new FileUploadException(FILE_STORE_FAIL_MSG, e);
+				throw new FileUploadException("파일 저장에 실패했습니다.", e);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}

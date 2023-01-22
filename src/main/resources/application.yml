@@ -2,7 +2,20 @@ spring:
   profiles:
     active: "test"
 
+  redis:
+    host: localhost
+    port: 6379
+
+jwt:
+  secret-key: +ePALofjF/LvGGYXmSMCvEl9R9c42nvhCS97/MILll0=
+  #  6시간
+  access-token-expired-ms: 21600000
+
 # mybatis
 mybatis:
   mapper-locations: classpath:/mapper/*.xml
   type-handlers-package: com.example.flabcaloriecounter.util
+
+file:
+  dir: "C:\\Users\\dudwl\\OneDrive\\바탕 화면\\calorie-counter\\"
+

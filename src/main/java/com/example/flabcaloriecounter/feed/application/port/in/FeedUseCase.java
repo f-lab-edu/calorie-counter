@@ -13,7 +13,7 @@ import com.example.flabcaloriecounter.feed.domain.Feed;
 
 public interface FeedUseCase {
 
-	void write(final FeedRequestDto feedRequestDto, final long userId);
+	void write(final FeedRequestDto feedRequestDto, final String userId);
 
 	Optional<Feed> findByFeedId(final long feedId);
 

@@ -31,4 +31,10 @@
         FROM user_table
         WHERE USER_ID = #{userId}
     </select>
+
+    <select id="getPassword" resultType="String">
+        select USER_PASSWORD
+        from USER_TABLE
+        where USER_ID = #{userId}
+    </select>
 </mapper>

@@ -12,4 +12,6 @@ public interface UserRepository {
 	boolean hasDuplicatedId(final String userId);
 
 	Optional<User> findByUserId(final String userId);
+
+	String getPassword(final String userId);
 }

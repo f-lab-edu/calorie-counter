@@ -41,4 +41,9 @@ public class UserMybatisRepository implements UserRepository {
 	public Optional<User> findByUserId(final String userId) {
 		return this.userMapper.findByUserId(userId);
 	}
+
+	@Override
+	public String getPassword(final String userId) {
+		return this.userMapper.getPassword(userId);
+	}
 }

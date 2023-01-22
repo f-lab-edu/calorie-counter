@@ -1,14 +1,13 @@
 package com.example.flabcaloriecounter.exception;
 
-public class HasDuplicatedIdException extends RuntimeException {
+public class PasswordNotMatchException extends RuntimeException {
 	private final String message;
 
-	public HasDuplicatedIdException(final String format, final String message) {
-		super(format);
+	public PasswordNotMatchException(final String message) {
+		super(message);
 		this.message = message;
 	}
 
-	@Override
 	public String getMessage() {
 		return this.message;
 	}
