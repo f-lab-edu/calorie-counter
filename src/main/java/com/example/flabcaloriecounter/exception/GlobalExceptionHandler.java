@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.example.flabcaloriecounter.user.application.port.in.response.ResponseTokenDto;
+import com.example.flabcaloriecounter.user.application.port.in.dto.ResponseTokenAuthFail;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -67,16 +67,17 @@ public class GlobalExceptionHandler {
 		return new ResponseDto("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-	@ResponseStatus(HttpStatus.UNAUTHORIZED)
-	@ExceptionHandler(UnauthorizedTokenException.class)
-	public ResponseDto unAuthorizedHandler(UnauthorizedTokenException tokenException) {
-		return new ResponseDto(tokenException.getMessage(), HttpStatus.UNAUTHORIZED);
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(InvalidTokenRequestException.class)
+	public ResponseTokenAuthFail unAuthorizedHandler(InvalidTokenRequestException tokenException) {
+		return new ResponseTokenAuthFail(tokenException.getError(), tokenException.getMessage(),
+			HttpStatus.BAD_REQUEST);
 	}
 
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
-	@ExceptionHandler(ReIssuedTokenException.class)
-	public ResponseTokenDto unAuthorizedHandler(ReIssuedTokenException tokenException) {
-		return new ResponseTokenDto(tokenException.getMessage(), tokenException.getResponseToken().accessToken(),
-			tokenException.getResponseToken().refreshToken(), HttpStatus.UNAUTHORIZED);
+	@ExceptionHandler(InvalidTokenException.class)
+	public ResponseTokenAuthFail unAuthorizedHandler2(InvalidTokenException tokenException) {
+		return new ResponseTokenAuthFail(tokenException.getError(), tokenException.getMessage(),
+			HttpStatus.UNAUTHORIZED);
 	}
 }

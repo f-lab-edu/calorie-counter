@@ -1,7 +1,8 @@
 package com.example.flabcaloriecounter.user.application.port.in.dto;
 
-public record ResponseToken(
+public record ResponseIssuedToken(
 	String accessToken,
-	String refreshToken
+	String tokenType,
+	long expiresIn
 ) {
 }

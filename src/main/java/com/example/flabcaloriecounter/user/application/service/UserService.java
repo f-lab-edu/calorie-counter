@@ -10,13 +10,13 @@ import com.example.flabcaloriecounter.exception.PasswordNotMatchException;
 import com.example.flabcaloriecounter.exception.UserNotFoundException;
 import com.example.flabcaloriecounter.user.application.port.in.UserUseCase;
 import com.example.flabcaloriecounter.user.application.port.in.dto.LoginForm;
-import com.example.flabcaloriecounter.user.application.port.in.dto.ResponseToken;
+import com.example.flabcaloriecounter.user.application.port.in.dto.ResponseIssuedToken;
 import com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm;
 import com.example.flabcaloriecounter.user.application.port.out.LoginPort;
 import com.example.flabcaloriecounter.user.application.port.out.SignUpPort;
 import com.example.flabcaloriecounter.user.domain.User;
-import com.example.flabcaloriecounter.util.JwtTokenService;
 import com.example.flabcaloriecounter.util.PasswordEncrypt;
+import com.example.flabcaloriecounter.util.TokenService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ public class UserService implements UserUseCase {
 
 	private final SignUpPort signUpPort;
 	private final LoginPort loginPort;
-	private final JwtTokenService jwtTokenService;
+	private final TokenService tokenService;
 	private final UserCacheService userCacheService;
 
 	@Override
@@ -44,17 +44,17 @@ public class UserService implements UserUseCase {
 
 	@Override
 	@Transactional
-	public ResponseToken login(final LoginForm loginForm) {
+	public ResponseIssuedToken login(final LoginForm loginForm) {
 		final User user = this.findByUserId(loginForm.userId())
 			.orElseThrow(() -> new UserNotFoundException(String.format("userId %s not exist", loginForm.userId())));
 
 		if (!PasswordEncrypt.isMatch(loginForm.userPassword(), this.loginPort.getPassword(loginForm.userId()))) {
 			throw new PasswordNotMatchException("비밀번호가 일치하지 않습니다.");
 		}
-		
+
 		//todo 로그인 5회 실패시 lock, Response
 		this.userCacheService.setUser(user);
-		return this.jwtTokenService.generate(loginForm.userId());
+		return this.tokenService.issue(loginForm.userId());
 	}
 
 	@Override

@@ -1,14 +1,14 @@
 package com.example.flabcaloriecounter.exception;
 
-import com.example.flabcaloriecounter.user.application.port.in.dto.ResponseToken;
+import com.example.flabcaloriecounter.user.application.port.in.dto.ResponseIssuedToken;
 
 public class ReIssuedTokenException extends RuntimeException {
-	private final ResponseToken responseToken;
+	private final ResponseIssuedToken responseIssuedToken;
 	private final String message;
 
-	public ReIssuedTokenException(String message, ResponseToken responseToken) {
+	public ReIssuedTokenException(String message, ResponseIssuedToken responseIssuedToken) {
 		this.message = message;
-		this.responseToken = responseToken;
+		this.responseIssuedToken = responseIssuedToken;
 	}
 
 	@Override
@@ -16,7 +16,7 @@ public class ReIssuedTokenException extends RuntimeException {
 		return message;
 	}
 
-	public ResponseToken getResponseToken() {
-		return responseToken;
+	public ResponseIssuedToken getResponseToken() {
+		return responseIssuedToken;
 	}
 }

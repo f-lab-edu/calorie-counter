@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.flabcaloriecounter.user.application.port.in.UserUseCase;
 import com.example.flabcaloriecounter.user.application.port.in.dto.LoginForm;
-import com.example.flabcaloriecounter.user.application.port.in.dto.ResponseToken;
+import com.example.flabcaloriecounter.user.application.port.in.dto.ResponseIssuedToken;
 import com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm;
 
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public class UserController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<ResponseToken> login(@RequestBody @Valid LoginForm loginForm) {
+	public ResponseEntity<ResponseIssuedToken> login(@RequestBody @Valid LoginForm loginForm) {
 		return new ResponseEntity<>(this.userUseCase.login(loginForm), HttpStatus.OK);
 	}
 }
