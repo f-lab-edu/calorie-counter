@@ -8,10 +8,8 @@ spring:
 
 jwt:
   secret-key: +ePALofjF/LvGGYXmSMCvEl9R9c42nvhCS97/MILll0=
-  #  30분
-  access-token-expired-ms: 1800000
-  #  2주
-  refresh-token-expired-ms: 1209600000
+  #  6시간
+  access-token-expired-ms: 21600000
 
 # mybatis
 mybatis:
