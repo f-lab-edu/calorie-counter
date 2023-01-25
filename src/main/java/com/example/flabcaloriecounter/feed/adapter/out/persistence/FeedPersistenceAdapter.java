@@ -12,6 +12,7 @@ import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateFeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
 import com.example.flabcaloriecounter.feed.application.port.out.FeedPort;
+import com.example.flabcaloriecounter.feed.domain.Comment;
 import com.example.flabcaloriecounter.feed.domain.Feed;
 import com.example.flabcaloriecounter.feed.domain.Like;
 import com.example.flabcaloriecounter.feed.domain.LikeStatus;
@@ -98,5 +99,15 @@ public class FeedPersistenceAdapter implements FeedPort {
 	@Override
 	public LikeStatus findLikeStatusByUserId(final long feedId, final long mockUserId) {
 		return this.feedRepository.findLikeStatusByUserId(feedId, mockUserId);
+	}
+
+	@Override
+	public void insertComment(final long feedId, final long userId, final String contents) {
+		this.feedRepository.insertComment(feedId, userId, contents);
+	}
+
+	@Override
+	public void insertReply(final long userId, final long feedId, final long parentId, final String reply) {
+		this.feedRepository.insertReply(userId, feedId, parentId, reply);
 	}
 }

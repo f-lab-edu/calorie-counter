@@ -91,4 +91,23 @@ public class FeedController {
 		this.feedUseCase.delete(authentication.userId(), feedId);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
+
+	@PostMapping("/{feedId}/comment")
+	public ResponseEntity<CommentDto> comment(final UserAuthentication userAuthentication,
+		@PathVariable final long feedId,
+		@RequestBody final CommentDto commentDto) {
+		this.feedUseCase.comment(feedId, userAuthentication.id(), commentDto.comment());
+		return new ResponseEntity<>(commentDto, HttpStatus.CREATED);
+	}
+
+	@PostMapping("/{feedId}/{parentId}/reply")
+	public ResponseEntity<CommentDto> reply(final UserAuthentication userAuthentication,
+		@PathVariable final long feedId,
+		@PathVariable final long parentId,
+		@RequestBody final CommentDto commentDto) {
+		this.feedUseCase.reply(userAuthentication.id(), feedId, parentId, commentDto.comment());
+		return new ResponseEntity<>(commentDto, HttpStatus.CREATED);
+	}
+
+	//todo 수정, 삭제
 }

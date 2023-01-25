@@ -101,4 +101,14 @@ public class FeedMybatisRepository implements FeedRepository {
 	public LikeStatus findLikeStatusByUserId(final long feedId, final long mockUserId) {
 		return this.feedMapper.findLikeStatusByUserId(feedId, mockUserId);
 	}
+
+	@Override
+	public void insertComment(final long feedId, final long userId, final String contents) {
+		this.feedMapper.insertComment(feedId, userId, contents);
+	}
+
+	@Override
+	public void insertReply(final long userId, final long feedId, final long parentId, final String reply) {
+		this.feedMapper.insertReply(userId, feedId, parentId, reply);
+	}
 }

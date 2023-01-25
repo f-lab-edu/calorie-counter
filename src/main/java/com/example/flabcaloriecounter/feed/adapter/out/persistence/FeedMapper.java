@@ -51,4 +51,10 @@ public interface FeedMapper {
 		@Param("likeStatus") final LikeStatus likeStatus);
 
 	LikeStatus findLikeStatusByUserId(@Param("feedId") final long feedId, @Param("mockUserId") final long mockUserId);
+
+	void insertComment(@Param("feedId") final long feedId, @Param("userId") final long userId,
+		@Param("contents") final String contents);
+
+	void insertReply(@Param("userId") final long userId, @Param("feedId") final long feedId,
+		@Param("parentId") final long parentId, @Param("reply") final String reply);
 }

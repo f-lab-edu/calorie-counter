@@ -17,7 +17,7 @@ public interface FeedUseCase {
 
 	Optional<Feed> findByFeedId(final long feedId);
 
-	void update(final String contents, final List<MultipartFile> photos, final String mockUserId, final long feedId);
+	void update(final String contents, final List<MultipartFile> photos, final String userId, final long feedId);
 
 	void delete(final String userId, final long feedId);
 
@@ -28,4 +28,8 @@ public interface FeedUseCase {
 	List<GetFeedListDto> feedListWithPhoto(final List<FeedListDto> feedList, final long mockUserId);
 
 	void like(final long feedId, final String userId);
+
+	void comment(final long feedId, final long userId, final String contents);
+
+	void reply(final long userId, final long feedId, final long parentId, final String reply);
 }

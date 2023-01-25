@@ -139,6 +139,27 @@ public class FeedService implements FeedUseCase {
 		}
 	}
 
+	@Override
+	@Transactional
+	public void comment(final long feedId, final long userId, final String contents) {
+		this.feedPort.findByFeedId(feedId)
+			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId), "존재하지 않는 피드입니다."));
+		this.feedPort.insertComment(feedId, userId, contents);
+	}
+
+	@Override
+	@Transactional
+	public void reply(final long userId, final long feedId, final long parentId, final String reply) {
+		this.feedPort.findByFeedId(feedId)
+			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId), "존재하지 않는 피드입니다."));
+
+		this.feedPort.findCommentById(parentId)
+			.orElseThrow(
+				() -> new CommentNotFoundException(String.format("%s not exist", parentId), "부모댓글이 존재하지 않습니다."));
+
+		this.feedPort.insertReply(userId, feedId, parentId, reply);
+	}
+
 	public int likeCount(final long feedId) {
 		final Feed feed = this.feedPort.findByFeedId(feedId)
 			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId), "존재하지 않는 피드입니다."));

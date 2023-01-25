@@ -113,6 +113,30 @@
           and FEED_ID = #{feedId}
     </select>
 
+    <insert id="insertComment">
+        INSERT INTO COMMENT(FEED_ID, CONTENTS, USER_ID)
+        values (#{feedId}, #{contents}, #{userId})
+    </insert>
+
+    <insert id="insertReply">
+        INSERT INTO COMMENT(FEED_ID, CONTENTS, PARENT_ID, USER_ID)
+        values (#{feedId}, #{reply}, #{parentId}, #{userId})
+    </insert>
+
+    <select id="findCommentById" parameterType="long"
+            resultType="com.example.flabcaloriecounter.feed.domain.Comment">
+        select COMMENT_ID, FEED_ID, WRITEDATE, CONTENTS, USER_ID
+        from COMMENT
+        where COMMENT_ID = #{parentId}
+    </select>
+
+    <select id="comment" resultType="com.example.flabcaloriecounter.feed.domain.Comment">
+        select COMMENT_ID, FEED_ID, WRITEDATE, CONTENTS, PARENT_ID, USER_ID
+        from COMMENT
+        where FEED_ID = #{feedId}
+        limit #{offset},#{commentPerPage}
+    </select>
+
 
     <delete id="delete" parameterType="long">
         delete
