@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.mock.web.MockMultipartFile;
 
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedRequestDto;
+import com.example.flabcaloriecounter.feed.application.port.in.response.CommentDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -15,6 +16,8 @@ public class TestFeedSource {
 	private static final String TEST_CONTENTS = "contents";
 	private static final String EMPTY_CONTENT_TYPE = "";
 	private static final ObjectMapper objectMapper = new ObjectMapper();
+
+	public static final CommentDto commentDto = new CommentDto("댓글1: 반갑습니다");
 
 	public static final MockMultipartFile mockImage1 = new MockMultipartFile(
 		"photos",

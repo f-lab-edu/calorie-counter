@@ -109,7 +109,7 @@ class UserControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(rightLoginForm)))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.length()", is(2)))
+			.andExpect(jsonPath("$.length()", is(3)))
 			.andDo(print());
 	}
 

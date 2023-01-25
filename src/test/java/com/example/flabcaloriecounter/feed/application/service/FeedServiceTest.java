@@ -252,25 +252,27 @@ class FeedServiceTest {
 
 		//then
 		assertThat(feedList.size()).isEqualTo(3);
-		assertThat(this.feedService.feedListWithPhoto(feedList, 1).size()).isEqualTo(3);
-		assertThat(this.feedService.feedListWithPhoto(feedList, 1).get(0)).isEqualTo(new GetFeedListDto(
+		assertThat(this.feedService.feedListWithPhoto(feedList, 1, 1, 30).size()).isEqualTo(3);
+		assertThat(this.feedService.feedListWithPhoto(feedList, 1, 1, 30).get(0)).isEqualTo(new GetFeedListDto(
 			feedList.get(0).feedId(),
 			feedList.get(0).contents(),
 			feedList.get(0).writeDate(),
 			feedList.get(0).userId(),
 			this.feedPort.photos(feedList.get(0).feedId()),
 			this.feedService.likeCount(feedList.get(0).feedId()),
-			this.feedPort.findLikeStatusByUserId(feedList.get(0).feedId(), 1)
+			this.feedPort.findLikeStatusByUserId(feedList.get(0).feedId(), 1),
+			this.feedPort.comment(feedList.get(0).feedId(), 0, 30)
 		));
 
-		assertThat(this.feedService.feedListWithPhoto(feedList, 1).get(2)).isEqualTo(new GetFeedListDto(
+		assertThat(this.feedService.feedListWithPhoto(feedList, 1, 1, 30).get(2)).isEqualTo(new GetFeedListDto(
 			feedList.get(2).feedId(),
 			feedList.get(2).contents(),
 			feedList.get(2).writeDate(),
 			feedList.get(2).userId(),
 			this.feedPort.photos(feedList.get(2).feedId()),
 			this.feedService.likeCount(feedList.get(2).feedId()),
-			this.feedPort.findLikeStatusByUserId(feedList.get(2).feedId(), 1)
+			this.feedPort.findLikeStatusByUserId(feedList.get(2).feedId(), 1),
+			this.feedPort.comment(feedList.get(0).feedId(), 0, 30)
 		));
 	}
 
