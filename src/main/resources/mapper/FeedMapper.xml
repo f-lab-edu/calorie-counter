@@ -59,19 +59,16 @@
     <select id="photos" resultType="com.example.flabcaloriecounter.feed.domain.Photo">
         select photo_id, photo_name, upload_date, photo_path, feed_id
         from photo p
-        where p.feed_id In
-              (select f.feed_id
-               from feed f
-               where f.feed_id = #{feedId});
+        where p.feed_id = #{feedId};
     </select>
 
     <update id="updateImage">
-        <foreach collection="updateImageInfos" item="file" separator=";">
-            UPDATE PHOTO
-            set PHOTO_NAME = #{file.updateImageName},
-            PHOTO_PATH = #{file.updateImagePath}
-            where FEED_ID = #{feedId}
+        UPDATE PHOTO
+        set
+        <foreach collection="updateImageInfos" item="file" separator=",">
+            PHOTO_NAME = #{file.updateImageName} , PHOTO_PATH = #{file.updateImagePath}
         </foreach>
+        where FEED_ID = #{feedId};
     </update>
 
     <update id="update">
@@ -141,10 +138,6 @@
     <delete id="delete" parameterType="long">
         delete
         from FEED
-        where FEED_ID = #{feedId};
-
-        delete
-        from PHOTO
         where FEED_ID = #{feedId};
     </delete>
 </mapper>
