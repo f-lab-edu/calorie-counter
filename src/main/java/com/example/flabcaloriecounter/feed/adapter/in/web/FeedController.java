@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -22,6 +23,7 @@ import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedRequestDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.GetFeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
+import com.example.flabcaloriecounter.feed.application.port.in.response.CommentDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,7 +39,7 @@ public class FeedController {
 		@RequestPart(value = "photos", required = false) final List<MultipartFile> photos,
 		@RequestPart(value = "contents", required = false) final String contents) {
 
-		if (("".equals(contents)) && (photos == null || photos.stream()
+		if ((contents == null || "".equals(contents)) && (photos == null || photos.stream()
 			.anyMatch(MultipartFile::isEmpty))) {
 			throw new EmptyFeedException("피드 내용이 비어있습니다");
 		}
@@ -52,7 +54,7 @@ public class FeedController {
 		@RequestPart(value = "contents", required = false) final String contents,
 		@PathVariable final long feedId) {
 
-		if (("".equals(contents)) && (photos == null || photos.stream()
+		if ((contents == null || "".equals(contents)) && (photos == null || photos.stream()
 			.anyMatch(MultipartFile::isEmpty))) {
 			throw new EmptyFeedException("피드 내용이 비어있습니다");
 		}
@@ -64,20 +66,24 @@ public class FeedController {
 	@GetMapping
 	public ResponseEntity<List<GetFeedListDto>> feedList(final UserAuthentication authentication,
 		@RequestParam final long cursorNo,
-		@RequestParam(required = false, defaultValue = "5") final int displayPerPage) {
+		@RequestParam(required = false, defaultValue = "5") final int displayPerPage,
+		@RequestParam(required = false, defaultValue = "1") final int commentPageNum,
+		@RequestParam(required = false, defaultValue = "30") final int commentPerPage) {
 
 		if (cursorNo <= 0) {
 			final List<FeedListDto> feedList = this.feedUseCase.getFeedList(
 				new Paging(this.feedUseCase.maxCursor(), displayPerPage));
 
-			return new ResponseEntity<>(this.feedUseCase.feedListWithPhoto(feedList, authentication.id()),
+			return new ResponseEntity<>(this.feedUseCase.feedListWithPhoto(feedList, authentication.id(),
+				commentPageNum, commentPerPage),
 				HttpStatus.OK);
 		}
 
 		final List<FeedListDto> feedList = this.feedUseCase.getFeedList(
 			new Paging(cursorNo, displayPerPage));
 
-		return new ResponseEntity<>(this.feedUseCase.feedListWithPhoto(feedList, authentication.id()), HttpStatus.OK);
+		return new ResponseEntity<>(this.feedUseCase.feedListWithPhoto(feedList, authentication.id(),
+			commentPageNum, commentPerPage), HttpStatus.OK);
 	}
 
 	@PostMapping("/{feedId}/like")

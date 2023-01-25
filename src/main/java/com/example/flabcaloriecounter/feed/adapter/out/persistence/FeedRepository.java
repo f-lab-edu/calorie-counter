@@ -50,4 +50,8 @@ public interface FeedRepository {
 	void insertComment(final long feedId, final long userId, final String contents);
 
 	void insertReply(final long userId, final long feedId, final long parentId, final String reply);
+
+	Optional<Comment> findCommentById(final long parentId);
+
+	List<Comment> comment(final long feedId, final int offset, final int commentPerPage);
 }

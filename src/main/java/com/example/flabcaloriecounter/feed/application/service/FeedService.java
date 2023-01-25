@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.flabcaloriecounter.exception.CommentNotFoundException;
 import com.example.flabcaloriecounter.exception.FeedNotFoundException;
 import com.example.flabcaloriecounter.exception.InvalidUserException;
 import com.example.flabcaloriecounter.exception.UserNotFoundException;
@@ -105,7 +106,8 @@ public class FeedService implements FeedUseCase {
 	}
 
 	@Override
-	public List<GetFeedListDto> feedListWithPhoto(final List<FeedListDto> feedList, final long mockUserId) {
+	public List<GetFeedListDto> feedListWithPhoto(final List<FeedListDto> feedList, final long userId,
+		final int commentPageNum, final int commentPerPage) {
 		return feedList.stream()
 			.map(
 				feedListDto -> new GetFeedListDto(
@@ -115,7 +117,9 @@ public class FeedService implements FeedUseCase {
 					feedListDto.userId(),
 					this.feedPort.photos(feedListDto.feedId()),
 					likeCount(feedListDto.feedId()),
-					this.feedPort.findLikeStatusByUserId(feedListDto.feedId(), mockUserId)))
+					this.feedPort.findLikeStatusByUserId(feedListDto.feedId(), userId),
+					this.feedPort.comment(feedListDto.feedId(), (commentPageNum - 1) * commentPerPage, commentPerPage)
+				))
 			.toList();
 	}
 

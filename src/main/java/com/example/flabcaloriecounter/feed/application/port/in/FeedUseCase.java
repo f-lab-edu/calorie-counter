@@ -25,7 +25,8 @@ public interface FeedUseCase {
 
 	long maxCursor();
 
-	List<GetFeedListDto> feedListWithPhoto(final List<FeedListDto> feedList, final long mockUserId);
+	List<GetFeedListDto> feedListWithPhoto(final List<FeedListDto> feedList, final long userId,
+		final int commentPageNum, final int commentPerPage);
 
 	void like(final long feedId, final String userId);
 

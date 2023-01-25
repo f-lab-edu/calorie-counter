@@ -110,4 +110,15 @@ public class FeedPersistenceAdapter implements FeedPort {
 	public void insertReply(final long userId, final long feedId, final long parentId, final String reply) {
 		this.feedRepository.insertReply(userId, feedId, parentId, reply);
 	}
+
+	@Override
+	public Optional<Comment> findCommentById(final long parentId) {
+		return this.feedRepository.findCommentById(parentId);
+	}
+
+	@Override
+	public List<Comment> comment(final long feedId, final int offset, final int commentPerPage) {
+		return this.feedRepository.comment(feedId, offset, commentPerPage);
+	}
+
 }

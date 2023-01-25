@@ -11,6 +11,7 @@ import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDt
 import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateFeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
+import com.example.flabcaloriecounter.feed.domain.Comment;
 import com.example.flabcaloriecounter.feed.domain.Feed;
 import com.example.flabcaloriecounter.feed.domain.Like;
 import com.example.flabcaloriecounter.feed.domain.LikeStatus;
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class FeedMybatisRepository implements FeedRepository {
 
 	private final FeedMapper feedMapper;
+	private final PhotoMapper photoMapper;
 
 	@Override
 	public long write(final String contents, final long userId) {
@@ -55,6 +57,7 @@ public class FeedMybatisRepository implements FeedRepository {
 	@Override
 	public void delete(final long feedId) {
 		this.feedMapper.delete(feedId);
+		this.photoMapper.delete(feedId);
 	}
 
 	@Override
@@ -111,4 +114,15 @@ public class FeedMybatisRepository implements FeedRepository {
 	public void insertReply(final long userId, final long feedId, final long parentId, final String reply) {
 		this.feedMapper.insertReply(userId, feedId, parentId, reply);
 	}
+
+	@Override
+	public Optional<Comment> findCommentById(final long parentId) {
+		return this.feedMapper.findCommentById(parentId);
+	}
+
+	@Override
+	public List<Comment> comment(final long feedId, final int offset, final int commentPerPage) {
+		return this.feedMapper.comment(feedId, offset, commentPerPage);
+	}
+
 }

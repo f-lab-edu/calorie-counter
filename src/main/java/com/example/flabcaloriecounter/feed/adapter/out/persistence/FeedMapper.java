@@ -11,6 +11,7 @@ import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
+import com.example.flabcaloriecounter.feed.domain.Comment;
 import com.example.flabcaloriecounter.feed.domain.Feed;
 import com.example.flabcaloriecounter.feed.domain.Like;
 import com.example.flabcaloriecounter.feed.domain.LikeStatus;
@@ -57,4 +58,9 @@ public interface FeedMapper {
 
 	void insertReply(@Param("userId") final long userId, @Param("feedId") final long feedId,
 		@Param("parentId") final long parentId, @Param("reply") final String reply);
+
+	Optional<Comment> findCommentById(@Param("parentId") final long parentId);
+
+	List<Comment> comment(@Param("feedId") final long feedId, @Param("offset") final int offset,
+		@Param("commentPerPage") final int commentPerPage);
 }
