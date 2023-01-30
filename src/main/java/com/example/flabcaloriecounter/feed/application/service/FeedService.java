@@ -19,7 +19,9 @@ import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDt
 import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateFeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
+import com.example.flabcaloriecounter.feed.application.port.in.response.CommentDto;
 import com.example.flabcaloriecounter.feed.application.port.out.FeedPort;
+import com.example.flabcaloriecounter.feed.domain.Comment;
 import com.example.flabcaloriecounter.feed.domain.Feed;
 import com.example.flabcaloriecounter.feed.domain.Like;
 import com.example.flabcaloriecounter.feed.domain.LikeStatus;
@@ -118,7 +120,9 @@ public class FeedService implements FeedUseCase {
 					this.feedPort.photos(feedListDto.feedId()),
 					likeCount(feedListDto.feedId()),
 					this.feedPort.findLikeStatusByUserId(feedListDto.feedId(), userId),
-					this.feedPort.comment(feedListDto.feedId(), (commentPageNum - 1) * commentPerPage, commentPerPage)
+					CommentDto.createSequence(
+						this.feedPort.comment(feedListDto.feedId(), (commentPageNum - 1) * commentPerPage,
+							commentPerPage), 0)
 				))
 			.toList();
 	}
@@ -148,20 +152,23 @@ public class FeedService implements FeedUseCase {
 	public void comment(final long feedId, final long userId, final String contents) {
 		this.feedPort.findByFeedId(feedId)
 			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId), "존재하지 않는 피드입니다."));
-		this.feedPort.insertComment(feedId, userId, contents);
+
+		// 부모댓글의 group번호는 해당피드에 존재하는 부모댓글의 개수 +1로 설정
+		this.feedPort.insertComment(feedId, userId, contents, this.feedPort.countParent(feedId) + 1);
 	}
 
 	@Override
 	@Transactional
-	public void reply(final long userId, final long feedId, final long parentId, final String reply) {
+	public void reply(final long feedId, final long userId, final String contents, final Long parentId) {
 		this.feedPort.findByFeedId(feedId)
 			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId), "존재하지 않는 피드입니다."));
 
-		this.feedPort.findCommentById(parentId)
+		final Comment comment = this.feedPort.findCommentById(parentId)
 			.orElseThrow(
 				() -> new CommentNotFoundException(String.format("%s not exist", parentId), "부모댓글이 존재하지 않습니다."));
 
-		this.feedPort.insertReply(userId, feedId, parentId, reply);
+		// 부모가있는 댓글들은 부모댓글의 depth+1의 깊이로 설정, 부모댓글의 groupNum으로 묶인다.
+		this.feedPort.insertReply(feedId, userId, contents, parentId, comment.depth() + 1, comment.groupNumber());
 	}
 
 	public int likeCount(final long feedId) {

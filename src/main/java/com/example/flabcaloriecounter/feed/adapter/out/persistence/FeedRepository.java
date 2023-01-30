@@ -47,11 +47,15 @@ public interface FeedRepository {
 
 	LikeStatus findLikeStatusByUserId(final long feedId, final long mockUserId);
 
-	void insertComment(final long feedId, final long userId, final String contents);
+	void insertComment(final long feedId, final long userId, final String contents, final int group);
 
-	void insertReply(final long userId, final long feedId, final long parentId, final String reply);
+	void insertReply(final long feedId, final long userId, final String contents, final Long parentId,
+		final int depth, final int groupNumber);
 
-	Optional<Comment> findCommentById(final long parentId);
+	Optional<Comment> findCommentById(final Long parentId);
 
 	List<Comment> comment(final long feedId, final int offset, final int commentPerPage);
+
+	int countParent(final long feedId);
+
 }

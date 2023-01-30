@@ -106,17 +106,18 @@ public class FeedMybatisRepository implements FeedRepository {
 	}
 
 	@Override
-	public void insertComment(final long feedId, final long userId, final String contents) {
-		this.feedMapper.insertComment(feedId, userId, contents);
+	public void insertComment(final long feedId, final long userId, final String contents, final int group) {
+		this.feedMapper.insertComment(feedId, userId, contents, group);
 	}
 
 	@Override
-	public void insertReply(final long userId, final long feedId, final long parentId, final String reply) {
-		this.feedMapper.insertReply(userId, feedId, parentId, reply);
+	public void insertReply(final long feedId, final long userId, final String contents, final Long parentId,
+		final int depth, final int groupNumber) {
+		this.feedMapper.insertReply(feedId, userId, contents, parentId, depth, groupNumber);
 	}
 
 	@Override
-	public Optional<Comment> findCommentById(final long parentId) {
+	public Optional<Comment> findCommentById(final Long parentId) {
 		return this.feedMapper.findCommentById(parentId);
 	}
 
@@ -125,4 +126,8 @@ public class FeedMybatisRepository implements FeedRepository {
 		return this.feedMapper.comment(feedId, offset, commentPerPage);
 	}
 
+	@Override
+	public int countParent(final long feedId) {
+		return this.feedMapper.countParent(feedId);
+	}
 }

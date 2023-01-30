@@ -32,5 +32,5 @@ public interface FeedUseCase {
 
 	void comment(final long feedId, final long userId, final String contents);
 
-	void reply(final long userId, final long feedId, final long parentId, final String reply);
+	void reply(final long feedId, final long userId, final String contents, final Long parentId);
 }

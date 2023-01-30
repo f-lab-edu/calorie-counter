@@ -19,11 +19,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.flabcaloriecounter.config.UserAuthentication;
 import com.example.flabcaloriecounter.exception.EmptyFeedException;
 import com.example.flabcaloriecounter.feed.application.port.in.FeedUseCase;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.CommentRequestDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedRequestDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.GetFeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
-import com.example.flabcaloriecounter.feed.application.port.in.response.CommentDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -99,21 +99,17 @@ public class FeedController {
 	}
 
 	@PostMapping("/{feedId}/comment")
-	public ResponseEntity<CommentDto> comment(final UserAuthentication userAuthentication,
+	public ResponseEntity<CommentRequestDto> comment(final UserAuthentication userAuthentication,
+		@RequestParam(required = false) final Long parentId,
 		@PathVariable final long feedId,
-		@RequestBody final CommentDto commentDto) {
-		this.feedUseCase.comment(feedId, userAuthentication.id(), commentDto.comment());
+		@RequestBody final CommentRequestDto commentDto) {
+		if (parentId == null) {
+			this.feedUseCase.comment(feedId, userAuthentication.id(), commentDto.contents());
+			return new ResponseEntity<>(commentDto, HttpStatus.CREATED);
+		}
+		this.feedUseCase.reply(feedId, userAuthentication.id(), commentDto.contents(), parentId);
 		return new ResponseEntity<>(commentDto, HttpStatus.CREATED);
 	}
-
-	@PostMapping("/{feedId}/{parentId}/reply")
-	public ResponseEntity<CommentDto> reply(final UserAuthentication userAuthentication,
-		@PathVariable final long feedId,
-		@PathVariable final long parentId,
-		@RequestBody final CommentDto commentDto) {
-		this.feedUseCase.reply(userAuthentication.id(), feedId, parentId, commentDto.comment());
-		return new ResponseEntity<>(commentDto, HttpStatus.CREATED);
-	}
-
+	
 	//todo 수정, 삭제
 }

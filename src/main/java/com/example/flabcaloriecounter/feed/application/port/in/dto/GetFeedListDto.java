@@ -3,7 +3,7 @@ package com.example.flabcaloriecounter.feed.application.port.in.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.example.flabcaloriecounter.feed.domain.Comment;
+import com.example.flabcaloriecounter.feed.application.port.in.response.CommentDto;
 import com.example.flabcaloriecounter.feed.domain.LikeStatus;
 import com.example.flabcaloriecounter.feed.domain.Photo;
 
@@ -15,6 +15,6 @@ public record GetFeedListDto(
 	List<Photo> photos,
 	int likeCount,
 	LikeStatus likeStatus,
-	List<Comment> comments
+	List<CommentDto> comments
 ) {
 }

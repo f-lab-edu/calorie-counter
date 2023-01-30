@@ -54,13 +54,18 @@ public interface FeedMapper {
 	LikeStatus findLikeStatusByUserId(@Param("feedId") final long feedId, @Param("mockUserId") final long mockUserId);
 
 	void insertComment(@Param("feedId") final long feedId, @Param("userId") final long userId,
-		@Param("contents") final String contents);
+		@Param("contents") final String contents, @Param("group") final int group);
 
-	void insertReply(@Param("userId") final long userId, @Param("feedId") final long feedId,
-		@Param("parentId") final long parentId, @Param("reply") final String reply);
+	void insertReply(@Param("feedId") final long feedId, @Param("userId") final long userId,
+		@Param("contents") final String contents,
+		@Param("parentId") final long parentId, @Param("depth") final int depth,
+		@Param("groupNumber") final int groupNumber);
 
-	Optional<Comment> findCommentById(@Param("parentId") final long parentId);
+	Optional<Comment> findCommentById(@Param("parentId") final Long parentId);
 
 	List<Comment> comment(@Param("feedId") final long feedId, @Param("offset") final int offset,
 		@Param("commentPerPage") final int commentPerPage);
+
+	int countParent(final long feedId);
+
 }

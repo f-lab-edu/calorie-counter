@@ -111,29 +111,50 @@
     </select>
 
     <insert id="insertComment">
-        INSERT INTO COMMENT(FEED_ID, CONTENTS, USER_ID)
-        values (#{feedId}, #{contents}, #{userId})
+        INSERT INTO COMMENT(FEED_ID, CONTENTS, USER_ID, GROUP_NUMBER)
+        values (#{feedId}, #{contents}, #{userId}, #{group})
     </insert>
+
+    <select id="countParent" parameterType="long" resultType="int">
+        select count(*)
+        from COMMENT
+        where FEED_ID = #{feedId}
+          and DEPTH = 0
+    </select>
 
     <insert id="insertReply">
-        INSERT INTO COMMENT(FEED_ID, CONTENTS, PARENT_ID, USER_ID)
-        values (#{feedId}, #{reply}, #{parentId}, #{userId})
+        INSERT INTO COMMENT(FEED_ID, USER_ID, CONTENTS, PARENT_ID, DEPTH, GROUP_NUMBER)
+        values (#{feedId}, #{userId}, #{contents}, #{parentId}, #{depth}, #{groupNumber})
     </insert>
 
-    <select id="findCommentById" parameterType="long"
+    <select id="findCommentById" parameterType="Long"
             resultType="com.example.flabcaloriecounter.feed.domain.Comment">
-        select COMMENT_ID, FEED_ID, WRITEDATE, CONTENTS, USER_ID
+        select COMMENT_ID,
+               FEED_ID,
+               WRITEDATE,
+               CONTENTS,
+               PARENT_ID,
+               DEPTH,
+               USER_ID,
+               GROUP_NUMBER
         from COMMENT
         where COMMENT_ID = #{parentId}
     </select>
 
     <select id="comment" resultType="com.example.flabcaloriecounter.feed.domain.Comment">
-        select COMMENT_ID, FEED_ID, WRITEDATE, CONTENTS, PARENT_ID, USER_ID
+        select COMMENT_ID,
+               FEED_ID,
+               WRITEDATE,
+               CONTENTS,
+               PARENT_ID,
+               DEPTH,
+               USER_ID,
+               GROUP_NUMBER
         from COMMENT
         where FEED_ID = #{feedId}
+        order by GROUP_NUMBER, DEPTH
         limit #{offset},#{commentPerPage}
     </select>
-
 
     <delete id="delete" parameterType="long">
         delete
