@@ -20,7 +20,8 @@ public class UserTypeHandler extends BaseTypeHandler<UserType> {
 
 	@Override
 	public UserType getNullableResult(ResultSet rs, String columnName) throws SQLException {
-		return UserType.findByMessage(rs.getString(columnName));
+		String getString = rs.getString(columnName);
+		return UserType.findByMessage(getString);
 	}
 
 	@Override

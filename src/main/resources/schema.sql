@@ -9,8 +9,8 @@ CREATE TABLE `user_table`
     `weight`            DOUBLE                                NULL,
     `withdrawal_reason` VARCHAR(200)                          NULL,
     `join_date`         DATETIME    default current_timestamp NOT NULL,
-    `user_status`       VARCHAR(30) default '01'              NOT NULL COMMENT '정상상태,탈퇴상태',
-    `user_type`         VARCHAR(30) default '01'              NOT NULL COMMENT '일반,제공자,관리자',
+    `user_status`       VARCHAR(30) default '01'              NOT NULL COMMENT '01:정상상태,02:탈퇴상태',
+    `user_type`         VARCHAR(30) default '01'              NOT NULL COMMENT '01:일반,02:제공자,03:관리자',
     `judge_status`      VARCHAR(30)                           NULL COMMENT '프로바이더 특성, 심사상태',
     `photo_link`        VARCHAR(255)                          NULL COMMENT '프로바이더 특성'
 );
@@ -37,12 +37,14 @@ CREATE TABLE `feed`
 drop table if exists comment;
 CREATE TABLE `comment`
 (
-    `comment_id` BIGINT auto_increment primary key  NOT NULL,
-    `feed_id`    BIGINT                             NOT NULL,
-    `contents`   VARCHAR(300)                       NOT NULL,
-    `writeDate`  DATETIME default current_timestamp NOT NULL,
-    `parent_id`  BIGINT                             NULL,
-    `user_id`    BIGINT                             NOT NULL
+    `comment_id`   BIGINT auto_increment primary key  NOT NULL,
+    `feed_id`      BIGINT                             NOT NULL,
+    `contents`     VARCHAR(300)                       NOT NULL,
+    `writeDate`    DATETIME default current_timestamp NOT NULL,
+    `parent_id`    BIGINT                             NULL,
+    `depth`        INT      default 0                 NOT NULL,
+    `user_id`      BIGINT                             NOT NULL,
+    `group_number` INT                                NOT NULL
 );
 
 drop table if exists nutrition;

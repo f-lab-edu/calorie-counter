@@ -5,35 +5,41 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public enum UserStatus {
-    WITHDRAWAL("탈퇴상태"),
-    NOT_WITHDRAWAL("정상상태");
+	WITHDRAWAL("01", "탈퇴상태"),
+	NOT_WITHDRAWAL("02", "정상상태");
 
-    private String statusMessage;
+	private String code;
+	private String statusMessage;
 
-    UserStatus(String statusMessage) {
-        this.statusMessage = statusMessage;
-    }
+	UserStatus(String code, String statusMessage) {
+		this.code = code;
+		this.statusMessage = statusMessage;
+	}
 
-    public String getStatusMessage() {
-        return this.statusMessage;
-    }
+	public String getCode() {
+		return this.code;
+	}
 
-    public boolean checkStatusMessage(String statusMessage) {
-        return this.statusMessage.equals(statusMessage);
-    }
+	public String getStatusMessage() {
+		return this.statusMessage;
+	}
 
-    public static UserStatus findByMessage(String statusMessage) {
-        return Arrays.stream(UserStatus.values())
-                .filter(getUserStatusPredicate(statusMessage))
-                .findFirst()
-                .orElseThrow(NonStatusFoundErrorSupplier());
-    }
+	public boolean checkUserCode(String code) {
+		return this.code.equals(code);
+	}
 
-    private static Supplier<IllegalArgumentException> NonStatusFoundErrorSupplier() {
-        return () -> new IllegalArgumentException("해당하는 상태가 없습니다.");
-    }
+	public static UserStatus findByMessage(String code) {
+		return Arrays.stream(UserStatus.values())
+			.filter(getUserCode(code))
+			.findFirst()
+			.orElseThrow(NonCodeFoundErrorSupplier());
+	}
 
-    private static Predicate<UserStatus> getUserStatusPredicate(String statusMessage) {
-        return userStatus -> userStatus.checkStatusMessage(statusMessage);
-    }
+	private static Supplier<IllegalArgumentException> NonCodeFoundErrorSupplier() {
+		return () -> new IllegalArgumentException("해당하는 상태가 없습니다.");
+	}
+
+	private static Predicate<UserStatus> getUserCode(String code) {
+		return userStatus -> userStatus.checkUserCode(code);
+	}
 }

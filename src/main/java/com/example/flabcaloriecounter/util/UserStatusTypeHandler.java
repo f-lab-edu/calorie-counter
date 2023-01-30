@@ -15,7 +15,7 @@ public class UserStatusTypeHandler extends BaseTypeHandler<UserStatus> {
 	@Override
 	public void setNonNullParameter(PreparedStatement ps, int i, UserStatus parameter, JdbcType jdbcType)
 		throws SQLException {
-		ps.setString(i, parameter.getStatusMessage());
+		ps.setString(i, parameter.getCode());
 	}
 
 	@Override
@@ -32,6 +32,5 @@ public class UserStatusTypeHandler extends BaseTypeHandler<UserStatus> {
 	public UserStatus getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
 		return UserStatus.findByMessage(cs.getString(columnIndex));
 	}
-
 }
 

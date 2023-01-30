@@ -37,12 +37,14 @@ CREATE TABLE `feed`
 drop table if exists comment;
 CREATE TABLE `comment`
 (
-    `comment_id` BIGINT auto_increment primary key  NOT NULL,
-    `feed_id`    BIGINT                             NOT NULL,
-    `contents`   VARCHAR(300)                       NOT NULL,
-    `writeDate`  DATETIME default current_timestamp NOT NULL,
-    `parent_id`  BIGINT                             NULL,
-    `user_id`    BIGINT                             NOT NULL
+    `comment_id`   BIGINT auto_increment primary key  NOT NULL,
+    `feed_id`      BIGINT                             NOT NULL,
+    `contents`     VARCHAR(300)                       NOT NULL,
+    `writeDate`    DATETIME default current_timestamp NOT NULL,
+    `parent_id`    BIGINT                             NULL,
+    `depth`        INT      default 0                 NOT NULL,
+    `user_id`      BIGINT                             NOT NULL,
+    `group_number` INT                                NOT NULL
 );
 
 drop table if exists nutrition;
