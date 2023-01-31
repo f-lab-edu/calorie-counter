@@ -25,6 +25,7 @@ public class FeedMybatisRepository implements FeedRepository {
 
 	private final FeedMapper feedMapper;
 	private final PhotoMapper photoMapper;
+	private final CommentMapper commentMapper;
 
 	@Override
 	public long write(final String contents, final long userId) {
@@ -58,6 +59,7 @@ public class FeedMybatisRepository implements FeedRepository {
 	public void delete(final long feedId) {
 		this.feedMapper.delete(feedId);
 		this.photoMapper.delete(feedId);
+		this.commentMapper.delete(feedId);
 	}
 
 	@Override
