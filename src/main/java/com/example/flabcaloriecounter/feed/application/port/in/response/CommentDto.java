@@ -43,17 +43,13 @@ public class CommentDto {
 	public static List<CommentDto> createSequence(final List<Comment> allComment, final int depth) {
 		final List<CommentDto> commentResults = new ArrayList<>();
 
-		while (true) {
-			if (allComment.isEmpty()) {
-				return commentResults;
-			}
+		while (!allComment.isEmpty()) {
+			final Comment firstComment = allComment.get(0);
 
-			final Comment comment = allComment.get(0);
-
-			if (comment.depth() == depth) {
-				commentResults.add(new CommentDto(comment));
+			if (firstComment.depth() == depth) {
+				commentResults.add(new CommentDto(firstComment));
 				allComment.remove(0);
-			} else if (comment.depth() > depth) {
+			} else if (firstComment.depth() > depth) {
 				final List<CommentDto> childList = createSequence(allComment, depth + 1);
 
 				commentResults.forEach(commentResult -> {
@@ -69,5 +65,7 @@ public class CommentDto {
 				return commentResults;
 			}
 		}
+
+		return commentResults;
 	}
 }
