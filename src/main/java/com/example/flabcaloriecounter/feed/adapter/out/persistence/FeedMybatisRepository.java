@@ -52,7 +52,9 @@ public class FeedMybatisRepository implements FeedRepository {
 
 	@Override
 	public void updateImage(final long feedId, final List<UpdateImageInfo> updateImageInfos) {
-		this.feedMapper.updateImage(feedId, updateImageInfos);
+		for (UpdateImageInfo updateImageInfo : updateImageInfos) {
+			this.feedMapper.updateImage(feedId, updateImageInfo);
+		}
 	}
 
 	@Override

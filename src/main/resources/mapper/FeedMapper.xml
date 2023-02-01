@@ -64,10 +64,8 @@
 
     <update id="updateImage">
         UPDATE PHOTO
-        set
-        <foreach collection="updateImageInfos" item="file" separator=",">
-            PHOTO_NAME = #{file.updateImageName} , PHOTO_PATH = #{file.updateImagePath}
-        </foreach>
+        set PHOTO_NAME = #{updateImageInfo.updateImageName},
+            PHOTO_PATH = #{updateImageInfo.updateImagePath}
         where FEED_ID = #{feedId};
     </update>
 

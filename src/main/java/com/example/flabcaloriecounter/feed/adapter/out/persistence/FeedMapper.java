@@ -29,7 +29,7 @@ public interface FeedMapper {
 	void insertImage(@Param("imagePathResult") final List<ImageUploadDto> imagePathResult);
 
 	void updateImage(@Param("feedId") final long feedId,
-		@Param("updateImageInfos") final List<UpdateImageInfo> updateImageInfos);
+		@Param("updateImageInfo") final UpdateImageInfo updateImageInfo);
 
 	void delete(final long feedId);
 
