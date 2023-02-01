@@ -5,9 +5,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.flabcaloriecounter.exception.HasDuplicatedIdException;
-import com.example.flabcaloriecounter.exception.PasswordNotMatchException;
-import com.example.flabcaloriecounter.exception.UserNotFoundException;
+import com.example.flabcaloriecounter.exception.CustomException;
 import com.example.flabcaloriecounter.user.application.port.in.UserUseCase;
 import com.example.flabcaloriecounter.user.application.port.in.dto.LoginForm;
 import com.example.flabcaloriecounter.user.application.port.in.dto.ResponseIssuedToken;
@@ -16,6 +14,7 @@ import com.example.flabcaloriecounter.user.application.port.out.LoginPort;
 import com.example.flabcaloriecounter.user.application.port.out.SignUpPort;
 import com.example.flabcaloriecounter.user.domain.User;
 import com.example.flabcaloriecounter.util.PasswordEncrypt;
+import com.example.flabcaloriecounter.util.StatusEnum;
 import com.example.flabcaloriecounter.util.TokenService;
 
 import lombok.RequiredArgsConstructor;
@@ -35,8 +34,8 @@ public class UserService implements UserUseCase {
 	@Transactional
 	public void signUp(final SignUpForm signUpForm) {
 		if (this.signUpPort.hasDuplicatedId(signUpForm.userId())) {
-			throw new HasDuplicatedIdException(String.format("%s has duplicated Id", signUpForm.userId()),
-				"이미 존재하는 ID 입니다");
+			throw new CustomException(StatusEnum.DUPLICATED_ID,
+				String.format("%s has duplicated Id", signUpForm.userId()));
 		}
 
 		this.signUpPort.signUp(signUpForm);
@@ -46,10 +45,11 @@ public class UserService implements UserUseCase {
 	@Transactional
 	public ResponseIssuedToken login(final LoginForm loginForm) {
 		final User user = this.findByUserId(loginForm.userId())
-			.orElseThrow(() -> new UserNotFoundException(String.format("userId %s not exist", loginForm.userId())));
+			.orElseThrow(() -> new CustomException(
+				StatusEnum.USER_NOT_FOUND, String.format("userId %s not exist", loginForm.userId())));
 
 		if (!PasswordEncrypt.isMatch(loginForm.userPassword(), this.loginPort.getPassword(loginForm.userId()))) {
-			throw new PasswordNotMatchException("비밀번호가 일치하지 않습니다.");
+			throw new CustomException(StatusEnum.PASSWORD_NOT_MATCH);
 		}
 
 		//todo 로그인 5회 실패시 lock, Response

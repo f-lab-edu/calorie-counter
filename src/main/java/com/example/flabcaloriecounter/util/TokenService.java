@@ -8,7 +8,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.example.flabcaloriecounter.exception.InvalidTokenException;
+import com.example.flabcaloriecounter.exception.CustomException;
 import com.example.flabcaloriecounter.user.application.port.in.dto.ResponseIssuedToken;
 
 import io.jsonwebtoken.Claims;
@@ -60,9 +60,9 @@ public class TokenService {
 			log.info(">>>>{}", claims);
 
 		} catch (ExpiredJwtException e) {
-			throw new InvalidTokenException("토큰이 만료되었습니다. 다시 인증해주세요", e);
+			throw new CustomException(StatusEnum.INVALID_TOKEN, e);
 		} catch (JwtException e) {
-			throw new InvalidTokenException("토큰 복호화에 실패했습니다.", e);
+			throw new CustomException(StatusEnum.FAIL_DECRYPTION, e);
 		}
 
 		return claims.getBody();

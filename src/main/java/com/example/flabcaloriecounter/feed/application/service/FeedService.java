@@ -7,10 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.flabcaloriecounter.exception.CommentNotFoundException;
-import com.example.flabcaloriecounter.exception.FeedNotFoundException;
-import com.example.flabcaloriecounter.exception.InvalidUserException;
-import com.example.flabcaloriecounter.exception.UserNotFoundException;
+import com.example.flabcaloriecounter.exception.CustomException;
 import com.example.flabcaloriecounter.feed.application.port.in.FeedUseCase;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedRequestDto;
@@ -27,6 +24,7 @@ import com.example.flabcaloriecounter.feed.domain.Like;
 import com.example.flabcaloriecounter.feed.domain.LikeStatus;
 import com.example.flabcaloriecounter.user.application.port.out.SignUpPort;
 import com.example.flabcaloriecounter.user.domain.User;
+import com.example.flabcaloriecounter.util.StatusEnum;
 
 import lombok.RequiredArgsConstructor;
 
@@ -42,7 +40,7 @@ public class FeedService implements FeedUseCase {
 	@Transactional
 	public void write(final FeedRequestDto feedRequestDto, final String userId) {
 		final User user = this.signUpPort.findByUserId(userId)
-			.orElseThrow(() -> new UserNotFoundException(String.format("userId %s not exist", userId)));
+			.orElseThrow(() -> new CustomException(StatusEnum.USER_NOT_FOUND, String.format("%s not exist", userId)));
 
 		final long feedId = this.feedPort.write(feedRequestDto.contents(), user.id());
 
@@ -61,13 +59,13 @@ public class FeedService implements FeedUseCase {
 	public void update(final String contents, final List<MultipartFile> photos, final String userId,
 		final long feedId) {
 		final User user = this.signUpPort.findByUserId(userId)
-			.orElseThrow(() -> new UserNotFoundException(String.format("%s not exist", userId)));
+			.orElseThrow(() -> new CustomException(StatusEnum.USER_NOT_FOUND, String.format("%s not exist", userId)));
 
 		final Feed feed = this.feedPort.findByFeedId(feedId)
-			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId), "존재하지 않는 피드입니다."));
+			.orElseThrow(() -> new CustomException(StatusEnum.FEED_NOT_FOUND, String.format("%s not exist", feedId)));
 
 		if (user.id() != feed.userId()) {
-			throw new InvalidUserException(String.format("%s is not match feedWriter", user.id()), "권한이 없는 유저입니다");
+			throw new CustomException(StatusEnum.INVALID_USER, String.format("%s is not match feedWriter", user.id()));
 		}
 
 		if (photos != null && photos.stream().noneMatch(MultipartFile::isEmpty)) {
@@ -85,13 +83,13 @@ public class FeedService implements FeedUseCase {
 	@Transactional
 	public void delete(final String userId, final long feedId) {
 		final User user = this.signUpPort.findByUserId(userId)
-			.orElseThrow(() -> new UserNotFoundException(String.format("%s not exist", userId)));
+			.orElseThrow(() -> new CustomException(StatusEnum.USER_NOT_FOUND, String.format("%s not exist", userId)));
 
 		final Feed feed = this.feedPort.findByFeedId(feedId)
-			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId), "존재하지 않는 피드입니다."));
+			.orElseThrow(() -> new CustomException(StatusEnum.FEED_NOT_FOUND, String.format("%s not exist", feedId)));
 
 		if (user.id() != feed.userId()) {
-			throw new InvalidUserException(String.format("%s is not match feedWriter", user.id()), "권한이 없는 유저입니다");
+			throw new CustomException(StatusEnum.INVALID_USER, String.format("%s is not match feedWriter", user.id()));
 		}
 
 		this.feedPort.delete(feedId);
@@ -131,10 +129,10 @@ public class FeedService implements FeedUseCase {
 	@Transactional
 	public void like(final long feedId, final String userId) {
 		final User user = this.signUpPort.findByUserId(userId)
-			.orElseThrow(() -> new UserNotFoundException(String.format("%s not exist", userId)));
+			.orElseThrow(() -> new CustomException(StatusEnum.USER_NOT_FOUND, String.format("%s not exist", userId)));
 
-		this.feedPort.findByFeedId(feedId)
-			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId), "존재하지 않는 피드입니다."));
+		final Feed feed = this.feedPort.findByFeedId(feedId)
+			.orElseThrow(() -> new CustomException(StatusEnum.FEED_NOT_FOUND, String.format("%s not exist", feedId)));
 
 		final Like like = this.feedPort.findByFeedAndUser(user.id(), feedId);
 
@@ -149,9 +147,9 @@ public class FeedService implements FeedUseCase {
 
 	@Override
 	@Transactional
-	public void comment(final long feedId, final long userId, final String contents) {
-		this.feedPort.findByFeedId(feedId)
-			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId), "존재하지 않는 피드입니다."));
+	public long comment(final long feedId, final long userId, final String contents) {
+		final Feed feed = this.feedPort.findByFeedId(feedId)
+			.orElseThrow(() -> new CustomException(StatusEnum.FEED_NOT_FOUND, String.format("%s not exist", feedId)));
 
 		// 부모댓글의 group번호는 해당피드에 존재하는 부모댓글의 개수 +1로 설정
 		this.feedPort.insertComment(feedId, userId, contents, this.feedPort.countParent(feedId) + 1);
@@ -159,13 +157,13 @@ public class FeedService implements FeedUseCase {
 
 	@Override
 	@Transactional
-	public void reply(final long feedId, final long userId, final String contents, final Long parentId) {
-		this.feedPort.findByFeedId(feedId)
-			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId), "존재하지 않는 피드입니다."));
+	public long reply(final long feedId, final long userId, final String contents, final Long parentId) {
+		final Feed feed = this.feedPort.findByFeedId(feedId)
+			.orElseThrow(() -> new CustomException(StatusEnum.FEED_NOT_FOUND, String.format("%s not exist", feedId)));
 
 		final Comment comment = this.feedPort.findCommentById(parentId)
 			.orElseThrow(
-				() -> new CommentNotFoundException(String.format("%s not exist", parentId), "부모댓글이 존재하지 않습니다."));
+				() -> new CustomException(StatusEnum.COMMENT_NOT_FOUND, String.format("%s not exist", parentId)));
 
 		// 부모가있는 댓글들은 부모댓글의 depth+1의 깊이로 설정, 부모댓글의 groupNum으로 묶인다.
 		this.feedPort.insertReply(feedId, userId, contents, parentId, comment.depth() + 1, comment.groupNumber());
@@ -173,7 +171,7 @@ public class FeedService implements FeedUseCase {
 
 	public int likeCount(final long feedId) {
 		final Feed feed = this.feedPort.findByFeedId(feedId)
-			.orElseThrow(() -> new FeedNotFoundException(String.format("%s not exist", feedId), "존재하지 않는 피드입니다."));
+			.orElseThrow(() -> new CustomException(StatusEnum.FEED_NOT_FOUND, String.format("%s not exist", feedId)));
 
 		return this.feedPort.likeCount(feed.id(), LikeStatus.ACTIVATE);
 	}

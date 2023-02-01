@@ -6,10 +6,10 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import com.example.flabcaloriecounter.exception.InvalidTokenException;
-import com.example.flabcaloriecounter.exception.InvalidTokenRequestException;
+import com.example.flabcaloriecounter.exception.CustomException;
 import com.example.flabcaloriecounter.user.application.service.UserService;
 import com.example.flabcaloriecounter.user.domain.User;
+import com.example.flabcaloriecounter.util.StatusEnum;
 import com.example.flabcaloriecounter.util.TokenService;
 
 import io.jsonwebtoken.Claims;
@@ -36,14 +36,14 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
 		//요청 헤더 비어있는경우
 		final String jws = webRequest.getHeader("Authorization");
 		if (jws == null || "".equals(jws)) {
-			throw new InvalidTokenRequestException("요청헤더에 토큰이 없습니다.");
+			throw new CustomException(StatusEnum.EMPTY_TOKEN);
 		}
 
 		final String[] splitHeaders = jws.split(" ");
 
 		//<Bearer> <token> 형식이 아닌경우
 		if (splitHeaders.length != 2) {
-			throw new InvalidTokenRequestException("요청헤더의 형식이 잘못되었습니다.");
+			throw new CustomException(StatusEnum.INVALID_TOKEN_FORM);
 		}
 
 		//토큰 까봐서 만료,조작여부 확인
@@ -51,7 +51,7 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
 
 		//토큰에심은 UserId값이 유효한지 확인
 		final User user = this.userService.findByUserId(accessClaim.get(TOKEN_CLAIM).toString())
-			.orElseThrow(() -> new InvalidTokenException("token의 userId가 유효하지않습니다."));
+			.orElseThrow(() -> new CustomException(StatusEnum.INVALID_TOKEN_CONTENTS));
 
 		return new UserAuthentication(user.id(), user.userId());
 	}
