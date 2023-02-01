@@ -30,7 +30,7 @@ public interface FeedUseCase {
 
 	void like(final long feedId, final String userId);
 
-	void comment(final long feedId, final long userId, final String contents);
+	long comment(final long feedId, final long userId, final String contents);
 
-	void reply(final long feedId, final long userId, final String contents, final Long parentId);
+	long reply(final long feedId, final long userId, final String contents, final Long parentId);
 }

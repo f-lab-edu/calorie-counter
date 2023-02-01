@@ -113,6 +113,9 @@
     <insert id="insertComment">
         INSERT INTO COMMENT(FEED_ID, CONTENTS, USER_ID, GROUP_NUMBER)
         values (#{feedId}, #{contents}, #{userId}, #{group})
+        <selectKey resultType="long" order="AFTER">
+            select last_insert_id()
+        </selectKey>
     </insert>
 
     <select id="countParent" parameterType="long" resultType="int">
@@ -125,6 +128,9 @@
     <insert id="insertReply">
         INSERT INTO COMMENT(FEED_ID, USER_ID, CONTENTS, PARENT_ID, DEPTH, GROUP_NUMBER)
         values (#{feedId}, #{userId}, #{contents}, #{parentId}, #{depth}, #{groupNumber})
+        <selectKey resultType="long" order="AFTER">
+            select last_insert_id()
+        </selectKey>
     </insert>
 
     <select id="findCommentById" parameterType="Long"

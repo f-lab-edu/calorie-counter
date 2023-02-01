@@ -108,14 +108,14 @@ public class FeedMybatisRepository implements FeedRepository {
 	}
 
 	@Override
-	public void insertComment(final long feedId, final long userId, final String contents, final int group) {
-		this.feedMapper.insertComment(feedId, userId, contents, group);
+	public long insertComment(final long feedId, final long userId, final String contents, final int group) {
+		return this.feedMapper.insertComment(feedId, userId, contents, group);
 	}
 
 	@Override
-	public void insertReply(final long feedId, final long userId, final String contents, final Long parentId,
+	public long insertReply(final long feedId, final long userId, final String contents, final Long parentId,
 		final int depth, final int groupNumber) {
-		this.feedMapper.insertReply(feedId, userId, contents, parentId, depth, groupNumber);
+		return this.feedMapper.insertReply(feedId, userId, contents, parentId, depth, groupNumber);
 	}
 
 	@Override

@@ -152,7 +152,7 @@ public class FeedService implements FeedUseCase {
 			.orElseThrow(() -> new CustomException(StatusEnum.FEED_NOT_FOUND, String.format("%s not exist", feedId)));
 
 		// 부모댓글의 group번호는 해당피드에 존재하는 부모댓글의 개수 +1로 설정
-		this.feedPort.insertComment(feedId, userId, contents, this.feedPort.countParent(feedId) + 1);
+		return this.feedPort.insertComment(feedId, userId, contents, this.feedPort.countParent(feedId) + 1);
 	}
 
 	@Override
@@ -166,7 +166,8 @@ public class FeedService implements FeedUseCase {
 				() -> new CustomException(StatusEnum.COMMENT_NOT_FOUND, String.format("%s not exist", parentId)));
 
 		// 부모가있는 댓글들은 부모댓글의 depth+1의 깊이로 설정, 부모댓글의 groupNum으로 묶인다.
-		this.feedPort.insertReply(feedId, userId, contents, parentId, comment.depth() + 1, comment.groupNumber());
+		return this.feedPort.insertReply(feedId, userId, contents, parentId, comment.depth() + 1,
+			comment.groupNumber());
 	}
 
 	public int likeCount(final long feedId) {

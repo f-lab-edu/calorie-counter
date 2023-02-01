@@ -47,9 +47,9 @@ public interface FeedRepository {
 
 	LikeStatus findLikeStatusByUserId(final long feedId, final long mockUserId);
 
-	void insertComment(final long feedId, final long userId, final String contents, final int group);
+	long insertComment(final long feedId, final long userId, final String contents, final int group);
 
-	void insertReply(final long feedId, final long userId, final String contents, final Long parentId,
+	long insertReply(final long feedId, final long userId, final String contents, final Long parentId,
 		final int depth, final int groupNumber);
 
 	Optional<Comment> findCommentById(final Long parentId);
