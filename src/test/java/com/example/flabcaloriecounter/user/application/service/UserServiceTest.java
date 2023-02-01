@@ -4,9 +4,9 @@ import static com.example.flabcaloriecounter.user.source.TestUserSource.rightLog
 import static com.example.flabcaloriecounter.user.source.TestUserSource.rightSignUpForm;
 import static com.example.flabcaloriecounter.user.source.TestUserSource.wrongPasswordLoginForm;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,14 +18,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.flabcaloriecounter.exception.HasDuplicatedIdException;
-import com.example.flabcaloriecounter.exception.PasswordNotMatchException;
-import com.example.flabcaloriecounter.exception.UserNotFoundException;
-import com.example.flabcaloriecounter.user.application.port.in.dto.ResponseToken;
+import com.example.flabcaloriecounter.exception.CustomException;
+import com.example.flabcaloriecounter.user.application.port.in.dto.ResponseIssuedToken;
 import com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm;
 import com.example.flabcaloriecounter.user.application.port.out.SignUpPort;
 import com.example.flabcaloriecounter.user.domain.JudgeStatus;
 import com.example.flabcaloriecounter.user.domain.User;
+import com.example.flabcaloriecounter.util.StatusEnum;
 
 @SpringBootTest
 @Transactional
@@ -36,9 +35,6 @@ class UserServiceTest {
 	private UserService userService;
 
 	@Autowired
-	private RedisTokenService redisTokenService;
-
-	@Autowired
 	private UserCacheService userCacheService;
 
 	@Autowired
@@ -47,17 +43,18 @@ class UserServiceTest {
 	@BeforeEach
 	void setup() {
 		this.userCacheService.deleteAll();
-		this.redisTokenService.deleteAll();
 	}
 
 	@ParameterizedTest
 	@MethodSource("com.example.flabcaloriecounter.user.source.TestUserSource#일반사용자_1가지_정보제공자_1가지")
 	@DisplayName("중복된 아이디가 있으면 예외를 던진다")
 	void signUp_existEmail_fail(final SignUpForm signUpForm) {
+		//given
 		this.userService.signUp(signUpForm);
 
-		assertThatThrownBy(() -> this.userService.signUp(signUpForm))
-			.isInstanceOf(HasDuplicatedIdException.class);
+		CustomException customException = assertThrows(CustomException.class,
+			() -> this.userService.signUp(signUpForm));
+		assertThat(StatusEnum.DUPLICATED_ID).isEqualTo(customException.getStatusEnum());
 	}
 
 	@ParameterizedTest
@@ -103,14 +100,12 @@ class UserServiceTest {
 		this.userService.signUp(rightSignUpForm);
 
 		//when
-		ResponseToken login = this.userService.login(rightLoginForm);
+		ResponseIssuedToken login = this.userService.login(rightLoginForm);
 
 		//then
 		assertAll(
 			() -> assertDoesNotThrow(() -> login),
-			() -> assertThat(login.refreshToken()).isNotNull(),
-			() -> assertThat(login.accessToken()).isNotNull(),
-			() -> assertThat(this.redisTokenService.getRefreshToken(rightLoginForm.userId())).isNotNull()
+			() -> assertThat(login.accessToken()).isNotNull()
 		);
 	}
 
@@ -119,17 +114,14 @@ class UserServiceTest {
 	void login_success2() {
 		//given
 		this.userService.signUp(rightSignUpForm);
-		this.redisTokenService.setToken(rightLoginForm.userId(), "mockToken");
 
 		//when
-		ResponseToken login = this.userService.login(rightLoginForm);
+		ResponseIssuedToken login = this.userService.login(rightLoginForm);
 
 		//then
 		assertAll(
 			() -> assertDoesNotThrow(() -> login),
-			() -> assertThat(login.refreshToken()).isEqualTo("재발급 하지않음"),
-			() -> assertThat(login.accessToken()).isNotNull(),
-			() -> assertThat(this.redisTokenService.getRefreshToken(rightLoginForm.userId())).isNotNull()
+			() -> assertThat(login.accessToken()).isNotNull()
 		);
 	}
 
@@ -141,7 +133,7 @@ class UserServiceTest {
 		this.userService.signUp(rightSignUpForm);
 
 		//when
-		ResponseToken login = this.userService.login(rightLoginForm);
+		ResponseIssuedToken login = this.userService.login(rightLoginForm);
 
 		//then
 		assertAll(
@@ -153,9 +145,9 @@ class UserServiceTest {
 	@Test
 	@DisplayName("로그인 실패: 존재하지 않는 ID")
 	void login_fail() {
-		//when
-		assertThatThrownBy(() -> this.userService.login(rightLoginForm))
-			.isInstanceOf(UserNotFoundException.class);
+		CustomException customException = assertThrows(CustomException.class,
+			() -> this.userService.login(rightLoginForm));
+		assertThat(StatusEnum.USER_NOT_FOUND).isEqualTo(customException.getStatusEnum());
 	}
 
 	@Test
@@ -164,13 +156,16 @@ class UserServiceTest {
 		//given
 		this.userService.signUp(rightSignUpForm);
 
-		assertThatThrownBy(() -> this.userService.login(wrongPasswordLoginForm))
-			.isInstanceOf(PasswordNotMatchException.class);
+		CustomException customException = assertThrows(CustomException.class,
+			() -> this.userService.login(wrongPasswordLoginForm));
+		assertThat(StatusEnum.PASSWORD_NOT_MATCH).isEqualTo(customException.getStatusEnum());
+
 	}
 
 	@Test
 	@DisplayName("캐싱된 유저는 DB유저와 일치한다.")
 	void user_cache_success() {
+		//given
 		this.userService.signUp(rightSignUpForm);
 		this.userService.login(rightLoginForm);
 

@@ -1,5 +1,6 @@
 package com.example.flabcaloriecounter.user.source;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.mock.web.MockMultipartFile;
@@ -17,7 +18,8 @@ public class TestFeedSource {
 	private static final String EMPTY_CONTENT_TYPE = "";
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 
-	public static final CommentDto commentDto = new CommentDto("댓글1: 반갑습니다");
+	public static final CommentDto commentDto = new CommentDto(1, 1, LocalDateTime.now(), "댓글1: 반갑습니다", null, 0, null);
+	public static final CommentDto reply = new CommentDto(1, 1, LocalDateTime.now(), "대댓글1: 반갑습니다", 1L, 1, null);
 
 	public static final MockMultipartFile mockImage1 = new MockMultipartFile(
 		"photos",
