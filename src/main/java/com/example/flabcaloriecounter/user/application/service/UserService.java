@@ -33,11 +33,10 @@ public class UserService implements UserUseCase {
 	@Override
 	@Transactional
 	public void signUp(final SignUpForm signUpForm) {
-		if (this.signUpPort.hasDuplicatedId(signUpForm.userId())) {
+		if (this.signUpPort.hasDuplicatedId(signUpForm.getUserId())) {
 			throw new CustomException(StatusEnum.DUPLICATED_ID,
-				String.format("%s has duplicated Id", signUpForm.userId()));
+				String.format("%s has duplicated Id", signUpForm.getUserId()));
 		}
-
 		this.signUpPort.signUp(signUpForm);
 	}
 

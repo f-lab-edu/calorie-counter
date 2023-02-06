@@ -104,7 +104,7 @@
             resultType="com.example.flabcaloriecounter.feed.domain.LikeStatus">
         select LIKES_STATE
         from LIKES
-        where USER_ID = #{mockUserId}
+        where USER_ID = #{userId}
           and FEED_ID = #{feedId}
     </select>
 
