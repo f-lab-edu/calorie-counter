@@ -2,10 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.flabcaloriecounter.feed.adapter.out.persistence.FeedMapper">
-    <insert id="write">
+    <insert id="write" parameterType="com.example.flabcaloriecounter.feed.application.port.in.dto.FeedDto">
         INSERT INTO feed(contents, user_id)
         values (#{contents}, #{userId})
-        <selectKey resultType="long" order="AFTER">
+        <selectKey keyColumn="FEED_ID" keyProperty="id" resultType="long" order="AFTER">
             select last_insert_id()
         </selectKey>
     </insert>
@@ -108,10 +108,11 @@
           and FEED_ID = #{feedId}
     </select>
 
-    <insert id="insertComment">
+    <insert id="insertComment"
+            parameterType="com.example.flabcaloriecounter.feed.application.port.in.dto.CommentRequestDto">
         INSERT INTO COMMENT(FEED_ID, CONTENTS, USER_ID, GROUP_NUMBER)
-        values (#{feedId}, #{contents}, #{userId}, #{group})
-        <selectKey resultType="long" order="AFTER">
+        values (#{feedId}, #{commentRequestDto.contents}, #{userId}, #{group})
+        <selectKey keyColumn="COMMENT_ID" keyProperty="commentRequestDto.commentId" resultType="long" order="AFTER">
             select last_insert_id()
         </selectKey>
     </insert>
@@ -123,10 +124,12 @@
           and DEPTH = 0
     </select>
 
-    <insert id="insertReply">
+    <insert id="insertReply"
+            parameterType="com.example.flabcaloriecounter.feed.application.port.in.dto.CommentRequestDto">
         INSERT INTO COMMENT(FEED_ID, USER_ID, CONTENTS, PARENT_ID, DEPTH, GROUP_NUMBER)
-        values (#{feedId}, #{userId}, #{contents}, #{parentId}, #{depth}, #{groupNumber})
-        <selectKey resultType="long" order="AFTER">
+        values (#{feedId}, #{userId}, #{commentRequestDto.contents}, #{commentRequestDto.parentId}, #{depth},
+        #{groupNumber})
+        <selectKey keyColumn="COMMENT_ID" keyProperty="commentRequestDto.commentId" resultType="long" order="AFTER">
             select last_insert_id()
         </selectKey>
     </insert>

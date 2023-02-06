@@ -7,6 +7,8 @@ import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.example.flabcaloriecounter.feed.application.port.in.dto.CommentRequestDto;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
@@ -20,7 +22,7 @@ import com.example.flabcaloriecounter.feed.domain.Photo;
 @Mapper
 public interface FeedMapper {
 
-	long write(@Param("contents") final String contents, @Param("userId") final long userId);
+	void write(final FeedDto feedDto);
 
 	void update(@Param("feedId") final long feedId, @Param("contents") final String contents);
 
@@ -51,14 +53,13 @@ public interface FeedMapper {
 	void unLike(@Param("userId") final long userId, @Param("feedId") final long feedId,
 		@Param("likeStatus") final LikeStatus likeStatus);
 
-	LikeStatus findLikeStatusByUserId(@Param("feedId") final long feedId, @Param("mockUserId") final long mockUserId);
+	LikeStatus findLikeStatusByUserId(@Param("feedId") final long feedId, @Param("userId") final long userId);
 
 	long insertComment(@Param("feedId") final long feedId, @Param("userId") final long userId,
-		@Param("contents") final String contents, @Param("group") final int group);
+		@Param("commentRequestDto") final CommentRequestDto commentRequestDto, @Param("group") final int group);
 
 	long insertReply(@Param("feedId") final long feedId, @Param("userId") final long userId,
-		@Param("contents") final String contents,
-		@Param("parentId") final long parentId, @Param("depth") final int depth,
+		@Param("commentRequestDto") final CommentRequestDto commentRequestDto, @Param("depth") final int depth,
 		@Param("groupNumber") final int groupNumber);
 
 	Optional<Comment> findCommentById(@Param("parentId") final Long parentId);

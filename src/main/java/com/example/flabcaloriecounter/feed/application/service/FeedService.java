@@ -9,8 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.flabcaloriecounter.exception.CustomException;
 import com.example.flabcaloriecounter.feed.application.port.in.FeedUseCase;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.CommentRequestDto;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto;
-import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedRequestDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.GetFeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
@@ -22,8 +23,6 @@ import com.example.flabcaloriecounter.feed.domain.Comment;
 import com.example.flabcaloriecounter.feed.domain.Feed;
 import com.example.flabcaloriecounter.feed.domain.Like;
 import com.example.flabcaloriecounter.feed.domain.LikeStatus;
-import com.example.flabcaloriecounter.user.application.port.out.SignUpPort;
-import com.example.flabcaloriecounter.user.domain.User;
 import com.example.flabcaloriecounter.util.StatusEnum;
 
 import lombok.RequiredArgsConstructor;
@@ -34,18 +33,16 @@ public class FeedService implements FeedUseCase {
 
 	private final FeedPort feedPort;
 	private final ImageService imageService;
-	private final SignUpPort signUpPort;
 
 	@Override
 	@Transactional
-	public void write(final FeedRequestDto feedRequestDto, final String userId) {
-		final User user = this.signUpPort.findByUserId(userId)
-			.orElseThrow(() -> new CustomException(StatusEnum.USER_NOT_FOUND, String.format("%s not exist", userId)));
+	public void write(final FeedDto feedDto) {
+		this.feedPort.write(feedDto);
 
-		final long feedId = this.feedPort.write(feedRequestDto.contents(), user.id());
-
-		if (feedRequestDto.photos() != null && feedRequestDto.photos().stream().noneMatch(MultipartFile::isEmpty)) {
-			this.feedPort.insertImage(imageInfos(feedRequestDto.photos(), user.id(), feedId));
+		if (feedDto.getPhotos() != null && feedDto.getPhotos()
+			.stream()
+			.noneMatch(MultipartFile::isEmpty)) {
+			this.feedPort.insertImage(imageInfos(feedDto.getPhotos(), feedDto.getUserId(), feedDto.getId()));
 		}
 	}
 
@@ -56,20 +53,17 @@ public class FeedService implements FeedUseCase {
 
 	@Override
 	@Transactional
-	public void update(final String contents, final List<MultipartFile> photos, final String userId,
+	public void update(final String contents, final List<MultipartFile> photos, final long userId,
 		final long feedId) {
-		final User user = this.signUpPort.findByUserId(userId)
-			.orElseThrow(() -> new CustomException(StatusEnum.USER_NOT_FOUND, String.format("%s not exist", userId)));
-
 		final Feed feed = this.feedPort.findByFeedId(feedId)
 			.orElseThrow(() -> new CustomException(StatusEnum.FEED_NOT_FOUND, String.format("%s not exist", feedId)));
 
-		if (user.id() != feed.userId()) {
-			throw new CustomException(StatusEnum.INVALID_USER, String.format("%s is not match feedWriter", user.id()));
+		if (userId != feed.userId()) {
+			throw new CustomException(StatusEnum.INVALID_USER, String.format("%s is not match feedWriter", userId));
 		}
 
 		if (photos != null && photos.stream().noneMatch(MultipartFile::isEmpty)) {
-			final List<UpdateImageInfo> updateImageInfos = imageService.uploadFile(photos, user.id()).stream()
+			final List<UpdateImageInfo> updateImageInfos = imageService.uploadFile(photos, userId).stream()
 				.map(imageUploadPath -> new UpdateImageInfo(imageUploadPath.imageName(), imageUploadPath.imagePath()))
 				.toList();
 
@@ -81,15 +75,12 @@ public class FeedService implements FeedUseCase {
 
 	@Override
 	@Transactional
-	public void delete(final String userId, final long feedId) {
-		final User user = this.signUpPort.findByUserId(userId)
-			.orElseThrow(() -> new CustomException(StatusEnum.USER_NOT_FOUND, String.format("%s not exist", userId)));
-
+	public void delete(final long userId, final long feedId) {
 		final Feed feed = this.feedPort.findByFeedId(feedId)
 			.orElseThrow(() -> new CustomException(StatusEnum.FEED_NOT_FOUND, String.format("%s not exist", feedId)));
 
-		if (user.id() != feed.userId()) {
-			throw new CustomException(StatusEnum.INVALID_USER, String.format("%s is not match feedWriter", user.id()));
+		if (userId != feed.userId()) {
+			throw new CustomException(StatusEnum.INVALID_USER, String.format("%s is not match feedWriter", userId));
 		}
 
 		this.feedPort.delete(feedId);
@@ -127,47 +118,44 @@ public class FeedService implements FeedUseCase {
 
 	@Override
 	@Transactional
-	public void like(final long feedId, final String userId) {
-		final User user = this.signUpPort.findByUserId(userId)
-			.orElseThrow(() -> new CustomException(StatusEnum.USER_NOT_FOUND, String.format("%s not exist", userId)));
-
+	public void like(final long feedId, final long userId) {
 		final Feed feed = this.feedPort.findByFeedId(feedId)
 			.orElseThrow(() -> new CustomException(StatusEnum.FEED_NOT_FOUND, String.format("%s not exist", feedId)));
 
-		final Like like = this.feedPort.findByFeedAndUser(user.id(), feedId);
+		final Like like = this.feedPort.findByFeedAndUser(userId, feedId);
 
 		if (like == null) {
-			this.feedPort.like(user.id(), feedId, LikeStatus.ACTIVATE);
+			this.feedPort.like(userId, feedId, LikeStatus.ACTIVATE);
 		} else if (like.likeStatus() == LikeStatus.ACTIVATE) {
-			this.feedPort.changeStatus(user.id(), feedId, LikeStatus.NOT_ACTIVATE);
+			this.feedPort.changeStatus(userId, feedId, LikeStatus.NOT_ACTIVATE);
 		} else {
-			this.feedPort.changeStatus(user.id(), feedId, LikeStatus.ACTIVATE);
+			this.feedPort.changeStatus(userId, feedId, LikeStatus.ACTIVATE);
 		}
 	}
 
 	@Override
 	@Transactional
-	public long comment(final long feedId, final long userId, final String contents) {
+	public long comment(final long feedId, final long userId, final CommentRequestDto commentRequestDto) {
 		final Feed feed = this.feedPort.findByFeedId(feedId)
 			.orElseThrow(() -> new CustomException(StatusEnum.FEED_NOT_FOUND, String.format("%s not exist", feedId)));
 
 		// 부모댓글의 group번호는 해당피드에 존재하는 부모댓글의 개수 +1로 설정
-		return this.feedPort.insertComment(feedId, userId, contents, this.feedPort.countParent(feedId) + 1);
+		return this.feedPort.insertComment(feedId, userId, commentRequestDto, this.feedPort.countParent(feedId) + 1);
 	}
 
 	@Override
 	@Transactional
-	public long reply(final long feedId, final long userId, final String contents, final Long parentId) {
+	public long reply(final long feedId, final long userId, final CommentRequestDto commentRequestDto) {
 		final Feed feed = this.feedPort.findByFeedId(feedId)
 			.orElseThrow(() -> new CustomException(StatusEnum.FEED_NOT_FOUND, String.format("%s not exist", feedId)));
 
-		final Comment comment = this.feedPort.findCommentById(parentId)
+		final Comment comment = this.feedPort.findCommentById(commentRequestDto.getParentId())
 			.orElseThrow(
-				() -> new CustomException(StatusEnum.COMMENT_NOT_FOUND, String.format("%s not exist", parentId)));
+				() -> new CustomException(StatusEnum.COMMENT_NOT_FOUND,
+					String.format("%s not exist", commentRequestDto.getParentId())));
 
 		// 부모가있는 댓글들은 부모댓글의 depth+1의 깊이로 설정, 부모댓글의 groupNum으로 묶인다.
-		return this.feedPort.insertReply(feedId, userId, contents, parentId, comment.depth() + 1,
-			comment.groupNumber());
+		return this.feedPort.insertReply(feedId, userId, commentRequestDto, comment.depth() + 1, comment.groupNumber());
 	}
 
 	public int likeCount(final long feedId) {

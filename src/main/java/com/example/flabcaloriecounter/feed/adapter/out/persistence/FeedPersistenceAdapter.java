@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
+import com.example.flabcaloriecounter.feed.application.port.in.dto.CommentRequestDto;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
@@ -27,8 +29,8 @@ public class FeedPersistenceAdapter implements FeedPort {
 	private final FeedRepository feedRepository;
 
 	@Override
-	public long write(final String contents, final long userId) {
-		return this.feedRepository.write(contents, userId);
+	public void write(final FeedDto feedDto) {
+		this.feedRepository.write(feedDto);
 	}
 
 	@Override
@@ -97,19 +99,20 @@ public class FeedPersistenceAdapter implements FeedPort {
 	}
 
 	@Override
-	public LikeStatus findLikeStatusByUserId(final long feedId, final long mockUserId) {
-		return this.feedRepository.findLikeStatusByUserId(feedId, mockUserId);
+	public LikeStatus findLikeStatusByUserId(final long feedId, final long userId) {
+		return this.feedRepository.findLikeStatusByUserId(feedId, userId);
 	}
 
 	@Override
-	public long insertComment(final long feedId, final long userId, final String contents, final int group) {
-		return this.feedRepository.insertComment(feedId, userId, contents, group);
+	public long insertComment(final long feedId, final long userId, final CommentRequestDto commentRequestDto,
+		final int group) {
+		return this.feedRepository.insertComment(feedId, userId, commentRequestDto, group);
 	}
 
 	@Override
-	public long insertReply(final long feedId, final long userId, final String contents, final Long parentId,
+	public long insertReply(final long feedId, final long userId, final CommentRequestDto commentRequestDto,
 		final int depth, final int groupNumber) {
-		return this.feedRepository.insertReply(feedId, userId, contents, parentId, depth, groupNumber);
+		return this.feedRepository.insertReply(feedId, userId, commentRequestDto, depth, groupNumber);
 	}
 
 	@Override

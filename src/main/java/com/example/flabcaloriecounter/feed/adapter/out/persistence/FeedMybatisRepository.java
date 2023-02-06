@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
+import com.example.flabcaloriecounter.feed.application.port.in.dto.CommentRequestDto;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
@@ -28,8 +30,8 @@ public class FeedMybatisRepository implements FeedRepository {
 	private final CommentMapper commentMapper;
 
 	@Override
-	public long write(final String contents, final long userId) {
-		return this.feedMapper.write(contents, userId);
+	public void write(final FeedDto feedDto) {
+		this.feedMapper.write(feedDto);
 	}
 
 	@Override
@@ -110,14 +112,15 @@ public class FeedMybatisRepository implements FeedRepository {
 	}
 
 	@Override
-	public long insertComment(final long feedId, final long userId, final String contents, final int group) {
-		return this.feedMapper.insertComment(feedId, userId, contents, group);
+	public long insertComment(final long feedId, final long userId, final CommentRequestDto commentRequestDto,
+		final int group) {
+		return this.feedMapper.insertComment(feedId, userId, commentRequestDto, group);
 	}
 
 	@Override
-	public long insertReply(final long feedId, final long userId, final String contents, final Long parentId,
+	public long insertReply(final long feedId, final long userId, final CommentRequestDto commentRequestDto,
 		final int depth, final int groupNumber) {
-		return this.feedMapper.insertReply(feedId, userId, contents, parentId, depth, groupNumber);
+		return this.feedMapper.insertReply(feedId, userId, commentRequestDto, depth, groupNumber);
 	}
 
 	@Override

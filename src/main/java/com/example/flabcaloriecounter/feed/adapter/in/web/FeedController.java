@@ -44,7 +44,7 @@ public class FeedController {
 			throw new CustomException(StatusEnum.EMPTY_FEED);
 		}
 
-		this.feedUseCase.write(new FeedRequestDto(contents, photos), userAuthentication.userId());
+		this.feedUseCase.write(new FeedDto(contents, photos, userAuthentication.id()));
 		return CustomResponse.created();
 	}
 
@@ -97,15 +97,15 @@ public class FeedController {
 
 	@PostMapping("/{feedId}/comment")
 	public ResponseEntity<CustomResponse<CommentResponseDto>> comment(final UserAuthentication userAuthentication,
-		@RequestParam(required = false) final Long parentId,
-		@PathVariable final long feedId,
-		@RequestBody final CommentRequestDto commentDto) {
-		if (parentId == null) {
-			final long commentId = this.feedUseCase.comment(feedId, userAuthentication.id(), commentDto.contents());
-			return CustomResponse.created(new CommentResponseDto(commentId, commentDto.contents()));
+		@PathVariable final long feedId, @RequestBody final CommentRequestDto commentRequestDto) {
+		if (commentRequestDto.getParentId() == null) {
+			this.feedUseCase.comment(feedId, userAuthentication.id(), commentRequestDto);
+			return CustomResponse.created(
+				new CommentResponseDto(commentRequestDto.getCommentId(), commentRequestDto.getContents()));
 		}
-		final long commentId = this.feedUseCase.reply(feedId, userAuthentication.id(), commentDto.contents(), parentId);
-		return CustomResponse.created(new CommentResponseDto(commentId, commentDto.contents()));
+		this.feedUseCase.reply(feedId, userAuthentication.id(), commentRequestDto);
+		return CustomResponse.created(
+			new CommentResponseDto(commentRequestDto.getCommentId(), commentRequestDto.getContents()));
 	}
 
 	//todo 수정, 삭제

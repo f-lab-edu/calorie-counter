@@ -2,36 +2,58 @@ package com.example.flabcaloriecounter.user.application.port.in.response;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.springframework.format.annotation.NumberFormat;
+import lombok.Getter;
+import lombok.ToString;
 
-import com.example.flabcaloriecounter.user.domain.JudgeStatus;
-import com.example.flabcaloriecounter.user.domain.UserType;
+@Getter
+@ToString
+public class SignUpForm {
+	//mybatis 에서 주입받기위한 용도
+	private final long id;
 
-public record SignUpForm(
-	@NotBlank @Size(min = 6, max = 20) @Pattern(regexp = userIdPattern)
-	String userId,
-	@NotBlank @Size(min = 1, max = 20) @Pattern(regexp = namePattern)
-	String userName,
-	@NotBlank @Size(min = 8, max = 25) @Pattern(regexp = passwordPattern)
-	String userPassword,
-	@NotBlank @Email
-	String email,
+	@NotBlank
+	@Size(min = 6, max = 20)
+	@Pattern(regexp = "^[a-zA-Z0-9가-힣]+$")
+	private final String userId;
+	@NotBlank
+	@Size(min = 1, max = 20)
+	@Pattern(regexp = "^[가-힣|a-zA-Z]+$")
+	private final String userName;
+	@NotBlank
+	@Size(min = 8, max = 60)
+	@Pattern(regexp = "^[a-zA-Z0-9!@#$%^&*()/.,:';]+$")
+	private String userPassword;
+	@NotBlank
+	@Email
+	private final String email;
 
-	@NotNull @NumberFormat
-	Double weight,
+	public SignUpForm() {
+		this(1, "", "", "", "");
+	}
 
-	@NotNull
-	UserType userType,
+	public SignUpForm(long id, String userId, String userName, String userPassword, String email) {
+		this.id = id;
+		this.userId = userId;
+		this.userName = userName;
+		this.userPassword = userPassword;
+		this.email = email;
+	}
 
-	@NotNull
-	JudgeStatus judgeStatus
-) {
+	public SignUpForm(long id, String userId, String userName, String email) {
+		this.id = id;
+		this.userId = userId;
+		this.userName = userName;
+		this.email = email;
+	}
 
-	private static final String userIdPattern = "^[a-zA-Z0-9가-힣]+$";
-	private static final String namePattern = "^[가-힣|a-zA-Z]+$";
-	private static final String passwordPattern = "^[a-zA-Z0-9]+$";
+	public SignUpForm(String userId, String userName, String userPassword, String email) {
+		this(1, userId, userName, userPassword, email);
+	}
+
+	public void setUserPassword(String userPassword) {
+		this.userPassword = userPassword;
+	}
 }
