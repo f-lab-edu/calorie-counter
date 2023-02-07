@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 import com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm;
-import com.example.flabcaloriecounter.user.domain.JudgeStatus;
 import com.example.flabcaloriecounter.user.domain.User;
 import com.example.flabcaloriecounter.util.PasswordEncrypt;
 
@@ -19,17 +18,8 @@ public class UserMybatisRepository implements UserRepository {
 
 	@Override
 	public void signUp(final SignUpForm signUpForm) {
-		SignUpForm intermediateUserForm = new SignUpForm(
-			signUpForm.userId(),
-			signUpForm.userName(),
-			PasswordEncrypt.encrypt(signUpForm.userPassword()),
-			signUpForm.email(),
-			signUpForm.weight(),
-			signUpForm.userType(),
-			JudgeStatus.getInitialJudgeStatusByUserType(signUpForm.userType())
-		);
-
-		this.userMapper.signUp(intermediateUserForm);
+		signUpForm.setUserPassword(PasswordEncrypt.encrypt(signUpForm.getUserPassword()));
+		this.userMapper.signUp(signUpForm);
 	}
 
 	@Override

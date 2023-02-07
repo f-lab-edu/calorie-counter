@@ -6,12 +6,16 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
+import com.example.flabcaloriecounter.feed.application.port.in.dto.CommentRequestDto;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.ReplyDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateFeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
 import com.example.flabcaloriecounter.feed.application.port.out.FeedPort;
+import com.example.flabcaloriecounter.feed.domain.Comment;
 import com.example.flabcaloriecounter.feed.domain.Feed;
 import com.example.flabcaloriecounter.feed.domain.Like;
 import com.example.flabcaloriecounter.feed.domain.LikeStatus;
@@ -26,8 +30,8 @@ public class FeedPersistenceAdapter implements FeedPort {
 	private final FeedRepository feedRepository;
 
 	@Override
-	public long write(final String contents, final long userId) {
-		return this.feedRepository.write(contents, userId);
+	public void write(final FeedDto feedDto) {
+		this.feedRepository.write(feedDto);
 	}
 
 	@Override
@@ -96,7 +100,48 @@ public class FeedPersistenceAdapter implements FeedPort {
 	}
 
 	@Override
-	public LikeStatus findLikeStatusByUserId(final long feedId, final long mockUserId) {
-		return this.feedRepository.findLikeStatusByUserId(feedId, mockUserId);
+	public LikeStatus findLikeStatusByUserId(final long feedId, final long userId) {
+		return this.feedRepository.findLikeStatusByUserId(feedId, userId);
 	}
+
+	@Override
+	public void insertComment(final long feedId, final long userId, final CommentRequestDto commentRequestDto) {
+		this.feedRepository.insertComment(feedId, userId, commentRequestDto);
+	}
+
+	@Override
+	public void insertReply(final ReplyDto replyDto) {
+		this.feedRepository.insertReply(replyDto);
+	}
+
+	@Override
+	public Optional<Comment> findCommentById(final Long parentId) {
+		return this.feedRepository.findCommentById(parentId);
+	}
+
+	@Override
+	public List<Comment> comment(final long feedId, final int offset, final int commentPerPage) {
+		return this.feedRepository.comment(feedId, offset, commentPerPage);
+	}
+
+	@Override
+	public int countParent(final long feedId) {
+		return this.feedRepository.countParent(feedId);
+	}
+
+	@Override
+	public int maxDepth(final int groupNumber) {
+		return this.feedRepository.maxDepth(groupNumber);
+	}
+
+	@Override
+	public void updateRefOrder(final int parentOrderResult, final int groupNumber) {
+		this.feedRepository.updateRefOrder(parentOrderResult, groupNumber);
+	}
+
+	@Override
+	public void updateChild(final Long parentId) {
+		this.feedRepository.updateChild(parentId);
+	}
+
 }

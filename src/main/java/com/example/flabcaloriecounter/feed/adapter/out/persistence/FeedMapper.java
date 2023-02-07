@@ -7,10 +7,14 @@ import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.example.flabcaloriecounter.feed.application.port.in.dto.CommentRequestDto;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.ReplyDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
+import com.example.flabcaloriecounter.feed.domain.Comment;
 import com.example.flabcaloriecounter.feed.domain.Feed;
 import com.example.flabcaloriecounter.feed.domain.Like;
 import com.example.flabcaloriecounter.feed.domain.LikeStatus;
@@ -19,7 +23,7 @@ import com.example.flabcaloriecounter.feed.domain.Photo;
 @Mapper
 public interface FeedMapper {
 
-	long write(@Param("contents") final String contents, @Param("userId") final long userId);
+	void write(final FeedDto feedDto);
 
 	void update(@Param("feedId") final long feedId, @Param("contents") final String contents);
 
@@ -28,7 +32,7 @@ public interface FeedMapper {
 	void insertImage(@Param("imagePathResult") final List<ImageUploadDto> imagePathResult);
 
 	void updateImage(@Param("feedId") final long feedId,
-		@Param("updateImageInfos") final List<UpdateImageInfo> updateImageInfos);
+		@Param("updateImageInfo") final UpdateImageInfo updateImageInfo);
 
 	void delete(final long feedId);
 
@@ -50,5 +54,24 @@ public interface FeedMapper {
 	void unLike(@Param("userId") final long userId, @Param("feedId") final long feedId,
 		@Param("likeStatus") final LikeStatus likeStatus);
 
-	LikeStatus findLikeStatusByUserId(@Param("feedId") final long feedId, @Param("mockUserId") final long mockUserId);
+	LikeStatus findLikeStatusByUserId(@Param("feedId") final long feedId, @Param("userId") final long userId);
+
+	void insertComment(@Param("feedId") final long feedId, @Param("userId") final long userId,
+		@Param("commentRequestDto") final CommentRequestDto commentRequestDto);
+
+	void insertReply(@Param("replyDto") final ReplyDto replyDto);
+
+	Optional<Comment> findCommentById(@Param("parentId") final Long parentId);
+
+	List<Comment> comment(@Param("feedId") final long feedId, @Param("offset") final int offset,
+		@Param("commentPerPage") final int commentPerPage);
+
+	int countParent(final long feedId);
+
+	int maxDepth(final int groupNumber);
+
+	void updateRefOrder(@Param("parentOrderResult") final int parentOrderResult,
+		@Param("groupNumber") final int groupNumber);
+
+	void updateChild(final Long parentId);
 }

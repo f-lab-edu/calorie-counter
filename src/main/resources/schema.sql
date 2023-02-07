@@ -1,5 +1,4 @@
 drop table if exists user_table;
-
 CREATE TABLE `user_table`
 (
     `id`                BIGINT auto_increment primary key     not null,
@@ -10,8 +9,8 @@ CREATE TABLE `user_table`
     `weight`            DOUBLE                                NULL,
     `withdrawal_reason` VARCHAR(200)                          NULL,
     `join_date`         DATETIME    default current_timestamp NOT NULL,
-    `user_status`       VARCHAR(30) default '정상상태'            NOT NULL COMMENT '탈퇴상태, 정상상태',
-    `user_type`         VARCHAR(30) default '일반'              NOT NULL COMMENT '일반,제공자,관리자',
+    `user_status`       VARCHAR(30) default '01'              NOT NULL COMMENT '01:정상상태,02:탈퇴상태',
+    `user_type`         VARCHAR(30) default '01'              NOT NULL COMMENT '01:일반,02:제공자,03:관리자',
     `judge_status`      VARCHAR(30)                           NULL COMMENT '프로바이더 특성, 심사상태',
     `photo_link`        VARCHAR(255)                          NULL COMMENT '프로바이더 특성'
 );
@@ -38,13 +37,16 @@ CREATE TABLE `feed`
 drop table if exists comment;
 CREATE TABLE `comment`
 (
-    `comment_id`  BIGINT auto_increment primary key  NOT NULL,
-    `board_id`    BIGINT                             NOT NULL,
-    `contents`    VARCHAR(300)                       NOT NULL,
-    `depth`       INT                                NOT NULL COMMENT '댓글의 현재 깊이가 몇인지',
-    `writeDate`   DATETIME default current_timestamp NOT NULL,
-    `comment_id3` BIGINT                             NULL,
-    `user_id`     BIGINT                             NOT NULL
+    `comment_id`     BIGINT auto_increment primary key  NOT NULL,
+    `feed_id`        BIGINT                             NOT NULL,
+    `contents`       VARCHAR(300)                       NOT NULL,
+    `writeDate`      DATETIME default current_timestamp NOT NULL,
+    `parent_id`      BIGINT                             NULL,
+    `depth`          INT      default 0                 NOT NULL,
+    `user_id`        BIGINT                             NOT NULL,
+    `group_number`   INT                                NOT NULL,
+    `group_reforder` int      default 1                 NOT NULL,
+    `child_number`   int      default 0                 NOT NULL
 );
 
 drop table if exists nutrition;
@@ -122,3 +124,12 @@ CREATE TABLE `likes`
     `user_id`     BIGINT                            NOT NULL,
     `likes_state` VARCHAR(30)                       NOT NULL COMMENT '활성화, 비활성화'
 );
+
+
+insert into user_table(user_id, user_name, user_password, email, weight)
+values ('mockUser', '이영진', '$2a$10$uPM5cI9oLxVlppZLDrkxCOwnj/IJBi0kltM2gdrfVibA9m05hK3M2', 'dudwls0505@naver.com',
+        50.3);
+
+insert into user_table(user_id, user_name, user_password, email, weight)
+values ('wrongUser', '김영진', '$2a$10$uPM5cI9oLxVlppZLDrkxCOwnj/IJBi0kltM2gdrfVibA9m05hK3M2', 'dudwls0505@nate.com',
+        50.3);

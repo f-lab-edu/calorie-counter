@@ -15,7 +15,7 @@ public class UserTypeHandler extends BaseTypeHandler<UserType> {
 	@Override
 	public void setNonNullParameter(PreparedStatement ps, int i, UserType parameter, JdbcType jdbcType) throws
 		SQLException {
-		ps.setString(i, parameter.getStatusMessage());
+		ps.setString(i, parameter.getCode());
 	}
 
 	@Override

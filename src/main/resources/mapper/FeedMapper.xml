@@ -2,10 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.flabcaloriecounter.feed.adapter.out.persistence.FeedMapper">
-    <insert id="write">
+    <insert id="write" parameterType="com.example.flabcaloriecounter.feed.application.port.in.dto.FeedDto">
         INSERT INTO feed(contents, user_id)
         values (#{contents}, #{userId})
-        <selectKey resultType="long" order="AFTER">
+        <selectKey keyColumn="FEED_ID" keyProperty="id" resultType="long" order="AFTER">
             select last_insert_id()
         </selectKey>
     </insert>
@@ -43,6 +43,12 @@
         from FEED;
     </select>
 
+    <select id="maxDepth" resultType="int">
+        select Max(DEPTH)
+        from COMMENT
+        where GROUP_NUMBER = #{groupNumber}
+    </select>
+
     <select id="getFeedList" resultType="com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto">
         select f.feed_id,
                f.contents,
@@ -59,19 +65,14 @@
     <select id="photos" resultType="com.example.flabcaloriecounter.feed.domain.Photo">
         select photo_id, photo_name, upload_date, photo_path, feed_id
         from photo p
-        where p.feed_id In
-              (select f.feed_id
-               from feed f
-               where f.feed_id = #{feedId});
+        where p.feed_id = #{feedId};
     </select>
 
     <update id="updateImage">
-        <foreach collection="updateImageInfos" item="file" separator=";">
-            UPDATE PHOTO
-            set PHOTO_NAME = #{file.updateImageName},
-            PHOTO_PATH = #{file.updateImagePath}
-            where FEED_ID = #{feedId}
-        </foreach>
+        UPDATE PHOTO
+        set PHOTO_NAME = #{updateImageInfo.updateImageName},
+            PHOTO_PATH = #{updateImageInfo.updateImagePath}
+        where FEED_ID = #{feedId};
     </update>
 
     <update id="update">
@@ -79,6 +80,21 @@
         set contents = #{contents}
         where feed_id = #{feedId}
     </update>
+
+
+    <update id="updateRefOrder">
+        update COMMENT
+        set GROUP_REFORDER = GROUP_REFORDER + 1
+        where GROUP_NUMBER = #{groupNumber}
+          and GROUP_REFORDER &gt; #{parentOrderResult}
+    </update>
+
+    <update id="updateChild">
+        update COMMENT
+        set CHILD_NUMBER = CHILD_NUMBER + 1
+        where COMMENT_ID = #{parentId}
+    </update>
+
 
     <select id="findByFeedAndUser" resultType="com.example.flabcaloriecounter.feed.domain.Like">
         select likes_id, feed_id, user_id, likes_state
@@ -109,18 +125,73 @@
             resultType="com.example.flabcaloriecounter.feed.domain.LikeStatus">
         select LIKES_STATE
         from LIKES
-        where USER_ID = #{mockUserId}
+        where USER_ID = #{userId}
           and FEED_ID = #{feedId}
     </select>
 
+    <insert id="insertComment"
+            parameterType="com.example.flabcaloriecounter.feed.application.port.in.dto.CommentRequestDto">
+        INSERT INTO COMMENT(FEED_ID, CONTENTS, USER_ID, GROUP_NUMBER)
+        values (#{feedId}, #{commentRequestDto.contents}, #{userId}, #{commentRequestDto.groupNumber})
+        <selectKey keyColumn="COMMENT_ID" keyProperty="commentRequestDto.commentId" resultType="long" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <select id="countParent" parameterType="long" resultType="int">
+        select count(*)
+        from COMMENT
+        where FEED_ID = #{feedId}
+          and DEPTH = 0
+    </select>
+
+    <insert id="insertReply"
+            parameterType="com.example.flabcaloriecounter.feed.application.port.in.dto.ReplyDto">
+        INSERT INTO COMMENT(FEED_ID, USER_ID, CONTENTS, PARENT_ID, DEPTH, GROUP_NUMBER, GROUP_REFORDER)
+        values (#{replyDto.feedId}, #{replyDto.userId}, #{replyDto.contents}, #{replyDto.parentId}, #{replyDto.depth},
+        #{replyDto.groupNumber},#{replyDto.refOrder})
+        <selectKey keyColumn="COMMENT_ID" keyProperty="replyDto.commentId" resultType="long" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <select id="findCommentById" parameterType="Long"
+            resultType="com.example.flabcaloriecounter.feed.domain.Comment">
+        select COMMENT_ID,
+               FEED_ID,
+               WRITEDATE,
+               CONTENTS,
+               PARENT_ID,
+               DEPTH,
+               USER_ID,
+               GROUP_NUMBER,
+               GROUP_REFORDER,
+               CHILD_NUMBER
+        from COMMENT
+        where COMMENT_ID = #{parentId}
+    </select>
+
+    <select id="comment" resultType="com.example.flabcaloriecounter.feed.domain.Comment">
+        select c.comment_id,
+               c.feed_id,
+               c.writeDate,
+               c.contents,
+               c.parent_id,
+               c.depth,
+               c.USER_ID,
+               c.GROUP_NUMBER,
+               c.GROUP_REFORDER,
+               c.CHILD_NUMBER
+        from comment c
+                 inner join user_table u on u.id = c.user_id
+        where feed_id = #{feedId}
+        order by c.group_number, c.GROUP_REFORDER
+        limit #{offset},#{commentPerPage};
+    </select>
 
     <delete id="delete" parameterType="long">
         delete
         from FEED
-        where FEED_ID = #{feedId};
-
-        delete
-        from PHOTO
         where FEED_ID = #{feedId};
     </delete>
 </mapper>

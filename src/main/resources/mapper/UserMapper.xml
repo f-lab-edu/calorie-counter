@@ -5,10 +5,11 @@
 <mapper namespace="com.example.flabcaloriecounter.user.adapter.out.persistence.UserMapper">
     <insert id="signUp"
             parameterType="com.example.flabcaloriecounter.user.application.port.in.response.SignUpForm">
-        INSERT INTO user_table(user_id, user_name, user_password, email, weight, user_type,
-                               judge_status)
-        values (#{userId}, #{userName}, #{userPassword}, #{email}, #{weight}, #{userType},
-                #{judgeStatus})
+        INSERT INTO user_table(USER_ID, user_name, user_password, email)
+        values (#{userId}, #{userName}, #{userPassword}, #{email});
+        <selectKey keyColumn="id" keyProperty="id" resultType="long" order="AFTER">
+            select last_insert_id()
+        </selectKey>
     </insert>
 
     <select id="hasDuplicatedId" resultType="boolean">

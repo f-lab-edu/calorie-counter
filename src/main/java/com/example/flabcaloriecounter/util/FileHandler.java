@@ -13,8 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.flabcaloriecounter.exception.CustomException;
 import com.example.flabcaloriecounter.exception.ExceptionFunction;
-import com.example.flabcaloriecounter.exception.FileUploadException;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.PhotoDto;
 
 @Component
@@ -38,9 +38,9 @@ public class FileHandler {
 			try {
 				return function.apply(r);
 			} catch (AccessDeniedException e) {
-				throw new FileUploadException("해당 경로의 파일을 식별할수 없습니다.", e);
+				throw new CustomException(StatusEnum.FILE_PATH_NOT_FOUND, e);
 			} catch (IOException e) {
-				throw new FileUploadException("파일 저장에 실패했습니다.", e);
+				throw new CustomException(StatusEnum.FILE_SAVE_FAIL, e);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
