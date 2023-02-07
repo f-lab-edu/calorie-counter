@@ -11,6 +11,7 @@ import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.ReplyDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateFeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
 import com.example.flabcaloriecounter.feed.application.port.out.FeedPort;
@@ -104,15 +105,13 @@ public class FeedPersistenceAdapter implements FeedPort {
 	}
 
 	@Override
-	public long insertComment(final long feedId, final long userId, final CommentRequestDto commentRequestDto,
-		final int group) {
-		return this.feedRepository.insertComment(feedId, userId, commentRequestDto, group);
+	public void insertComment(final long feedId, final long userId, final CommentRequestDto commentRequestDto) {
+		this.feedRepository.insertComment(feedId, userId, commentRequestDto);
 	}
 
 	@Override
-	public long insertReply(final long feedId, final long userId, final CommentRequestDto commentRequestDto,
-		final int depth, final int groupNumber) {
-		return this.feedRepository.insertReply(feedId, userId, commentRequestDto, depth, groupNumber);
+	public void insertReply(final ReplyDto replyDto) {
+		this.feedRepository.insertReply(replyDto);
 	}
 
 	@Override
@@ -128,6 +127,21 @@ public class FeedPersistenceAdapter implements FeedPort {
 	@Override
 	public int countParent(final long feedId) {
 		return this.feedRepository.countParent(feedId);
+	}
+
+	@Override
+	public int maxDepth(final int groupNumber) {
+		return this.feedRepository.maxDepth(groupNumber);
+	}
+
+	@Override
+	public void updateRefOrder(final int parentOrderResult, final int groupNumber) {
+		this.feedRepository.updateRefOrder(parentOrderResult, groupNumber);
+	}
+
+	@Override
+	public void updateChild(final Long parentId) {
+		this.feedRepository.updateChild(parentId);
 	}
 
 }

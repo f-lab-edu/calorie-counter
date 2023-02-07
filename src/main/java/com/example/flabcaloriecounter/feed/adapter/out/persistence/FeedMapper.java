@@ -12,6 +12,7 @@ import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.ReplyDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
 import com.example.flabcaloriecounter.feed.domain.Comment;
 import com.example.flabcaloriecounter.feed.domain.Feed;
@@ -55,12 +56,10 @@ public interface FeedMapper {
 
 	LikeStatus findLikeStatusByUserId(@Param("feedId") final long feedId, @Param("userId") final long userId);
 
-	long insertComment(@Param("feedId") final long feedId, @Param("userId") final long userId,
-		@Param("commentRequestDto") final CommentRequestDto commentRequestDto, @Param("group") final int group);
+	void insertComment(@Param("feedId") final long feedId, @Param("userId") final long userId,
+		@Param("commentRequestDto") final CommentRequestDto commentRequestDto);
 
-	long insertReply(@Param("feedId") final long feedId, @Param("userId") final long userId,
-		@Param("commentRequestDto") final CommentRequestDto commentRequestDto, @Param("depth") final int depth,
-		@Param("groupNumber") final int groupNumber);
+	void insertReply(@Param("replyDto") final ReplyDto replyDto);
 
 	Optional<Comment> findCommentById(@Param("parentId") final Long parentId);
 
@@ -68,4 +67,11 @@ public interface FeedMapper {
 		@Param("commentPerPage") final int commentPerPage);
 
 	int countParent(final long feedId);
+
+	int maxDepth(final int groupNumber);
+
+	void updateRefOrder(@Param("parentOrderResult") final int parentOrderResult,
+		@Param("groupNumber") final int groupNumber);
+
+	void updateChild(final Long parentId);
 }

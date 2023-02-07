@@ -15,13 +15,12 @@ public class UserTypeHandler extends BaseTypeHandler<UserType> {
 	@Override
 	public void setNonNullParameter(PreparedStatement ps, int i, UserType parameter, JdbcType jdbcType) throws
 		SQLException {
-		ps.setString(i, parameter.getStatusMessage());
+		ps.setString(i, parameter.getCode());
 	}
 
 	@Override
 	public UserType getNullableResult(ResultSet rs, String columnName) throws SQLException {
-		String getString = rs.getString(columnName);
-		return UserType.findByMessage(getString);
+		return UserType.findByMessage(rs.getString(columnName));
 	}
 
 	@Override

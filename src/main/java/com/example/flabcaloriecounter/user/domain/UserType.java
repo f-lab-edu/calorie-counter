@@ -4,38 +4,36 @@ import java.util.Arrays;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public enum UserType {
-	ORDINARY("일반"),
-	PROVIDER("제공자"),
-	ADMIN("관리자");
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+@Getter
+@RequiredArgsConstructor
+public enum UserType {
+	ORDINARY("01", "일반"),
+	PROVIDER("02", "제공자"),
+	ADMIN("03", "관리자");
+
+	private final String code;
 	private final String statusMessage;
 
-	UserType(String statusMessage) {
-		this.statusMessage = statusMessage;
+	public boolean checkUserCode(String code) {
+		return this.code.equals(code);
 	}
 
-	public String getStatusMessage() {
-		return this.statusMessage;
-	}
-
-	public boolean checkStatusMessage(String statusMessage) {
-		return this.statusMessage.equals(statusMessage);
-	}
-
-	public static UserType findByMessage(final String statusMessage) {
+	public static UserType findByMessage(final String code) {
 		return Arrays.stream(UserType.values())
-			.filter(getUserStatusPredicate(statusMessage))
+			.filter(getUserCode(code))
 			.findFirst()
-			.orElseThrow(NonStatusFoundErrorSupplier());
+			.orElseThrow(NonCodeFoundErrorSupplier());
 	}
 
-	private static Supplier<IllegalArgumentException> NonStatusFoundErrorSupplier() {
+	private static Supplier<IllegalArgumentException> NonCodeFoundErrorSupplier() {
 		return () -> new IllegalArgumentException("해당하는 상태가 없습니다.");
 	}
 
-	private static Predicate<UserType> getUserStatusPredicate(String statusMessage) {
-		return userType -> userType.checkStatusMessage(statusMessage);
+	private static Predicate<UserType> getUserCode(String code) {
+		return userType -> userType.checkUserCode(code);
 	}
 
 	public boolean isProvider() {

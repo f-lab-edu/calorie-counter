@@ -11,6 +11,7 @@ import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.ReplyDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateFeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
 import com.example.flabcaloriecounter.feed.domain.Comment;
@@ -112,15 +113,13 @@ public class FeedMybatisRepository implements FeedRepository {
 	}
 
 	@Override
-	public long insertComment(final long feedId, final long userId, final CommentRequestDto commentRequestDto,
-		final int group) {
-		return this.feedMapper.insertComment(feedId, userId, commentRequestDto, group);
+	public void insertComment(final long feedId, final long userId, final CommentRequestDto commentRequestDto) {
+		this.feedMapper.insertComment(feedId, userId, commentRequestDto);
 	}
 
 	@Override
-	public long insertReply(final long feedId, final long userId, final CommentRequestDto commentRequestDto,
-		final int depth, final int groupNumber) {
-		return this.feedMapper.insertReply(feedId, userId, commentRequestDto, depth, groupNumber);
+	public void insertReply(final ReplyDto replyDto) {
+		this.feedMapper.insertReply(replyDto);
 	}
 
 	@Override
@@ -136,5 +135,20 @@ public class FeedMybatisRepository implements FeedRepository {
 	@Override
 	public int countParent(final long feedId) {
 		return this.feedMapper.countParent(feedId);
+	}
+
+	@Override
+	public int maxDepth(final int groupNumber) {
+		return this.feedMapper.maxDepth(groupNumber);
+	}
+
+	@Override
+	public void updateRefOrder(final int parentOrderResult, final int groupNumber) {
+		this.feedMapper.updateRefOrder(parentOrderResult, groupNumber);
+	}
+
+	@Override
+	public void updateChild(final Long parentId) {
+		this.feedMapper.updateChild(parentId);
 	}
 }

@@ -9,6 +9,7 @@ import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.FeedListDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.ImageUploadDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.Paging;
+import com.example.flabcaloriecounter.feed.application.port.in.dto.ReplyDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateFeedDto;
 import com.example.flabcaloriecounter.feed.application.port.in.dto.UpdateImageInfo;
 import com.example.flabcaloriecounter.feed.domain.Comment;
@@ -48,15 +49,19 @@ public interface FeedPort {
 
 	LikeStatus findLikeStatusByUserId(final long feedId, final long userId);
 
-	long insertComment(final long feedId, final long userId, final CommentRequestDto commentRequestDto,
-		final int group);
+	void insertComment(final long feedId, final long userId, final CommentRequestDto commentRequestDto);
 
-	long insertReply(final long feedId, final long userId, final CommentRequestDto commentRequestDto,
-		final int depth, final int groupNumber);
+	void insertReply(final ReplyDto replyDto);
 
 	Optional<Comment> findCommentById(final Long parentId);
 
 	List<Comment> comment(final long feedId, final int offset, final int commentPerPage);
 
 	int countParent(final long feedId);
+
+	int maxDepth(final int groupNumber);
+
+	void updateRefOrder(final int parentOrderResult, final int groupNumber);
+
+	void updateChild(final Long parentId);
 }

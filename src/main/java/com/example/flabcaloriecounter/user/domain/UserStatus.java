@@ -4,25 +4,17 @@ import java.util.Arrays;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum UserStatus {
 	WITHDRAWAL("01", "탈퇴상태"),
 	NOT_WITHDRAWAL("02", "정상상태");
 
-	private String code;
-	private String statusMessage;
-
-	UserStatus(String code, String statusMessage) {
-		this.code = code;
-		this.statusMessage = statusMessage;
-	}
-
-	public String getCode() {
-		return this.code;
-	}
-
-	public String getStatusMessage() {
-		return this.statusMessage;
-	}
+	private final String code;
+	private final String statusMessage;
 
 	public boolean checkUserCode(String code) {
 		return this.code.equals(code);

@@ -10,11 +10,13 @@ public record Comment(
 	Long parentId,
 	int depth,
 	long userId,
-	int groupNumber
+	int groupNumber,
+	int groupRefOrder,
+	int childNumber
 
 ) {
 	public Comment(long id, long feedId, LocalDateTime writeDate, String contents, Long parentId, int depth,
-		long userId, int groupNumber) {
+		long userId, int groupNumber, int groupRefOrder, int childNumber) {
 		this.id = id;
 		this.feedId = feedId;
 		this.writeDate = writeDate;
@@ -23,5 +25,13 @@ public record Comment(
 		this.depth = depth;
 		this.userId = userId;
 		this.groupNumber = groupNumber;
+		this.groupRefOrder = groupRefOrder;
+		this.childNumber = childNumber;
+	}
+
+	public Comment(long id, long feedId, LocalDateTime writeDate, String contents, Long parentId, int depth,
+		long userId,
+		int groupNumber) {
+		this(id, feedId, writeDate, contents, parentId, depth, userId, groupNumber, 1, 0);
 	}
 }
